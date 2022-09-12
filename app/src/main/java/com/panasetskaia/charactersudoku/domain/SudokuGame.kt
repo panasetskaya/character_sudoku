@@ -1,41 +1,42 @@
 package com.panasetskaia.charactersudoku.domain
 
+import android.util.Log
 import com.panasetskaia.charactersudoku.domain.SudokuSolver.GRID_SIZE
 import com.panasetskaia.charactersudoku.domain.SudokuSolver.GRID_SIZE_SQUARE_ROOT
 import com.panasetskaia.charactersudoku.domain.SudokuSolver.MAX_DIGIT_INDEX
 import com.panasetskaia.charactersudoku.domain.SudokuSolver.MAX_DIGIT_VALUE
 import com.panasetskaia.charactersudoku.domain.SudokuSolver.MIN_DIGIT_INDEX
 import com.panasetskaia.charactersudoku.domain.SudokuSolver.MIN_DIGIT_VALUE
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
-class SudokuGame(val level: Level) {
+class SudokuGame {
 
-    val grid = Array(GRID_SIZE) { IntArray(GRID_SIZE) {0} }
+    private var grid = Array(GRID_SIZE) { IntArray(GRID_SIZE) {0} }
+    private var printableGridRemoved: MutableList<Int> = mutableListOf()
+    private var printableGridFull: MutableList<Int> = mutableListOf()
+    private lateinit var level: Level
 
-    init {
-        fillGrid()
+    suspend fun fillGrid(levelNew: Level = Level.JUNIOR): Map<MutableList<Int>,MutableList<Int>> {
+        return withContext(Dispatchers.Default){
+            level = levelNew
+            fillDiagonalBoxes()
+            fillRemaining(0, GRID_SIZE_SQUARE_ROOT)
+            makePrintableGrid(printableGridFull)
+            removeDigits()
+            makePrintableGrid(printableGridRemoved)
+            mapOf(printableGridFull to printableGridRemoved)
+        }
     }
 
-    fun printGrid() {
-        val printableGrid = mutableListOf<Int>()
+    private fun makePrintableGrid(printableGrid: MutableList<Int>) {
         for (i in 0 until GRID_SIZE) {
             for (j in 0 until GRID_SIZE) {
-                print(grid[i][j].toString().plus(" "))
                 printableGrid.add(grid[i][j])
             }
-            println()
         }
-        println()
-        println()
-        println(printableGrid.toString())
     }
-
-    private fun fillGrid() {
-        fillDiagonalBoxes()
-        fillRemaining(0, GRID_SIZE_SQUARE_ROOT)
-        removeDigits()
-    }
-
     private fun fillDiagonalBoxes() {
         for (i in 0 until GRID_SIZE step GRID_SIZE_SQUARE_ROOT) {
             fillBox(i, i)
@@ -151,19 +152,6 @@ class SudokuGame(val level: Level) {
                     digitsToRemove --
                 }
             }
-        }
-    }
-
-    class Builder {
-        private var level = Level.JUNIOR
-
-        fun setLevel(level: Level) : Builder {
-            this.level = level
-            return this
-        }
-
-        fun build() : SudokuGame {
-            return SudokuGame(level)
         }
     }
 }
