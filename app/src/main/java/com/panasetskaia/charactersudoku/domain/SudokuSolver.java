@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class Sudoku {
+public class SudokuSolver {
     private final int[][] constraints = new int[9][9];  // What choices remain valid for cell i,j?
     private final int[] rows = new int[9];              // What numbers are free in row i?
     private final int[] columns = new int[9];           // What numbers are free in column j?
@@ -14,7 +14,7 @@ public class Sudoku {
     private final int[][] board = new int[9][9];
     private final List<List<Integer>> optionToMove = new ArrayList<>();
 
-    private Sudoku() {
+    private SudokuSolver() {
         // Initially all moves are possible; record possibilities as bit vectors
         int mask = (1<<9) - 1;
         for (int i = 0; i < board.length; ++i) {
@@ -69,11 +69,11 @@ public class Sudoku {
      * @param boardString board representation with empty spaces recorded as '.'
      * @return Sudoku object. Call solutions() on it when you're ready.
      */
-    public static Sudoku fromBoardString(String boardString) {
+    public static SudokuSolver fromBoardString(String boardString) {
         // A board might look like:
         // "..3 .1. ... 415 ... .9. 2.6" etc.
         // Digits fill boxes, left to right, top to bottom; whitespace is ignored, '.' represents an empty box.
-        Sudoku sudoku = new Sudoku();
+        SudokuSolver sudokuSolver = new SudokuSolver();
 
         int p = 0;
         for (int j = 0; j < boardString.length(); ++j) {
@@ -82,13 +82,13 @@ public class Sudoku {
                 int r = p / 9;
                 int c = p % 9;
                 int number = ch - '0';   // 1..9
-                sudoku.addEntry(r, c, number);
+                sudokuSolver.addEntry(r, c, number);
                 ++p;
             } else if (ch == '.') {
                 ++p;
             }
         }
-        return sudoku;
+        return sudokuSolver;
     }
 
     private ExactCoverProblem toProblem() {
