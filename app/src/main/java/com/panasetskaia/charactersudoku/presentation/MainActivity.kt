@@ -2,8 +2,11 @@ package com.panasetskaia.charactersudoku.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import com.panasetskaia.charactersudoku.R
+import com.panasetskaia.charactersudoku.domain.Sudoku
+import kotlin.streams.asSequence
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,6 +17,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val sequence = Sudoku.fromBoardString("..3..82.4.2..64.1.9.......8.8............698.......5....49.7.3.8....1....7..5.4..").solutions().asSequence()
+        var result = ""
+        sequence.forEach {
+            result += it
+        }
+        Log.d("MY_TAG",result)
 
     }
 }
