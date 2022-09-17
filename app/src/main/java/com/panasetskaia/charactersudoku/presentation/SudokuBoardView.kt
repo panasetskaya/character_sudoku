@@ -2,6 +2,7 @@ package com.panasetskaia.charactersudoku.presentation
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -12,15 +13,13 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     private var sqrtSize = 3
     private var size = 9
-
     private var cellSizePixels = 0F
-
     private var selectedRow = 0
     private var selectedCol = 0
 
     private val thinLinePaint = Paint().apply {
         style = Paint.Style.STROKE
-        color = resources.getColor(R.color.primaryDarkColor)
+        color = Color.BLACK
         strokeWidth = 2F
     }
 

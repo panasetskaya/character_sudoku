@@ -8,28 +8,30 @@ import kotlin.random.Random
 class SudokuGame {
 
     private var grid = Array(GRID_SIZE) { IntArray(GRID_SIZE) {0} }
-    private var printableGridRemoved: MutableList<Int> = mutableListOf()
-    private var printableGridFull: MutableList<Int> = mutableListOf()
+    private var printableGridRemoved: String = ""
+    private var printableGridFull: String = ""
     private lateinit var level: GameLevel
 
-    suspend fun fillGrid(levelNew: GameLevel = GameLevel.JUNIOR): Map<MutableList<Int>,MutableList<Int>> {
+    suspend fun fillGrid(levelNew: GameLevel = GameLevel.JUNIOR): Map<String,String> {
         return withContext(Dispatchers.Default){
             level = levelNew
             fillDiagonalBoxes()
             fillRemaining(0, GRID_SIZE_SQUARE_ROOT)
-            makePrintableGrid(printableGridFull)
+            printableGridFull = makePrintableGrid(printableGridFull)
             removeDigits()
-            makePrintableGrid(printableGridRemoved)
+            printableGridRemoved = makePrintableGrid(printableGridRemoved)
             mapOf(printableGridFull to printableGridRemoved)
         }
     }
 
-    private fun makePrintableGrid(printableGrid: MutableList<Int>) {
+    private fun makePrintableGrid(printableGrid: String): String {
+        var stringGrid = printableGrid
         for (i in 0 until GRID_SIZE) {
             for (j in 0 until GRID_SIZE) {
-                printableGrid.add(grid[i][j])
+                stringGrid += grid[i][j]
             }
         }
+        return stringGrid
     }
     private fun fillDiagonalBoxes() {
         for (i in 0 until GRID_SIZE step GRID_SIZE_SQUARE_ROOT) {
