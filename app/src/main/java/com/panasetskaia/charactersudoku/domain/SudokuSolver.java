@@ -85,7 +85,7 @@ public class SudokuSolver {
                 int number = ch - '0';   // 1..9
                 sudokuSolver.addEntry(r, c, number);
                 ++p;
-            } else if (ch == '.') {
+            } else if (ch == '0') {
                 ++p;
             }
         }
@@ -124,13 +124,6 @@ public class SudokuSolver {
             }
         }
         return ExactCoverProblem.parseFrom(sb.toString());
-    }
-
-    public Boolean solutionExists() {
-        if (getSolution() != null) {
-            return true;
-        }
-        else return null;
     }
 
     public String getSolution() {

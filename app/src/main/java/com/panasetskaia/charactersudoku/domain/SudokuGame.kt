@@ -3,29 +3,26 @@ package com.panasetskaia.charactersudoku.domain
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlin.random.Random
 
 class SudokuGame {
 
     private var grid = Array(GRID_SIZE) { IntArray(GRID_SIZE) {0} }
     private var printableGridRemoved: String = ""
     private var printableGridFull: String = ""
-    private lateinit var level: GameLevel
 
-    suspend fun fillGrid(levelNew: GameLevel = GameLevel.JUNIOR): Map<String,String> {
+    suspend fun fillGrid(): Map<String,String> {
         return withContext(Dispatchers.Default){
-            level = levelNew
             fillDiagonalBoxes()
             fillRemaining(0, GRID_SIZE_SQUARE_ROOT)
-            printableGridFull = makePrintableGrid(printableGridFull)
+            printableGridFull = makePrintableGrid()
             removeDigits()
-            printableGridRemoved = makePrintableGrid(printableGridRemoved)
+            printableGridRemoved = makePrintableGrid()
             mapOf(printableGridFull to printableGridRemoved)
         }
     }
 
-    private fun makePrintableGrid(printableGrid: String): String {
-        var stringGrid = printableGrid
+    private fun makePrintableGrid(): String {
+        var stringGrid = ""
         for (i in 0 until GRID_SIZE) {
             for (j in 0 until GRID_SIZE) {
                 stringGrid += grid[i][j]
@@ -41,19 +38,17 @@ class SudokuGame {
 
     private fun fillBox(row: Int, column: Int) {
         var generatedDigit: Int
-
         for (i in 0 until GRID_SIZE_SQUARE_ROOT) {
             for (j in 0 until GRID_SIZE_SQUARE_ROOT) {
                 do {
                     generatedDigit = generateRandomInt(MIN_DIGIT_VALUE, MAX_DIGIT_VALUE)
                 } while (!isUnusedInBox(row, column, generatedDigit))
-
                 grid[row + i][column + j] = generatedDigit
             }
         }
     }
 
-    private fun generateRandomInt(min: Int, max: Int) = Random.nextInt(min, max + 1)
+    private fun generateRandomInt(min: Int, max: Int) = (min..max).shuffled().last()
 
     private fun isUnusedInBox(rowStart: Int, columnStart: Int, digit: Int) : Boolean {
         for (i in 0 until GRID_SIZE_SQUARE_ROOT) {
@@ -133,7 +128,7 @@ class SudokuGame {
     }
 
     private fun removeDigits() {
-        var digitsToRemove = GRID_SIZE * GRID_SIZE - level.numberOfProvidedDigits
+        var digitsToRemove = GRID_SIZE * GRID_SIZE - PROVIDED_DIGITS
 
         while (digitsToRemove > 0) {
             val randomRow = generateRandomInt(MIN_DIGIT_INDEX, MAX_DIGIT_INDEX)
@@ -142,8 +137,14 @@ class SudokuGame {
             if (grid[randomRow][randomColumn] != 0) {
                 val digitToRemove = grid[randomRow][randomColumn]
                 grid[randomRow][randomColumn] = 0
-                if (!SudokuSolver.fromBoardString(grid.toString()).solutionExists()) {
-                    // было: if (!SudokuSolver.solvable(grid)) { -> надо, чтобы fromBoardString принимал Array(GRID_SIZE) { IntArray(GRID_SIZE) {0} }
+                printableGridRemoved = makePrintableGrid()
+                val solution = try {
+                    SudokuSolver.fromBoardString(printableGridRemoved).solution
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+                val exists = solution!=null
+                if (!exists) {
                     grid[randomRow][randomColumn] = digitToRemove
                 } else {
                     digitsToRemove --
@@ -159,6 +160,6 @@ class SudokuGame {
         internal const val MAX_DIGIT_VALUE = 9
         internal const val MIN_DIGIT_INDEX = 0
         internal const val MAX_DIGIT_INDEX = 8
-        internal const val BOX_SIZE = 3
+        internal const val PROVIDED_DIGITS = 25
     }
 }

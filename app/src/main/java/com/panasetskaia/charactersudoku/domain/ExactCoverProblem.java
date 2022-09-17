@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -125,8 +124,6 @@ public class ExactCoverProblem {
         private final int[] dlink;
         private final int[] top;
         private final int[] color;
-        private final int[] vindex; // holds original order in vertical list
-        private final int[] olen = new int[items.size()]; // original length of vertical list
 
         Solutions() {
             if (N1 == 0) N1 = N;
@@ -150,7 +147,8 @@ public class ExactCoverProblem {
             dlink = new int[nxnodes];
             top = new int[nxnodes];
             color = new int[nxnodes];
-            vindex = new int[nxnodes];
+            // holds original order in vertical list
+            int[] vindex = new int[nxnodes];
 
             for (int i = 0; i < ulink.length; ++i) {
                 ulink[i] = dlink[i] = i;
@@ -183,6 +181,8 @@ public class ExactCoverProblem {
                 top[p] = -M;
                 ulink[p] = p-k;
             }
+            // original length of vertical list
+            int[] olen = new int[items.size()];
             System.arraycopy(len, 1, olen, 1, len.length - 1);
         }
 
