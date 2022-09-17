@@ -1,41 +1,34 @@
 package com.panasetskaia.charactersudoku.domain
 
-import android.util.Log
-import com.panasetskaia.charactersudoku.domain.SudokuSolver.GRID_SIZE
-import com.panasetskaia.charactersudoku.domain.SudokuSolver.GRID_SIZE_SQUARE_ROOT
-import com.panasetskaia.charactersudoku.domain.SudokuSolver.MAX_DIGIT_INDEX
-import com.panasetskaia.charactersudoku.domain.SudokuSolver.MAX_DIGIT_VALUE
-import com.panasetskaia.charactersudoku.domain.SudokuSolver.MIN_DIGIT_INDEX
-import com.panasetskaia.charactersudoku.domain.SudokuSolver.MIN_DIGIT_VALUE
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlin.random.Random
 
 class SudokuGame {
 
     private var grid = Array(GRID_SIZE) { IntArray(GRID_SIZE) {0} }
-    private var printableGridRemoved: MutableList<Int> = mutableListOf()
-    private var printableGridFull: MutableList<Int> = mutableListOf()
-    private lateinit var level: Level
+    private var printableGridRemoved: String = ""
+    private var printableGridFull: String = ""
 
-    suspend fun fillGrid(levelNew: Level = Level.JUNIOR): Map<MutableList<Int>,MutableList<Int>> {
+    suspend fun fillGrid(): Map<String,String> {
         return withContext(Dispatchers.Default){
-            level = levelNew
             fillDiagonalBoxes()
             fillRemaining(0, GRID_SIZE_SQUARE_ROOT)
-            makePrintableGrid(printableGridFull)
+            printableGridFull = makePrintableGrid()
             removeDigits()
-            makePrintableGrid(printableGridRemoved)
+            printableGridRemoved = makePrintableGrid()
             mapOf(printableGridFull to printableGridRemoved)
         }
     }
 
-    private fun makePrintableGrid(printableGrid: MutableList<Int>) {
+    private fun makePrintableGrid(): String {
+        var stringGrid = ""
         for (i in 0 until GRID_SIZE) {
             for (j in 0 until GRID_SIZE) {
-                printableGrid.add(grid[i][j])
+                stringGrid += grid[i][j]
             }
         }
+        return stringGrid
     }
     private fun fillDiagonalBoxes() {
         for (i in 0 until GRID_SIZE step GRID_SIZE_SQUARE_ROOT) {
@@ -45,19 +38,17 @@ class SudokuGame {
 
     private fun fillBox(row: Int, column: Int) {
         var generatedDigit: Int
-
         for (i in 0 until GRID_SIZE_SQUARE_ROOT) {
             for (j in 0 until GRID_SIZE_SQUARE_ROOT) {
                 do {
                     generatedDigit = generateRandomInt(MIN_DIGIT_VALUE, MAX_DIGIT_VALUE)
                 } while (!isUnusedInBox(row, column, generatedDigit))
-
                 grid[row + i][column + j] = generatedDigit
             }
         }
     }
 
-    private fun generateRandomInt(min: Int, max: Int) = Random.nextInt(min, max + 1)
+    private fun generateRandomInt(min: Int, max: Int) = (min..max).shuffled().last()
 
     private fun isUnusedInBox(rowStart: Int, columnStart: Int, digit: Int) : Boolean {
         for (i in 0 until GRID_SIZE_SQUARE_ROOT) {
@@ -137,7 +128,7 @@ class SudokuGame {
     }
 
     private fun removeDigits() {
-        var digitsToRemove = GRID_SIZE * GRID_SIZE - level.numberOfProvidedDigits
+        var digitsToRemove = GRID_SIZE * GRID_SIZE - PROVIDED_DIGITS
 
         while (digitsToRemove > 0) {
             val randomRow = generateRandomInt(MIN_DIGIT_INDEX, MAX_DIGIT_INDEX)
@@ -146,12 +137,29 @@ class SudokuGame {
             if (grid[randomRow][randomColumn] != 0) {
                 val digitToRemove = grid[randomRow][randomColumn]
                 grid[randomRow][randomColumn] = 0
-                if (!SudokuSolver.solvable(grid)) {
+                printableGridRemoved = makePrintableGrid()
+                val solution = try {
+                    SudokuSolver.fromBoardString(printableGridRemoved).solution
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+                val exists = solution!=null
+                if (!exists) {
                     grid[randomRow][randomColumn] = digitToRemove
                 } else {
                     digitsToRemove --
                 }
             }
         }
+    }
+
+    companion object {
+        internal const val GRID_SIZE = 9
+        internal const val GRID_SIZE_SQUARE_ROOT = 3
+        internal const val MIN_DIGIT_VALUE = 1
+        internal const val MAX_DIGIT_VALUE = 9
+        internal const val MIN_DIGIT_INDEX = 0
+        internal const val MAX_DIGIT_INDEX = 8
+        internal const val PROVIDED_DIGITS = 25
     }
 }
