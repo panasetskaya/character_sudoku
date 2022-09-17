@@ -1,7 +1,8 @@
 // This class was developed on base of Sudoku class copyrighted in 2018 by Colin Smith, MIT License: https://github.com/littleredcomputer.
 
-package com.panasetskaia.charactersudoku.domain;
+package com.panasetskaia.charactersudoku.data;
 import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

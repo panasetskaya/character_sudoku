@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.domain
+package com.panasetskaia.charactersudoku.data
 
 
 import kotlinx.coroutines.Dispatchers

@@ -3,7 +3,7 @@ package com.panasetskaia.charactersudoku.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.panasetskaia.charactersudoku.domain.SudokuGame
+import com.panasetskaia.charactersudoku.data.SudokuGame
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
