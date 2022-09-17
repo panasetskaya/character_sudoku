@@ -4,6 +4,7 @@ package com.panasetskaia.charactersudoku.domain;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SudokuSolver {
@@ -125,9 +126,17 @@ public class SudokuSolver {
         return ExactCoverProblem.parseFrom(sb.toString());
     }
 
-    public Stream<String> solutions() {
-        return toProblem().solutions()
-                .map(sol -> {
+    public Boolean solutionExists() {
+        if (getSolution() != null) {
+            return true;
+        }
+        else return null;
+    }
+
+    public String getSolution() {
+        Stream<String> mapping = toProblem().solutions()
+                .map(sol ->
+                {
                     sol.forEach(o -> {
                         List<Integer> move = optionToMove.get(o);
                         board[move.get(0)][move.get(1)] = move.get(2);
@@ -135,10 +144,13 @@ public class SudokuSolver {
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < 9; ++i) {
                         for (int j = 0; j < 9; j += 3) {
-                            sb.append(board[i][j]).append(board[i][j+1]).append(board[i][j+2]).append(' ');
+                            sb.append(board[i][j]).append(board[i][j+1]).append(board[i][j+2]);
                         }
                     }
                     return sb.toString();
                 });
+
+        List<String> resultingList = mapping.collect(Collectors.toList());
+        return resultingList.get(0);
     }
 }

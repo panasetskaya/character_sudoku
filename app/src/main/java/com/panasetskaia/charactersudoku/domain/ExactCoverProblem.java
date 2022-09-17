@@ -10,9 +10,14 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
-import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -122,7 +127,6 @@ public class ExactCoverProblem {
         private final int[] color;
         private final int[] vindex; // holds original order in vertical list
         private final int[] olen = new int[items.size()]; // original length of vertical list
-        private Instant lastLogTime;
 
         Solutions() {
             if (N1 == 0) N1 = N;
@@ -180,7 +184,6 @@ public class ExactCoverProblem {
                 ulink[p] = p-k;
             }
             System.arraycopy(len, 1, olen, 1, len.length - 1);
-            lastLogTime = Instant.now();
         }
 
         private void hide(int p) {
