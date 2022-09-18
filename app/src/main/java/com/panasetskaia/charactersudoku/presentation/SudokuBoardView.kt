@@ -17,10 +17,18 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var selectedRow = 0
     private var selectedCol = 0
 
+    private var listener: OnTouchListener? = null
+
     private val thinLinePaint = Paint().apply {
         style = Paint.Style.STROKE
         color = Color.BLACK
         strokeWidth = 2F
+    }
+
+    private val thickLinePaint = Paint().apply {
+        style = Paint.Style.STROKE
+        color = Color.BLACK
+        strokeWidth = 4F
     }
 
     private val selectedCellPaint = Paint().apply {
@@ -43,6 +51,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         cellSizePixels = (width / size).toFloat()
         fillCells(canvas)
         drawLines(canvas)
+
     }
 
     private fun fillCells(canvas: Canvas) {
@@ -67,15 +76,21 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     private fun drawLines(canvas: Canvas) {
-        canvas.drawRect(0F, 0F, width.toFloat(), height.toFloat(), thinLinePaint)
+        canvas.drawRect(0F, 0F,
+            canvas.width.toFloat(), canvas.height.toFloat(), thickLinePaint)
 
         for (i in 1 until size) {
+            val paintToUse = if (i % sqrtSize==0) {
+                thickLinePaint
+            } else {
+                thinLinePaint
+            }
             canvas.drawLine(
                 i * cellSizePixels,
                 0F,
                 i * cellSizePixels,
                 height.toFloat(),
-                thinLinePaint
+                paintToUse
             )
 
             canvas.drawLine(
@@ -83,7 +98,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 i * cellSizePixels,
                 width.toFloat(),
                 i * cellSizePixels,
-                thinLinePaint
+                paintToUse
             )
         }
     }
@@ -91,12 +106,30 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     override fun onTouchEvent(event: MotionEvent): Boolean {
         return when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                selectedRow = (event.y / cellSizePixels).toInt()
-                selectedCol = (event.x / cellSizePixels).toInt()
-                invalidate()
+                handleTouchEvent(event.x, event.y)
                 true
             }
             else -> false
         }
+    }
+
+    private fun handleTouchEvent(x: Float, y: Float) {
+        val possibleSelectedRow = (y / cellSizePixels).toInt()
+        val possibleSelectedCol = (x / cellSizePixels).toInt()
+        listener?.onCellTouched(possibleSelectedRow, possibleSelectedCol)
+    }
+
+    fun updateSelectedCellUI(row: Int, col: Int) {
+        selectedRow = row
+        selectedCol = col
+        invalidate()
+    }
+
+    fun registerListener(listener: OnTouchListener) {
+        this.listener = listener
+    }
+
+    interface OnTouchListener {
+        fun onCellTouched(row: Int, col: Int)
     }
 }
