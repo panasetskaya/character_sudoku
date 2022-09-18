@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.data
+package com.panasetskaia.charactersudoku.data.gameGenerator
 
 
 import kotlinx.coroutines.Dispatchers
