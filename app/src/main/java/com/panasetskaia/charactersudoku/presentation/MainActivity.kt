@@ -2,7 +2,6 @@ package com.panasetskaia.charactersudoku.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.panasetskaia.charactersudoku.R
 
@@ -19,8 +18,9 @@ class MainActivity : AppCompatActivity(), SudokuBoardView.OnTouchListener {
         viewModel.getGame()
         sudokuBoardView = findViewById(R.id.sudoku_board)
         sudokuBoardView.registerListener(this)
-        viewModel.selectedCellLiveData.observe(this, Observer {
-            updateSelectedCellUI(it) })
+        viewModel.selectedCellLiveData.observe(this) {
+            updateSelectedCellUI(it)
+        }
     }
 
     override fun onCellTouched(row: Int, col: Int) {

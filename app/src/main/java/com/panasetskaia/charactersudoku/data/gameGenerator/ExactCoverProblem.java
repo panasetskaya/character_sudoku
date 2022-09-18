@@ -1,6 +1,6 @@
 // This class was developed on base of Sudoku class copyrighted in 2018 by Colin Smith, MIT License: https://github.com/littleredcomputer
 
-package com.panasetskaia.charactersudoku.data;
+package com.panasetskaia.charactersudoku.data.gameGenerator;
 
 
 import com.google.common.base.Splitter;

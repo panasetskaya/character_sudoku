@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.panasetskaia.charactersudoku.data.SudokuGame
+import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -29,7 +29,7 @@ class MainViewModel: ViewModel() {
     }
 
     fun getGame() {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch {
             val map2 = SudokuGame().fillGrid()
             Log.d("MY_TAG",map2.toString())
             val map3 = SudokuGame().fillGrid()

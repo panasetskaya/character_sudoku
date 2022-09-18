@@ -10,7 +10,7 @@ interface CharacterSudokuRepository {
 
     fun editCharinDict(character: ChineseCharacter)
 
-    fun searchForCharacter(character: String)
+    fun searchForCharacter(character: String): ChineseCharacter
 
     fun getWholeDictionary(): List<ChineseCharacter>
 
