@@ -16,7 +16,6 @@ class MainActivity : AppCompatActivity(), SudokuBoardView.OnTouchListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewModel.getGame()
         sudokuBoardView = findViewById(R.id.sudoku_board)
         sudokuBoardView.registerListener(this)
         viewModel.selectedCellLiveData.observe(this) {

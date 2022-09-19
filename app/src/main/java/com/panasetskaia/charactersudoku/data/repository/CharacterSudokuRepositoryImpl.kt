@@ -1,10 +1,17 @@
 package com.panasetskaia.charactersudoku.data.repository
 
+import androidx.lifecycle.MutableLiveData
+import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.entities.Board
+import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import kotlinx.coroutines.*
 
-class CharacterSudokuRepositoryImpl: CharacterSudokuRepository {
+class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
+
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     override fun getNineRandomCharFromDict(): List<ChineseCharacter> {
         TODO("Not yet implemented")
     }
@@ -41,5 +48,31 @@ class CharacterSudokuRepositoryImpl: CharacterSudokuRepository {
         TODO("Not yet implemented")
     }
 
+    /**
+     * Just to test the game itself
+     */
+    suspend fun getNewNumberGameTestFun(): Board {
+        val grid = generateNumberGrid().values.toList()[0]
+        val cells = List(SudokuGame.GRID_SIZE * SudokuGame.GRID_SIZE) { i ->
+            Cell(
+                i / SudokuGame.GRID_SIZE,
+                i % SudokuGame.GRID_SIZE,
+                grid[i].toString()
+            )
+        }
+        cells[11].isStartingCell = true
+        cells[21].isStartingCell = true
+        val board = Board(SudokuGame.GRID_SIZE, cells)
+        return board
+    }
 
+    fun cancelScope() {
+        scope.cancel()
+    }
+
+    private suspend fun generateNumberGrid(): Map<String, String> {
+        return withContext(Dispatchers.Default) {
+            SudokuGame().fillGrid()
+        }
+    }
 }
