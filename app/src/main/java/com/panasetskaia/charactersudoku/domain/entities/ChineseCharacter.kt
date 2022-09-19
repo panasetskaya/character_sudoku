@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.domain
+package com.panasetskaia.charactersudoku.domain.entities
 
 data class ChineseCharacter(
     var id: Int,

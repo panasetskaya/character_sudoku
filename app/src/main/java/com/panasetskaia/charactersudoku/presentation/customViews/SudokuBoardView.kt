@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation
+package com.panasetskaia.charactersudoku.presentation.customViews
 
 import android.content.Context
 import android.graphics.Canvas

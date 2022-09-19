@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.panasetskaia.charactersudoku.R
+import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 
 class MainActivity : AppCompatActivity(), SudokuBoardView.OnTouchListener {
 
