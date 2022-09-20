@@ -1,42 +1,81 @@
 package com.panasetskaia.charactersudoku.presentation
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
-import kotlinx.coroutines.Dispatchers
+import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
+import com.panasetskaia.charactersudoku.domain.entities.Board
 import kotlinx.coroutines.launch
 
 
-class MainViewModel: ViewModel() {
+class MainViewModel : ViewModel() {
 
-    private val _selectedCellLiveData = MutableLiveData<Pair<Int, Int>>()
-    val selectedCellLiveData: MutableLiveData<Pair<Int, Int>>
-        get() = _selectedCellLiveData
-
+    val repository = CharacterSudokuRepositoryImpl()
     private var selectedRow = -1
     private var selectedCol = -1
 
+    private val _selectedCellLiveData = MutableLiveData<Pair<Int, Int>>()
+    val selectedCellLiveData: LiveData<Pair<Int, Int>>
+        get() = _selectedCellLiveData
+
+    private val _boardLiveData = MutableLiveData<Board>()
+    val boardLiveData: LiveData<Board>
+        get() = _boardLiveData
+
+    private val _nineCharactersLiveData = MutableLiveData<List<String>>()
+    val nineCharactersLiveData: MutableLiveData<List<String>>
+        get() = _nineCharactersLiveData
+
+
     init {
-        selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
+        getNewGame()
+        _selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
     }
 
-    fun updateSelectedCell(row: Int, col: Int) {
-        selectedRow = row
-        selectedCol = col
-        selectedCellLiveData.postValue(Pair(row, col))
-    }
-
-    fun getGame() {
-        viewModelScope.launch {
-            val map2 = SudokuGame().fillGrid()
-            Log.d("MY_TAG",map2.toString())
-            val map3 = SudokuGame().fillGrid()
-            Log.d("MY_TAG",map3.toString())
-            val map4 = SudokuGame().fillGrid()
-            Log.d("MY_TAG",map4.toString())
+    fun handleInput(number: Int) {
+        if (selectedRow == -1 || selectedCol == -1) return
+        val board = _boardLiveData.value
+        if (board != null) {
+            if (!board.getCell(selectedRow, selectedCol).isFixed) {
+                val characterValue = nineCharactersLiveData.value?.get(number)
+                characterValue?.let {
+                    board.getCell(selectedRow, selectedCol).value = it
+                    _boardLiveData.postValue(board)
+                }
+            }
         }
     }
 
+    fun updateSelection(row: Int, col: Int) {
+        selectedRow = row
+        selectedCol = col
+        _selectedCellLiveData.postValue(Pair(row, col))
+    }
+
+    private fun getNewGame() {
+        val charactersList = getNineRandomCharacters()
+        _nineCharactersLiveData.postValue(charactersList)
+        viewModelScope.launch {
+            val board = repository.getNewNumberGameTestFun()
+            for (i in board.cells) {
+                if (i.value != "0") {
+                    i.isFixed = true
+                    val index = i.value.toInt() - 1
+                    i.value = charactersList[index]
+                }
+            }
+            _boardLiveData.postValue(board)
+        }
+    }
+
+    private fun getNineRandomCharacters(): List<String> {
+        return repository.getNineRandomCharFromDict()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        repository.cancelScope()
+    }
 }
+

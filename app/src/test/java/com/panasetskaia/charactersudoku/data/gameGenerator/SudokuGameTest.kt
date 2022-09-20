@@ -47,6 +47,7 @@ class SudokuGameTest {
             Assert.assertEquals(SudokuGame.PROVIDED_DIGITS,numberOfDigits)
         }
     }
+
     @Test
     fun testOnlyNineNumbersInFullGrid() {
         scope.launch {
