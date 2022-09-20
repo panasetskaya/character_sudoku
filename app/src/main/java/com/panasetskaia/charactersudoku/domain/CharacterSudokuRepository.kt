@@ -5,7 +5,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 
 interface CharacterSudokuRepository {
 
-    fun getNineRandomCharFromDict(): List<ChineseCharacter>
+    fun getNineRandomCharFromDict(): List<String>
 
     fun addCharToDict(character: ChineseCharacter)
 

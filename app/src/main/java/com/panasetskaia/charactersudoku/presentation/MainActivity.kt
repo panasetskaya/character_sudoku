@@ -36,8 +36,13 @@ class MainActivity : AppCompatActivity(), SudokuBoardView.OnTouchListener {
             binding.eightButton,
             binding.nineButton
         )
+        viewModel.nineCharactersLiveData.observe(this) {
+            for (button in buttons) {
+                button.text = it[buttons.indexOf(button)]
+            }
+        }
         buttons.forEachIndexed { index, button ->
-            button.setOnClickListener { viewModel.handleInput(index + 1) }
+            button.setOnClickListener { viewModel.handleInput(index) }
         }
     }
 

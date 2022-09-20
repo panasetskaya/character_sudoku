@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.entities.Board
-import com.panasetskaia.charactersudoku.domain.entities.Cell
 import kotlinx.coroutines.launch
 
 
@@ -24,6 +23,10 @@ class MainViewModel : ViewModel() {
     val boardLiveData: LiveData<Board>
         get() = _boardLiveData
 
+    private val _nineCharactersLiveData = MutableLiveData<List<String>>()
+    val nineCharactersLiveData: MutableLiveData<List<String>>
+        get() = _nineCharactersLiveData
+
 
     init {
         getNewGame()
@@ -33,9 +36,14 @@ class MainViewModel : ViewModel() {
     fun handleInput(number: Int) {
         if (selectedRow == -1 || selectedCol == -1) return
         val board = _boardLiveData.value
-        if (board!=null) {
-            board.getCell(selectedRow,selectedCol).value = number.toString()
-            _boardLiveData.postValue(board)
+        if (board != null) {
+            if (!board.getCell(selectedRow, selectedCol).isFixed) {
+                val characterValue = nineCharactersLiveData.value?.get(number)
+                characterValue?.let {
+                    board.getCell(selectedRow, selectedCol).value = it
+                    _boardLiveData.postValue(board)
+                }
+            }
         }
     }
 
@@ -46,17 +54,28 @@ class MainViewModel : ViewModel() {
     }
 
     private fun getNewGame() {
+        val charactersList = getNineRandomCharacters()
+        _nineCharactersLiveData.postValue(charactersList)
         viewModelScope.launch {
             val board = repository.getNewNumberGameTestFun()
+            for (i in board.cells) {
+                if (i.value != "0") {
+                    i.isFixed = true
+                    val index = i.value.toInt() - 1
+                    i.value = charactersList[index]
+                }
+            }
             _boardLiveData.postValue(board)
         }
+    }
+
+    private fun getNineRandomCharacters(): List<String> {
+        return repository.getNineRandomCharFromDict()
     }
 
     override fun onCleared() {
         super.onCleared()
         repository.cancelScope()
     }
-
-    //TODO: 1) resolve left top corner box being empty issue; 2) make starting cells not changeable
 }
 

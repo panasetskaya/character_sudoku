@@ -1,19 +1,24 @@
 package com.panasetskaia.charactersudoku.data.repository
 
-import androidx.lifecycle.MutableLiveData
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.withContext
 
 class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    override fun getNineRandomCharFromDict(): List<ChineseCharacter> {
-        TODO("Not yet implemented")
+    private val temporaryDict = listOf("留","融","砌","铝","洞","乳","廖","部","伞")
+
+
+    override fun getNineRandomCharFromDict(): List<String> {
+        return temporaryDict
     }
 
     override fun addCharToDict(character: ChineseCharacter) {

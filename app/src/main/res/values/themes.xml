@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.CharacterSudoku" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="Theme.CharacterSudoku" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primaryDarkColor</item>
         <item name="colorPrimaryVariant">@color/primaryColor</item>
@@ -20,6 +20,7 @@
         <item name="android:textSize">28sp</item>
         <item name="android:textColor">@color/primaryDarkColor</item>
         <item name="android:backgroundTint">@color/transparent</item>
+        <item name="android:padding">0dp</item>
     </style>
 
 </resources>
