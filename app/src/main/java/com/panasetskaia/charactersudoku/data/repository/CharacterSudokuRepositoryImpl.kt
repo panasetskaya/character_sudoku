@@ -60,8 +60,6 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
                 grid[i].toString()
             )
         }
-        cells[11].isStartingCell = true
-        cells[21].isStartingCell = true
         val board = Board(SudokuGame.GRID_SIZE, cells)
         return board
     }

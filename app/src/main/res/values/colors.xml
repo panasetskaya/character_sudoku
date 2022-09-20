@@ -10,4 +10,5 @@
     <color name="secondaryTextColor">#ffffff</color>
     <color name="grey">#bdbdbd</color>
     <color name="LightYellowColor">#ffd95a</color>
+    <color name="transparent">#00ffffff</color>
 </resources>

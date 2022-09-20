@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
 
     val repository = CharacterSudokuRepositoryImpl()
+    private var selectedRow = -1
+    private var selectedCol = -1
 
     private val _selectedCellLiveData = MutableLiveData<Pair<Int, Int>>()
     val selectedCellLiveData: LiveData<Pair<Int, Int>>
@@ -22,8 +24,6 @@ class MainViewModel : ViewModel() {
     val boardLiveData: LiveData<Board>
         get() = _boardLiveData
 
-    private var selectedRow = -1
-    private var selectedCol = -1
 
     init {
         getNewGame()
@@ -32,21 +32,17 @@ class MainViewModel : ViewModel() {
 
     fun handleInput(number: Int) {
         if (selectedRow == -1 || selectedCol == -1) return
-        _boardLiveData.value?.getCell(selectedRow, selectedCol)?.let {
-            if (it.isStartingCell) return
+        val board = _boardLiveData.value
+        if (board!=null) {
+            board.getCell(selectedRow,selectedCol).value = number.toString()
+            _boardLiveData.postValue(board)
         }
-        _boardLiveData.value?.getCell(selectedRow, selectedCol)?.value = number.toString()
-
     }
 
-    fun updateSelectedCell(row: Int, col: Int) {
-        _boardLiveData.value?.getCell(selectedRow, selectedCol)?.let {
-            if (!it.isStartingCell) {
-                selectedRow = row
-                selectedCol = col
-                _selectedCellLiveData.postValue(Pair(row, col))
-            }
-        }
+    fun updateSelection(row: Int, col: Int) {
+        selectedRow = row
+        selectedCol = col
+        _selectedCellLiveData.postValue(Pair(row, col))
     }
 
     private fun getNewGame() {
@@ -60,5 +56,7 @@ class MainViewModel : ViewModel() {
         super.onCleared()
         repository.cancelScope()
     }
+
+    //TODO: 1) resolve left top corner box being empty issue; 2) make starting cells not changeable
 }
 
