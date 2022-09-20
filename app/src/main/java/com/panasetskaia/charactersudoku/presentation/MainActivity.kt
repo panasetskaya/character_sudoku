@@ -1,8 +1,11 @@
 package com.panasetskaia.charactersudoku.presentation
 
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
+import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.ActivityMainBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
@@ -18,6 +21,7 @@ class MainActivity : AppCompatActivity(), SudokuBoardView.OnTouchListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.gameConstraintLayout.background = AppCompatResources.getDrawable(this, R.drawable.game_background)
         binding.sudokuBoard.registerListener(this)
         viewModel.selectedCellLiveData.observe(this) {
             updateSelectedCellUI(it)

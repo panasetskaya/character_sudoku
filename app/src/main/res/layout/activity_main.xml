@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gameConstraintLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.MainActivity"
-
     >
+
+    <LinearLayout
+        style="@style/SudokuBackDrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="start"
+        android:visibility="invisible"
+        android:orientation="vertical"
+        android:paddingTop="88dp"
+        android:paddingStart="16dp">
+        <include layout="@layout/sudoku_backdrop" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textViewTimer"

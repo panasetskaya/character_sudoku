@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Mandarin Doku</string>
+    <string name="to_dictionary">Словарь</string>
+    <string name="to_game">Игра</string>
 </resources>

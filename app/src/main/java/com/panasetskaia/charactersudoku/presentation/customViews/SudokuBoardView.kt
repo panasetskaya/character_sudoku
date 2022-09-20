@@ -43,7 +43,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     private val notSelectedTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.BLACK
+        color = resources.getColor(R.color.secondaryColor)
         textSize = 65F
     }
 

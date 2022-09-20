@@ -23,4 +23,15 @@
         <item name="android:padding">0dp</item>
     </style>
 
+    <style name="backdropButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:backgroundTint">@color/transparent</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="SudokuBackDrop" parent="">
+        <item name="android:background">@color/primaryDarkColor</item>
+    </style>
+
 </resources>
