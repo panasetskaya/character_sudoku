@@ -15,7 +15,7 @@ class SudokuGame {
             fillDiagonalBoxes()
             fillRemaining(0, GRID_SIZE_SQUARE_ROOT)
             printableGridFull = makePrintableGrid()
-            removeDigits()
+            removeDigits() // есть готовая grid - двумерный array
             printableGridRemoved = makePrintableGrid()
             mapOf(printableGridFull to printableGridRemoved)
         }
