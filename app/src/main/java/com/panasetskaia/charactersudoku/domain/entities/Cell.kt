@@ -4,5 +4,6 @@ class Cell(
     val row: Int,
     val col: Int,
     var value: String,
-    var isFixed: Boolean = false
+    var isFixed: Boolean = false,
+    var isDoubtful: Boolean = false
 )

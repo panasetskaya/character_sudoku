@@ -127,7 +127,7 @@ class SudokuGame {
         return true
     }
 
-    private fun removeDigits() {
+    private suspend fun removeDigits() {
         var digitsToRemove = GRID_SIZE * GRID_SIZE - PROVIDED_DIGITS
 
         while (digitsToRemove > 0) {
@@ -138,17 +138,23 @@ class SudokuGame {
                 val digitToRemove = grid[randomRow][randomColumn]
                 grid[randomRow][randomColumn] = 0
                 printableGridRemoved = makePrintableGrid()
-                val solution = try {
-                    SudokuSolver.fromBoardString(printableGridRemoved).solution
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
+                val solution = getSolution(printableGridRemoved)
                 val exists = solution!=null
                 if (!exists) {
                     grid[randomRow][randomColumn] = digitToRemove
                 } else {
                     digitsToRemove --
                 }
+            }
+        }
+    }
+
+    suspend fun getSolution(gridString: String): String? {
+        return withContext(Dispatchers.Default){
+            try {
+                SudokuSolver.fromBoardString(gridString).solution
+            } catch (e: IllegalArgumentException) {
+                null
             }
         }
     }

@@ -53,20 +53,19 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun getSolution(gridString: String): Board? {
+        val solution = SudokuGame().getSolution(gridString)
+        if (solution!=null) {
+            return mapStringGridToBoard(solution)
+        } else return solution
+    }
+
     /**
      * Just to test the game itself
      */
     suspend fun getNewNumberGameTestFun(): Board {
         val grid = generateNumberGrid().values.toList()[0]
-        val cells = List(SudokuGame.GRID_SIZE * SudokuGame.GRID_SIZE) { i ->
-            Cell(
-                i / SudokuGame.GRID_SIZE,
-                i % SudokuGame.GRID_SIZE,
-                grid[i].toString()
-            )
-        }
-        val board = Board(SudokuGame.GRID_SIZE, cells)
-        return board
+        return mapStringGridToBoard(grid)
     }
 
     fun cancelScope() {
@@ -77,5 +76,17 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         return withContext(Dispatchers.Default) {
             SudokuGame().fillGrid()
         }
+    }
+
+    private fun mapStringGridToBoard(stringGrid: String): Board {
+        val cells = List(SudokuGame.GRID_SIZE * SudokuGame.GRID_SIZE) { i ->
+            Cell(
+                i / SudokuGame.GRID_SIZE,
+                i % SudokuGame.GRID_SIZE,
+                stringGrid[i].toString()
+            )
+        }
+        val board = Board(cells = cells)
+        return board
     }
 }
