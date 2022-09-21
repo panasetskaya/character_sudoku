@@ -23,4 +23,6 @@ interface CharacterSudokuRepository {
 
     fun getSavedGame(): Board
 
+    suspend fun getSolution(gridString: String): Board?
+
 }

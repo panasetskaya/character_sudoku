@@ -1,11 +1,8 @@
 package com.panasetskaia.charactersudoku.presentation
 
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
-import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.ActivityMainBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
@@ -13,7 +10,7 @@ import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 class MainActivity : AppCompatActivity(), SudokuBoardView.OnTouchListener {
 
     private val viewModel by lazy {
-        ViewModelProvider(this)[MainViewModel::class.java]
+        ViewModelProvider(this)[GameViewModel::class.java]
     }
     private lateinit var binding: ActivityMainBinding
 
@@ -39,11 +36,11 @@ class MainActivity : AppCompatActivity(), SudokuBoardView.OnTouchListener {
             binding.eightButton,
             binding.nineButton
         )
-        viewModel.nineCharactersLiveData.observe(this) {
-            for (button in buttons) {
-                button.text = it[buttons.indexOf(button)]
-            }
+
+        for (button in buttons) {
+            button.text = viewModel.nineCharacters[buttons.indexOf(button)]
         }
+
         buttons.forEachIndexed { index, button ->
             button.setOnClickListener { viewModel.handleInput(index) }
         }
