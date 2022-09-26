@@ -5,7 +5,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 
 class GetNineRandomCharFromDictUseCase(private val repository: CharacterSudokuRepository) {
 
-    operator fun invoke(): List<String>{
+    operator fun invoke(): List<String>?{
         return repository.getNineRandomCharFromDict()
     }
 
