@@ -8,26 +8,15 @@
     tools:context=".presentation.MainActivity"
     >
 
-    <TextView
-        android:id="@+id/textViewTimer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"
-        android:textColor="@color/primaryDarkColor"
-        android:text="00:00"/>
 
     <com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
         android:id="@+id/sudoku_board"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-
+        android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTimer"
+        app:layout_constraintTop_toTopOf="parent"
 
         />
 

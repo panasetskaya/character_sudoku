@@ -132,11 +132,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         internal const val EMPTY_CELLS_MINIMUM = 6
     }
 
-    //todo: добавить возможность выделения сомнительных решений цветом(например, черным)
-    // с помощью долго нажатия на клетку - поле isDoubtful в классе Cell
-
-    //todo: таймер! с паузой игры
-
     //todo: сохранение текущей Board в базу данных
 }
 
