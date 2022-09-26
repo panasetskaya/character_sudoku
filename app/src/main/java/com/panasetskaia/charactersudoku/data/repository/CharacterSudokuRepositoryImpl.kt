@@ -2,6 +2,9 @@ package com.panasetskaia.charactersudoku.data.repository
 
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
+import com.panasetskaia.charactersudoku.domain.FAILED
+import com.panasetskaia.charactersudoku.domain.GameResult
+import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
@@ -14,10 +17,10 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    private val temporaryDict = listOf("留","融","砌","铝","洞","乳","廖","部","伞")
+    private val temporaryDict = listOf("留", "融", "砌", "铝", "洞", "乳", "廖", "部", "伞")
 
 
-    override fun getNineRandomCharFromDict(): List<String> {
+    override fun getNineRandomCharFromDict(): List<String>? {
         return temporaryDict
     }
 
@@ -53,19 +56,21 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSolution(gridString: String): Board? {
-        val solution = SudokuGame().getSolution(gridString)
-        if (solution!=null) {
-            return mapStringGridToBoard(solution)
-        } else return solution
+    override suspend fun getGameResult(board: Board): GameResult {
+        val stringGrid = translateCharactersToNumbers(board)
+        val solution = SudokuGame().getSolution(stringGrid)
+        if (solution != null) {
+            val solutionBoard = mapStringGridToBoard(solution)
+            return SUCCESS(solutionBoard)
+        } else return FAILED()
     }
 
-    /**
-     * Just to test the game itself
-     */
+
+     // Just to test the game itself
     suspend fun getNewNumberGameTestFun(): Board {
         val grid = generateNumberGrid().values.toList()[0]
-        return mapStringGridToBoard(grid)
+        val board = mapStringGridToBoard(grid)
+        return translateNumbersToCharacters(board)
     }
 
     fun cancelScope() {
@@ -88,5 +93,29 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         }
         val board = Board(cells = cells)
         return board
+    }
+
+    private fun translateNumbersToCharacters(board: Board): Board {
+        for (i in board.cells) {
+            if (i.value != "0") {
+                i.isFixed = true
+                val index = i.value.toInt() - 1
+                i.value = temporaryDict[index] // поменять на нужный словарь
+            }
+        }
+        return board
+    }
+
+    private fun translateCharactersToNumbers(board: Board): String {
+        var gridString = ""
+        for (i in board.cells) {
+            var number = 0
+            if (i.value != "0") {
+                number = temporaryDict.indexOf(i.value) + 1  // поменять на нужный словарь
+            }
+            gridString += number.toString()
+        }
+
+        return gridString
     }
 }

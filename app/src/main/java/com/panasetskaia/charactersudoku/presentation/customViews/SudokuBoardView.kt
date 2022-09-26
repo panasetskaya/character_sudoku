@@ -3,11 +3,11 @@ package com.panasetskaia.charactersudoku.presentation.customViews
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.entities.Cell
+import java.util.*
 
 class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
 
@@ -18,6 +18,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var selectedCol = -10
     private var listener: OnTouchListener? = null
     private var cells: List<Cell>? = null
+    private var startCLickTime: Long = 0
 
     private val thinLinePaint = Paint().apply {
         style = Paint.Style.STROKE
@@ -60,9 +61,9 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         typeface = Typeface.DEFAULT_BOLD
     }
 
-    private val conflictingTextPaint = Paint().apply {
+    private val doubtfulTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.RED
+        color = Color.BLACK
         textSize = 65F
     }
 
@@ -135,23 +136,22 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             val row = it.row
             val col = it.col
             var valueString = it.value
-            if (valueString=="0") {
+            if (valueString == "0") {
                 valueString = ""
             }
-            val paintToUse = if(it.isFixed) {
-                fixedTextPaint
-            } else if (row == selectedRow && col == selectedCol) {
-                selectedTextPaint
-            } else if (isCellInConflictingSelection(it)) {
-                selectedTextPaint
-            } else notSelectedTextPaint
+            val paintToUse =  when {
+                it.isFixed -> fixedTextPaint
+                it.isDoubtful -> doubtfulTextPaint
+                isCellInConflictingSelection(it) -> selectedTextPaint
+                else -> notSelectedTextPaint
+            }
             val textBounds = Rect()
             paintToUse.getTextBounds(valueString, 0, valueString.length, textBounds)
             val textWidth = paintToUse.measureText(valueString)
             val textHeight = textBounds.height()
             canvas.drawText(
                 valueString, (col * cellSizePixels) + cellSizePixels / 2 - textWidth / 2,
-                (row * cellSizePixels) + cellSizePixels/2 + textHeight/2, paintToUse
+                (row * cellSizePixels) + cellSizePixels / 2 + textHeight / 2, paintToUse
             )
         }
     }
@@ -164,20 +164,36 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+
         return when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                handleTouchEvent(event.x, event.y)
+                startCLickTime = Calendar.getInstance().timeInMillis
+                true
+            }
+            MotionEvent.ACTION_UP -> {
+                val touchDuration = Calendar.getInstance().timeInMillis - startCLickTime
+                if (touchDuration < 200) {
+                    handleTouchEvent(event.x, event.y)
+                } else {
+                    handleLongTouchEvent(event.x, event.y)
+                }
                 true
             }
             else -> false
         }
     }
 
+
     private fun handleTouchEvent(x: Float, y: Float) {
         val possibleSelectedRow = (y / cellSizePixels).toInt()
         val possibleSelectedCol = (x / cellSizePixels).toInt()
-        Log.d("MY_TAG", "$possibleSelectedRow, $possibleSelectedCol")
         listener?.onCellTouched(possibleSelectedRow, possibleSelectedCol)
+    }
+
+    private fun handleLongTouchEvent(x: Float, y: Float) {
+        val possibleSelectedRow = (y / cellSizePixels).toInt()
+        val possibleSelectedCol = (x / cellSizePixels).toInt()
+        listener?.onCellLongTouched(possibleSelectedRow, possibleSelectedCol)
     }
 
     fun updateSelectedCellUI(row: Int, col: Int) {
@@ -197,5 +213,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     interface OnTouchListener {
         fun onCellTouched(row: Int, col: Int)
+        fun onCellLongTouched(row: Int, col: Int)
     }
 }

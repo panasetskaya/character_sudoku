@@ -50,6 +50,11 @@ class MainActivity : AppCompatActivity(), SudokuBoardView.OnTouchListener {
         viewModel.updateSelection(row, col)
     }
 
+    override fun onCellLongTouched(row: Int, col: Int) {
+        viewModel.updateSelection(row, col)
+        viewModel.markSelectedAsDoubtful()
+    }
+
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {
         binding.sudokuBoard.updateSelectedCellUI(cell.first, cell.second)
     }

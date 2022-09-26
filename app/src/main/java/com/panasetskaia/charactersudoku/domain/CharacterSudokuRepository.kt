@@ -5,7 +5,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 
 interface CharacterSudokuRepository {
 
-    fun getNineRandomCharFromDict(): List<String>
+    fun getNineRandomCharFromDict(): List<String>?
 
     fun addCharToDict(character: ChineseCharacter)
 
@@ -23,6 +23,6 @@ interface CharacterSudokuRepository {
 
     fun getSavedGame(): Board
 
-    suspend fun getSolution(gridString: String): Board?
+    suspend fun getGameResult(board: Board): GameResult
 
 }
