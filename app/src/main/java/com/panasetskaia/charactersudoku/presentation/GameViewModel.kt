@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
@@ -70,7 +71,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun checkForSolution() {
+    private fun checkForSolution() {
         val boardCells = boardLiveData.value?.cells
         var count = 0
         boardCells?.let { cellsList ->
@@ -85,13 +86,17 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 boardLiveData.value?.let { board ->
                     val gameResult = getGameResult(board)
                     if (gameResult is SUCCESS) {
-                        Toast.makeText(getApplication(), "Ура, игра завершена!", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                            getApplication(),
+                            getApplication<Application>().getString(R.string.game_succesful),
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                         _boardLiveData.postValue(gameResult.solution)
                     } else {
                         Toast.makeText(
                             getApplication(),
-                            "Проверьте все еще раз!",
+                            getApplication<Application>().getString(R.string.check_again),
                             Toast.LENGTH_SHORT
                         )
                             .show()
@@ -102,13 +107,13 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun getNewGame() {
-        val tryToGetharacters = getNineRandomCharacters()
-        if (tryToGetharacters != null) {
-            _nineCharacters = tryToGetharacters
+        val tryToGetCharacters = getNineRandomCharacters()
+        if (tryToGetCharacters != null) {
+            _nineCharacters = tryToGetCharacters
         } else {
             Toast.makeText(
                 getApplication(),
-                "В словаре пока пусто. Добавьте иероглифов!",
+                getApplication<Application>().getString(R.string.dict_is_empty),
                 Toast.LENGTH_SHORT
             )
                 .show()
@@ -129,7 +134,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     companion object {
-        internal const val EMPTY_CELLS_MINIMUM = 6
+        internal const val EMPTY_CELLS_MINIMUM = 8
     }
 
     //todo: сохранение текущей Board в базу данных
