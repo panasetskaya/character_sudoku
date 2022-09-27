@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(), SudokuBoardView.OnTouchListener {
     private fun shakeAnimator(shake: View, propertyName: String) =
         ObjectAnimator.ofFloat(shake, propertyName, -5f, 0f).apply {
             repeatMode = ValueAnimator.RESTART
-            repeatCount = 1
+            repeatCount = 2
             duration = 40
             interpolator = linearInterpolator
         }
