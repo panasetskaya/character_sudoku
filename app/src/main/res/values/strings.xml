@@ -5,4 +5,5 @@
     <string name="dict_is_empty">В словаре пока пусто. Добавьте иероглифов!</string>
     <string name="game_succesful">Ура, игра завершена!</string>
     <string name="check_again">Где-то ошибка. Проверьте еще раз!</string>
+
 </resources>
