@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">Mandarin Doku</string>
     <string name="to_dictionary">Словарь</string>
     <string name="to_game">Игра</string>
     <string name="dict_is_empty">В словаре пока пусто. Добавьте иероглифов!</string>
     <string name="game_succesful">Ура, игра завершена!</string>
     <string name="check_again">Где-то ошибка. Проверьте еще раз!</string>
+    <string name="app_name">Мандарин-доку</string>
 
 </resources>
