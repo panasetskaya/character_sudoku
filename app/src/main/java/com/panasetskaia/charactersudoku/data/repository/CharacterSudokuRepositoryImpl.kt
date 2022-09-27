@@ -62,7 +62,7 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         if (solution != null) {
             val solutionBoard = mapStringGridToBoard(solution)
             return SUCCESS(solutionBoard)
-        } else return FAILED()
+        } else return FAILED
     }
 
 

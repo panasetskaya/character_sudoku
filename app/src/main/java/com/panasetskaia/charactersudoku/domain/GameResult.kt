@@ -4,7 +4,8 @@ import com.panasetskaia.charactersudoku.domain.entities.Board
 
 sealed class GameResult
 
-class SUCCESS (private val solutionBoard: Board): GameResult() {
+class SUCCESS (solutionBoard: Board): GameResult() {
     val solution = solutionBoard
 }
-class FAILED: GameResult()
+
+object FAILED : GameResult()
