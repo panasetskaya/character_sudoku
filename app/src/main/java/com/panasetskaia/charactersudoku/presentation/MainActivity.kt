@@ -1,19 +1,13 @@
 package com.panasetskaia.charactersudoku.presentation
 
-import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.CycleInterpolator
-import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.ActivityMainBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
