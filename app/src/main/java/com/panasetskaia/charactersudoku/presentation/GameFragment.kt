@@ -6,27 +6,27 @@ import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
+import android.widget.Toast
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 
-
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     private val linearInterpolator = LinearInterpolator()
 
-    private val viewModel = (activity as MainActivity).viewModel
+    private lateinit var viewModel: GameViewModel
 
     private var _binding: FragmentGameBinding? = null
     private val binding: FragmentGameBinding
         get() = _binding ?: throw RuntimeException("FragmentGameBinding is null")
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +38,8 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupMenu()
+        viewModel = (activity as MainActivity).viewModel
         binding.sudokuBoard.registerListener(this)
         viewModel.selectedCellLiveData.observe(viewLifecycleOwner) {
             updateSelectedCellUI(it)
@@ -68,9 +70,27 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.game_toolbar_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+    private fun setupMenu() {
+        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.game_toolbar_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    return when (menuItem.itemId) {
+                    R.id.dictionary_icon -> {
+
+                        findNavController().navigate(R.id.action_gameFragment_to_dictionaryFragment)
+                        true
+                    }
+                    R.id.game_help_icon -> {
+                        Toast.makeText(context, "Will go to Help", Toast.LENGTH_LONG).show()
+                        true
+                    }
+                    else -> true
+                }
+            }
+        }, viewLifecycleOwner)
     }
 
     override fun onDestroyView() {
@@ -79,16 +99,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
     override fun onCellTouched(row: Int, col: Int) {
-        TODO("Not yet implemented")
+        viewModel.updateSelection(row, col)
     }
 
     override fun onCellLongTouched(row: Int, col: Int) {
-        TODO("Not yet implemented")
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = GameFragment()
+        viewModel.updateSelection(row, col)
+        viewModel.markSelectedAsDoubtful()
     }
 
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {

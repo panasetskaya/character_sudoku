@@ -21,5 +21,17 @@
         app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/character_item_not_chosen" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:layout_margin="24dp"
+        app:backgroundTint="@color/secondaryColor"
+        android:src="@drawable/add_circle_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 
