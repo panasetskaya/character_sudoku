@@ -1,5 +1,6 @@
 package com.panasetskaia.charactersudoku.domain
 
+import androidx.lifecycle.LiveData
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 
@@ -13,9 +14,9 @@ interface CharacterSudokuRepository {
 
     fun editCharinDict(character: ChineseCharacter)
 
-    fun searchForCharacter(character: String): ChineseCharacter
+    fun searchForCharacter(character: String): ChineseCharacter?
 
-    fun getWholeDictionary(): List<ChineseCharacter>
+    fun getWholeDictionary(): LiveData<List<ChineseCharacter>>
 
     fun getNewGame(nineCharacters: List<ChineseCharacter>): Board
 
@@ -26,3 +27,5 @@ interface CharacterSudokuRepository {
     suspend fun getGameResult(board: Board): GameResult
 
 }
+
+//todo: LiveData Переписать на Flow

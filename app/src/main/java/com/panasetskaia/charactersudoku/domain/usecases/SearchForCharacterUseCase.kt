@@ -5,7 +5,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 
 class SearchForCharacterUseCase(private val repository: CharacterSudokuRepository) {
 
-    operator fun invoke(character: String): ChineseCharacter {
+    operator fun invoke(character: String): ChineseCharacter? {
         return repository.searchForCharacter(character)
     }
 }

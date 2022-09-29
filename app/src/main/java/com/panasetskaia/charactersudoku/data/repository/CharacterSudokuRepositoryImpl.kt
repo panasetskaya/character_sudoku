@@ -1,5 +1,6 @@
 package com.panasetskaia.charactersudoku.data.repository
 
+import androidx.lifecycle.LiveData
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
@@ -36,11 +37,11 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         TODO("Not yet implemented")
     }
 
-    override fun searchForCharacter(character: String): ChineseCharacter {
+    override fun searchForCharacter(character: String): ChineseCharacter? {
         TODO("Not yet implemented")
     }
 
-    override fun getWholeDictionary(): List<ChineseCharacter> {
+    override fun getWholeDictionary(): LiveData<List<ChineseCharacter>> {
         TODO("Not yet implemented")
     }
 
