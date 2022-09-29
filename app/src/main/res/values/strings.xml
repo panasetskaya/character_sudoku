@@ -5,5 +5,9 @@
     <string name="game_succesful">Ура, игра завершена!</string>
     <string name="check_again">Где-то ошибка. Проверьте еще раз!</string>
     <string name="app_name">Мандарин-доку</string>
+    <string name="search_icon_title">Поиск</string>
+    <string name="dict_icon_title">Словарь</string>
+    <string name="help_icon_title">Помощь</string>
+    <string name="board_icon_title">Игра</string>
 
 </resources>

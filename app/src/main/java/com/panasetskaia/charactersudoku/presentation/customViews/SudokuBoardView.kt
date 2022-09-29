@@ -54,6 +54,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         textSize = 65F
     }
 
+
     private val fixedTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = resources.getColor(R.color.primaryLightColor)
@@ -64,6 +65,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private val doubtfulTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
+
         textSize = 65F
     }
 

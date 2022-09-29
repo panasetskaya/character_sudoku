@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/dictionary_icon"
+        android:icon="@drawable/dictionary_icon"
+        android:title="@string/dict_icon_title"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/game_help_icon"
+        android:icon="@drawable/help_icon"
+        android:title="@string/help_icon_title"
+        app:showAsAction="always" />
+</menu>

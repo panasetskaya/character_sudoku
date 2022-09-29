@@ -6,4 +6,8 @@
     <string name="dict_is_empty">Your dictionary is empty. Add some characters please!</string>
     <string name="to_game">Game</string>
     <string name="to_dictionary">Dictionary</string>
+    <string name="search_icon_title">Search</string>
+    <string name="dict_icon_title">Dictionary</string>
+    <string name="help_icon_title">Help</string>
+    <string name="board_icon_title">Game</string>
 </resources>
