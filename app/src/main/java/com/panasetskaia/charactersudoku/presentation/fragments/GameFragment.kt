@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation
+package com.panasetskaia.charactersudoku.presentation.fragments
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -11,11 +11,11 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
+import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
@@ -79,9 +79,10 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    return when (menuItem.itemId) {
+                return when (menuItem.itemId) {
                     R.id.dictionary_icon -> {
-                        binding.root.findNavController().navigate(R.id.action_gameFragment_to_dictionaryFragment)
+                        binding.root.findNavController()
+                            .navigate(R.id.action_gameFragment_to_dictionaryFragment)
                         true
                     }
                     R.id.game_help_icon -> {
@@ -118,10 +119,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
 
     private fun shakeAnimator(shake: View, propertyName: String) =
-        ObjectAnimator.ofFloat(shake, propertyName, -5f, 0f).apply {
+        ObjectAnimator.ofFloat(shake, propertyName, -10f, 0f).apply {
             repeatMode = ValueAnimator.RESTART
             repeatCount = 2
             duration = 40
             interpolator = linearInterpolator
         }
 }
+
+//todo: добавить кнопку "ластик", чтобы стереть ненужное значение клетки

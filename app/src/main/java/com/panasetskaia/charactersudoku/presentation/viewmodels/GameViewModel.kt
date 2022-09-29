@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation
+package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
 import android.widget.Toast

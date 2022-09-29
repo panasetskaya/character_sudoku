@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/gameFragment"
-        android:name="com.panasetskaia.charactersudoku.presentation.GameFragment"
+        android:name="com.panasetskaia.charactersudoku.presentation.fragments.GameFragment"
         android:label="fragment_game"
         tools:layout="@layout/fragment_game" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/dictionaryFragment"
-        android:name="com.panasetskaia.charactersudoku.presentation.DictionaryFragment"
+        android:name="com.panasetskaia.charactersudoku.presentation.fragments.DictionaryFragment"
         android:label="fragment_dictionary"
         tools:layout="@layout/fragment_dictionary" >
         <action

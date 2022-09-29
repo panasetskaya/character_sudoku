@@ -2,6 +2,9 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs.kotlin'
+    id "kotlin-kapt"
+    id "org.jetbrains.kotlin.kapt"
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -61,5 +64,9 @@ dependencies {
 
     implementation "androidx.activity:activity-ktx:1.6.0"
 
+    def room_version = "2.4.3"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
 
 }

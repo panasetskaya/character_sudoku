@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation
+package com.panasetskaia.charactersudoku.presentation.fragments
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -13,9 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.MainActivity
 
 class DictionaryFragment : Fragment() {
 

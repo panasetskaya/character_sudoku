@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.panasetskaia.charactersudoku.databinding.ActivityMainBinding
+import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
 class MainActivity : AppCompatActivity() {
 
