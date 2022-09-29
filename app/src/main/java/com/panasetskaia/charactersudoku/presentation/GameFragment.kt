@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.panasetskaia.charactersudoku.R
@@ -72,6 +73,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     private fun setupMenu() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.game_toolbar_menu, menu)
             }
@@ -79,8 +81,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     return when (menuItem.itemId) {
                     R.id.dictionary_icon -> {
-
-                        findNavController().navigate(R.id.action_gameFragment_to_dictionaryFragment)
+                        binding.root.findNavController().navigate(R.id.action_gameFragment_to_dictionaryFragment)
                         true
                     }
                     R.id.game_help_icon -> {

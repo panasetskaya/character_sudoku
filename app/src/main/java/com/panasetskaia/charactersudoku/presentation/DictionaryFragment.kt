@@ -1,5 +1,6 @@
 package com.panasetskaia.charactersudoku.presentation
 
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
@@ -12,6 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class DictionaryFragment : Fragment() {
 
@@ -40,6 +44,15 @@ class DictionaryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).viewModel
         setupMenu()
+        requireActivity().runOnUiThread {
+            AnimatorSet().apply {
+                play(shakeAnimator(binding.fabAdd, "rotation"))
+                start()
+            }
+        }
+
+
+
     }
 
 
@@ -75,10 +88,10 @@ class DictionaryFragment : Fragment() {
     }
 
     private fun shakeAnimator(shake: View, propertyName: String) =
-        ObjectAnimator.ofFloat(shake, propertyName, -70f, 70f).apply {
+        ObjectAnimator.ofFloat(shake, propertyName, -180f, 90f).apply {
             repeatMode = ValueAnimator.RESTART
-            repeatCount = 2
-            duration = 40
+            repeatCount = 1
+            duration = 400
             interpolator = linearInterpolator
         }
 }
