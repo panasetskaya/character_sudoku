@@ -96,6 +96,5 @@ class DictionaryFragment : Fragment() {
             interpolator = linearInterpolator
         }
 
-    //todo: Разобраться с PopBackStack navigation. Из SingleCharacterFragment уходит на GameFragment почему-то и дальше падает при попытке перейти на словарь.
 
 }
