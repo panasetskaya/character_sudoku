@@ -12,7 +12,9 @@
         tools:layout="@layout/fragment_game" >
         <action
             android:id="@+id/action_gameFragment_to_dictionaryFragment"
-            app:destination="@id/dictionaryFragment" />
+            app:destination="@id/dictionaryFragment"
+            app:popUpTo="@id/gameFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/dictionaryFragment"
@@ -21,6 +23,20 @@
         tools:layout="@layout/fragment_dictionary" >
         <action
             android:id="@+id/action_dictionaryFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
+            app:destination="@id/gameFragment"
+            app:launchSingleTop="false"
+            app:popUpTo="@id/dictionaryFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_dictionaryFragment_to_singleCharacterFragment"
+            app:destination="@id/singleCharacterFragment"
+            app:launchSingleTop="false"
+            app:popUpTo="@id/dictionaryFragment"
+            app:popUpToInclusive="false" />
     </fragment>
+    <fragment
+        android:id="@+id/singleCharacterFragment"
+        android:name="com.panasetskaia.charactersudoku.presentation.fragments.SingleCharacterFragment"
+        android:label="fragment_single_character"
+        tools:layout="@layout/fragment_single_character" />
 </navigation>

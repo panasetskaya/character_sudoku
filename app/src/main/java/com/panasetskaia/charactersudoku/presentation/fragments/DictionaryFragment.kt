@@ -10,11 +10,11 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
 class DictionaryFragment : Fragment() {
 
@@ -49,8 +49,10 @@ class DictionaryFragment : Fragment() {
                 start()
             }
         }
-
-
+        binding.fabAdd.setOnClickListener {
+            binding.root.findNavController()
+                .navigate(R.id.action_dictionaryFragment_to_singleCharacterFragment)
+        }
 
     }
 
@@ -67,7 +69,8 @@ class DictionaryFragment : Fragment() {
                         true
                     }
                     R.id.sudoku_icon -> {
-                        findNavController().navigate(R.id.action_dictionaryFragment_to_gameFragment)
+                        binding.root.findNavController()
+                            .navigate(R.id.action_dictionaryFragment_to_gameFragment)
                         true
                     }
                     R.id.dict_help_icon -> {
@@ -92,4 +95,7 @@ class DictionaryFragment : Fragment() {
             duration = 400
             interpolator = linearInterpolator
         }
+
+    //todo: Разобраться с PopBackStack navigation. Из SingleCharacterFragment уходит на GameFragment почему-то и дальше падает при попытке перейти на словарь.
+
 }

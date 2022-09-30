@@ -12,8 +12,8 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlin.random.Random
 
 class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
@@ -24,14 +24,18 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     private var temporaryDict = listOf("留", "融", "砌", "铝", "洞", "乳", "廖", "部", "伞")
 
-
     override suspend fun getNineRandomCharFromDict(): List<String> {
-        val nineRandom = charactersDao.getNineRandomCharacters()
-        val listOfStringCharacters = mutableListOf<String>()
-        for (i in nineRandom) {
-            listOfStringCharacters.add(i.character)
+        CoroutineScope(Dispatchers.Default).launch {
+            val idList = charactersDao.getAllIds()?.shuffled()
+            val listOfStringCharacters = mutableListOf<String>()
+            if (idList!=null && idList.size>=9) {
+                for (i in 0 until 9) {
+                    val randomId = idList[i]
+                    val randomCharacter = charactersDao.getCharacterById(randomId)
+                    listOfStringCharacters.add(randomCharacter.character)
+                }
+            }
         }
-        temporaryDict = listOfStringCharacters
         return temporaryDict
     }
 
@@ -92,7 +96,6 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         } else return FAILED
     }
 
-
     // Just to test the game itself
     suspend fun getNewGameTestFun(): Board {
         val grid = generateNumberGrid().values.toList()[0]
@@ -138,7 +141,6 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
             }
             gridString += number.toString()
         }
-
         return gridString
     }
 }
