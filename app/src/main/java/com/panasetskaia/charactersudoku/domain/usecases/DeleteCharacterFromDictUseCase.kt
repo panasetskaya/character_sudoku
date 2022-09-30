@@ -5,7 +5,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 
 class DeleteCharacterFromDictUseCase(private val repository: CharacterSudokuRepository) {
 
-    operator fun invoke(character: ChineseCharacter) {
+    suspend operator fun invoke(character: ChineseCharacter) {
         repository.deleteCharFromDict(character)
     }
 }

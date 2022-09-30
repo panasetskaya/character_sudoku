@@ -1,6 +1,9 @@
 package com.panasetskaia.charactersudoku.data.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import com.panasetskaia.charactersudoku.application.SudokuApplication
+import com.panasetskaia.charactersudoku.data.database.SudokuDatabase
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
@@ -9,40 +12,63 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 
 class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val charactersDao =
+        SudokuDatabase.getInstance(SudokuApplication.instance).chineseCharacterDao()
 
-    private val temporaryDict = listOf("留", "融", "砌", "铝", "洞", "乳", "廖", "部", "伞")
+    private val mapper = SudokuMapper()
+
+    private var temporaryDict = listOf("留", "融", "砌", "铝", "洞", "乳", "廖", "部", "伞")
 
 
-    override fun getNineRandomCharFromDict(): List<String>? {
+    override suspend fun getNineRandomCharFromDict(): List<String> {
+        val nineRandom = charactersDao.getNineRandomCharacters()
+        val listOfStringCharacters = mutableListOf<String>()
+        for (i in nineRandom) {
+            listOfStringCharacters.add(i.character)
+        }
+        temporaryDict = listOfStringCharacters
         return temporaryDict
     }
 
-    override fun addCharToDict(character: ChineseCharacter) {
-        TODO("Not yet implemented")
+    override suspend fun addOrEditCharToDict(character: ChineseCharacter) {
+        val dbModel = mapper.mapDomainChineseCharacterToDbModel(character)
+        charactersDao.addOrEditCharacter(dbModel)
     }
 
-    override fun deleteCharFromDict(character: ChineseCharacter) {
-        TODO("Not yet implemented")
+    override suspend fun deleteCharFromDict(character: ChineseCharacter) {
+        val dbModel = mapper.mapDomainChineseCharacterToDbModel(character)
+        charactersDao.deleteCharFromDict(dbModel.id)
     }
 
-    override fun editCharinDict(character: ChineseCharacter) {
-        TODO("Not yet implemented")
-    }
-
-    override fun searchForCharacter(character: String): ChineseCharacter? {
-        TODO("Not yet implemented")
+    override fun searchForCharacter(character: String): LiveData<List<ChineseCharacter>> {
+        return Transformations.map(
+            charactersDao.searchForCharacter(character)
+        ) { dbModelList ->
+            val entityList = mutableListOf<ChineseCharacter>()
+            for (i in dbModelList) {
+                val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+                entityList.add(entity)
+            }
+            entityList
+        }
     }
 
     override fun getWholeDictionary(): LiveData<List<ChineseCharacter>> {
-        TODO("Not yet implemented")
+        return Transformations.map(
+            charactersDao.getWholeDictionary()
+        ) { dbModelList ->
+            val entityList = mutableListOf<ChineseCharacter>()
+            for (i in dbModelList) {
+                val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+                entityList.add(entity)
+            }
+            entityList
+        }
     }
 
     override fun getNewGame(nineCharacters: List<ChineseCharacter>): Board {
@@ -67,15 +93,11 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
     }
 
 
-     // Just to test the game itself
-    suspend fun getNewNumberGameTestFun(): Board {
+    // Just to test the game itself
+    suspend fun getNewGameTestFun(): Board {
         val grid = generateNumberGrid().values.toList()[0]
         val board = mapStringGridToBoard(grid)
         return translateNumbersToCharacters(board)
-    }
-
-    fun cancelScope() {
-        scope.cancel()
     }
 
     private suspend fun generateNumberGrid(): Map<String, String> {
