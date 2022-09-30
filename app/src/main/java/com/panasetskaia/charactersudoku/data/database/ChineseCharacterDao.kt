@@ -1,22 +1,25 @@
 package com.panasetskaia.charactersudoku.data.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
+import androidx.room.*
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 
 @Dao
 interface ChineseCharacterDao {
 
-    suspend fun howManyCharacters() //todo: Int? Сразу рэндом 9 штук?
+    @Query("SELECT * FROM chinesecharacterdb ORDER BY RANDOM() LIMIT 9")
+    suspend fun getNineRandomCharacters(): List<ChineseCharacter>
 
-    fun getWholeDictionary(): LiveData<List<ChineseCharacter>>  /// todo:
+    @Query("SELECT * FROM chinesecharacterdb")
+    fun getWholeDictionary(): LiveData<List<ChineseCharacter>>
 
-    suspend fun deleteCharFromDict() //todo:
+    @Query("DELETE FROM chinesecharacterdb WHERE id=:characterId")
+    suspend fun deleteCharFromDict(characterId: Int)
 
-    suspend fun editCharinDict() ///todo:
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addOrEditCharacter(character: ChineseCharacter)
 
-    suspend fun addCharToDict(character: ChineseCharacter) /// todo:
-
-    suspend fun searchForCharacter(character: String): ChineseCharacter?   /// todo:
+    @Query("SELECT * FROM chinesecharacterdb WHERE character LIKE :characterQuery")
+    fun searchForCharacter(characterQuery: String): LiveData<List<ChineseCharacter>>
 
 }
