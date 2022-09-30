@@ -19,7 +19,7 @@ class SudokuMapper {
         return ChineseCharacterDb(
             0,
             entity.character,
-            entity.transcription,
+            entity.pinyin,
             entity.translation,
             entity.usages,
             entity.timesPlayed

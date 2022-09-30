@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ChineseCharacter(
     var character: String,
-    var transcription: String,
+    var pinyin: String,
     var translation: String,
     var usages: String,
     var timesPlayed: Int
