@@ -9,6 +9,7 @@
     <string name="dict_icon_title">Словарь</string>
     <string name="help_icon_title">Помощь</string>
     <string name="board_icon_title">Игра</string>
+    <string name="check_icon_title">готово</string>
 
 
 </resources>

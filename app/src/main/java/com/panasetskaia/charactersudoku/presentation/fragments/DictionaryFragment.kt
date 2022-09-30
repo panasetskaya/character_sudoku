@@ -65,7 +65,7 @@ class DictionaryFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.search_icon -> {
-                        Toast.makeText(context, "Will search", Toast.LENGTH_LONG).show() //todo
+                        Toast.makeText(context, "Will search", Toast.LENGTH_SHORT).show() //todo
                         true
                     }
                     R.id.sudoku_icon -> {
@@ -74,7 +74,7 @@ class DictionaryFragment : Fragment() {
                         true
                     }
                     R.id.dict_help_icon -> {
-                        Toast.makeText(context, "Will go to Help", Toast.LENGTH_LONG).show() //todo
+                        Toast.makeText(context, "Will go to Help", Toast.LENGTH_SHORT).show() //todo
                         true
                     }
                     else -> true
