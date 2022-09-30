@@ -119,18 +119,13 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 .show()
         }
         viewModelScope.launch {
-            val translatedBoard = repository.getNewNumberGameTestFun()
+            val translatedBoard = repository.getNewGameTestFun()
             _boardLiveData.postValue(translatedBoard)
         }
     }
 
     private fun getNineRandomCharacters(): List<String>? {
         return getNineRandomCharFromDict()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        repository.cancelScope() // todo: как-то по-другому надо его отменять, не здесь
     }
 
     companion object {
