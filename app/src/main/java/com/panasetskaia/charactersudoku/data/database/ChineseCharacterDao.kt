@@ -24,4 +24,8 @@ interface ChineseCharacterDao {
     @Query("SELECT * FROM chinesecharacterdb WHERE id=:characterId")
     suspend fun getCharacterById(characterId: Int): ChineseCharacterDb
 
+    @Query("SELECT character FROM chinesecharacterdb WHERE isChosen=1")
+    suspend fun getSelected(): List<String>?
+    // использовать для получения списка иероглифов
+
 }

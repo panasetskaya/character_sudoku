@@ -40,7 +40,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupMenu()
-        viewModel = (activity as MainActivity).viewModel
+        viewModel = (activity as MainActivity).gameViewModel
         binding.sudokuBoard.registerListener(this)
         viewModel.selectedCellLiveData.observe(viewLifecycleOwner) {
             updateSelectedCellUI(it)

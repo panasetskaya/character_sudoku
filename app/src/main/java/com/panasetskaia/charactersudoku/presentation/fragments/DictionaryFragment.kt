@@ -14,11 +14,12 @@ import androidx.navigation.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
 class DictionaryFragment : Fragment() {
 
-    private lateinit var viewModel: GameViewModel
+    private lateinit var viewModel: ChineseCharacterViewModel
 
     private val linearInterpolator = LinearInterpolator()
 
@@ -41,7 +42,7 @@ class DictionaryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as MainActivity).viewModel
+        viewModel = (activity as MainActivity).characterViewModel
         setupMenu()
         requireActivity().runOnUiThread {
             AnimatorSet().apply {

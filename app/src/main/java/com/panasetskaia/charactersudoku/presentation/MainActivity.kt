@@ -4,12 +4,17 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.panasetskaia.charactersudoku.databinding.ActivityMainBinding
+import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    val viewModel by lazy {
+    val gameViewModel by lazy {
         ViewModelProvider(this)[GameViewModel::class.java]
+    }
+
+    val characterViewModel by lazy {
+        ViewModelProvider(this)[ChineseCharacterViewModel::class.java]
     }
 
     private lateinit var binding: ActivityMainBinding

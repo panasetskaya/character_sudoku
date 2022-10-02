@@ -9,6 +9,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 class DictionaryListAdapter: ListAdapter<ChineseCharacter, ChineseCharViewHolder>(ChineseCharDiffUtilCallback()) {
 
     var onCharacterItemClickListener: ((ChineseCharacter) -> Unit)? = null
+    var onCharacterItemLongClickListener: ((ChineseCharacter) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChineseCharViewHolder {
         val binding = CharacterItemNotChosenBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -19,7 +20,10 @@ class DictionaryListAdapter: ListAdapter<ChineseCharacter, ChineseCharViewHolder
         val item = getItem(position)
         val binding = holder.binding
         binding.root.setOnLongClickListener {
-            item.isChosen = !item.isChosen
+            onCharacterItemLongClickListener?.invoke(item)
+           // todo: во фрагменте запилить вьюмодель: listAdapter.onCharacterItemLongClickListener = {
+            //   todo:        viewModel.changeIsChosenState(it)
+            //   todo:     } а там уже item.isChosen = !item.isChosen
             true
         }
         binding.root.setOnClickListener {
@@ -28,7 +32,7 @@ class DictionaryListAdapter: ListAdapter<ChineseCharacter, ChineseCharViewHolder
         }
         binding.root.isChecked = item.isChosen
         with(binding) {
-            tvHowOften.text = item.timesPlayed.toString()
+            tvHowOften.text = if (item.timesPlayed>=1) {item.timesPlayed.toString() } else ""
             tvCharacterChinese.text = item.character
             tvPinyin.text = item.pinyin
             tvTranslation.text = item.translation

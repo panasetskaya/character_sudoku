@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentSingleCharacterBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
@@ -37,7 +36,7 @@ class SingleCharacterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as MainActivity).viewModel
+        viewModel = (activity as MainActivity).gameViewModel
         setupMenu()
     }
 

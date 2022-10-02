@@ -11,7 +11,8 @@ class SudokuMapper {
             model.transcription,
             model.translation,
             model.usages,
-            model.timesPlayed
+            model.timesPlayed,
+            model.isChosen
         )
     }
 
@@ -22,7 +23,8 @@ class SudokuMapper {
             entity.pinyin,
             entity.translation,
             entity.usages,
-            entity.timesPlayed
+            entity.timesPlayed,
+            entity.isChosen
         )
     }
 
