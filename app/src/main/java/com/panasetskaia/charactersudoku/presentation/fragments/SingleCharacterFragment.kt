@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
+import androidx.navigation.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentSingleCharacterBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
@@ -58,13 +58,22 @@ class SingleCharacterFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.add_icon -> {
-                        val chinese = binding.etCharacter.text.toString()
-                        val pinyin = binding.etPinyin.text.toString()
-                        val translation = binding.etTranslation.text.toString()
-                        val usages = binding.etUsages.text.toString()
-                        val newChar = ChineseCharacter(chinese,pinyin, translation, usages)
-                        viewModel.addOrEditCharacter(newChar)
-                        Toast.makeText(context, "Добавлено", Toast.LENGTH_SHORT).show() //todo
+                        val chineseChar = binding.etCharacter.text.toString()
+                        if (chineseChar.length>0) {
+                            val pinyin = binding.etPinyin.text.toString()
+                            val translation = binding.etTranslation.text.toString()
+                            val usages = binding.etUsages.text.toString()
+                            val newChar = ChineseCharacter(chineseChar,pinyin, translation, usages)
+                            viewModel.addOrEditCharacter(newChar)
+                            Toast.makeText(context, "Добавлено", Toast.LENGTH_SHORT).show()
+                            val fragment = DictionaryFragment()
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.fcvMain,fragment)
+                                .addToBackStack(null)
+                                .commit()
+                        } else {
+                            Toast.makeText(context, "Отсутствует иероглиф", Toast.LENGTH_SHORT).show()
+                        }
                         true
                     }
                     else -> true
@@ -110,7 +119,6 @@ class SingleCharacterFragment : Fragment() {
         private const val EXTRA_CHINESE = "extra_chinese"
         private const val MODE_EDIT = "mode_edit"
         private const val MODE_ADD = "mode_add"
-        private const val ID_DEFAULT = -1
         private const val SCREEN_MODE_DEFAULT = ""
 
         fun newInstanceAddCharacter(): SingleCharacterFragment {

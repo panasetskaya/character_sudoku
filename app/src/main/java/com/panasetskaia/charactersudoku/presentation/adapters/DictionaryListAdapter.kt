@@ -36,3 +36,5 @@ class DictionaryListAdapter: ListAdapter<ChineseCharacter, ChineseCharViewHolder
         }
     }
 }
+
+//todo: проблема - при редактировании иероглифа либо выделении его он прыгает в конец списка

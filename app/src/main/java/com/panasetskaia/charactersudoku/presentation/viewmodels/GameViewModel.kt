@@ -32,9 +32,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val boardLiveData: LiveData<Board>
         get() = _boardLiveData
 
-    private var _nineCharacters: List<String> = listOf()
-    val nineCharacters: List<String>
-        get() = _nineCharacters
+    private var _nineCharactersLiveData = MutableLiveData<List<String>>()
+    val nineCharactersLiveData: LiveData<List<String>>
+        get() = _nineCharactersLiveData
 
 
     init {
@@ -45,12 +45,14 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     fun handleInput(number: Int) {
         if (selectedRow == -1 || selectedCol == -1) return
         val board = _boardLiveData.value
-        board?.let {
-            if (!it.getCell(selectedRow, selectedCol).isFixed) {
-                val characterValue = nineCharacters[number]
-                it.getCell(selectedRow, selectedCol).value = characterValue
-                it.getCell(selectedRow, selectedCol).isDoubtful = false
-                _boardLiveData.postValue(it)
+        board?.let { board ->
+            if (!board.getCell(selectedRow, selectedCol).isFixed) {
+                nineCharactersLiveData.value?.let { charList ->
+                    val characterValue = charList[number]
+                    board.getCell(selectedRow, selectedCol).value = characterValue
+                    board.getCell(selectedRow, selectedCol).isDoubtful = false
+                    _boardLiveData.postValue(board)
+                }
             }
         }
         checkForSolution()
@@ -106,20 +108,26 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun getNewGame() {
+    fun getNewGame() {
+        // todo: у нас здесь рэндом пока!
+        selectedRow = -1
+        selectedCol = -1
         viewModelScope.launch {
-            _nineCharacters = getNineRandomCharFromDict()
-            if (nineCharacters.size < 9) {
-                Toast.makeText(
-                    getApplication(),
-                    getApplication<Application>().getString(R.string.dict_is_empty),
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-            } else {
-                val translatedBoard = repository.getNewGameTestFun()
-                _boardLiveData.postValue(translatedBoard)
+            _nineCharactersLiveData.value = getNineRandomCharFromDict.invoke()
+            nineCharactersLiveData.value?.let {
+                if (it.size < 9) {
+                    Toast.makeText(
+                        getApplication(),
+                        getApplication<Application>().getString(R.string.dict_is_empty),
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                } else {
+                    val translatedBoard = repository.getNewGameTestFun()
+                    _boardLiveData.postValue(translatedBoard)
+                }
             }
+
         }
     }
 

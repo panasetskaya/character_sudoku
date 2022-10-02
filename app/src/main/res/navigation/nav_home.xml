@@ -42,5 +42,8 @@
         <argument
             android:name="chinese"
             app:argType="com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter" />
+        <action
+            android:id="@+id/action_singleCharacterFragment_to_dictionaryFragment"
+            app:destination="@id/dictionaryFragment" />
     </fragment>
 </navigation>

@@ -60,12 +60,10 @@ class DictionaryFragment : Fragment() {
             }
             listAdapter.onCharacterItemClickListener = {
                 val fragment = SingleCharacterFragment.newInstanceEditCharacter(it)
-//            todo: supportFragmentManager.popBackStack()
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.shop_item_container_main, fragment)
-//                .addToBackStack(null)
-//                .commit()
-
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fcvMain,fragment)
+                    .addToBackStack(null)
+                    .commit()
             }
         }
     }
@@ -79,11 +77,10 @@ class DictionaryFragment : Fragment() {
         }
         binding.fabAdd.setOnClickListener {
             val fragment = SingleCharacterFragment.newInstanceAddCharacter()
-//            todo: supportFragmentManager.popBackStack()
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.shop_item_container_main, fragment)
-//                .addToBackStack(null)
-//                .commit()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fcvMain,fragment)
+                .addToBackStack(null)
+                .commit()
         }
     }
 
