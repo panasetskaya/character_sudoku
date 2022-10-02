@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Mandarin-doku</string>
     <string name="check_again">There is an error somewhere, check again!</string>
-    <string name="game_succesful">Hooray, you finished the game!</string>
+    <string name="game_succesful">Hooray, you\'ve finished the game!</string>
     <string name="dict_is_empty">Your dictionary is empty. Add some characters please!</string>
     <string name="to_game">Game</string>
     <string name="to_dictionary">Dictionary</string>
@@ -11,4 +11,8 @@
     <string name="help_icon_title">Help</string>
     <string name="board_icon_title">Game</string>
     <string name="check_icon_title">готово</string>
+    <string name="usages_hint">usages</string>
+    <string name="translation_hint">translation</string>
+    <string name="pinyin_hint">pinyin</string>
+    <string name="character_hint">字</string>
 </resources>

@@ -9,5 +9,6 @@ data class ChineseCharacter(
     var pinyin: String,
     var translation: String,
     var usages: String,
-    var timesPlayed: Int
+    var timesPlayed: Int,
+    var isChosen: Boolean = false
 ): Parcelable
