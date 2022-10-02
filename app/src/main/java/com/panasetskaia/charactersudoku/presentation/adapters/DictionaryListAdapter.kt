@@ -21,9 +21,6 @@ class DictionaryListAdapter: ListAdapter<ChineseCharacter, ChineseCharViewHolder
         val binding = holder.binding
         binding.root.setOnLongClickListener {
             onCharacterItemLongClickListener?.invoke(item)
-           // todo: во фрагменте запилить вьюмодель: listAdapter.onCharacterItemLongClickListener = {
-            //   todo:        viewModel.changeIsChosenState(it)
-            //   todo:     } а там уже item.isChosen = !item.isChosen
             true
         }
         binding.root.setOnClickListener {
@@ -38,9 +35,4 @@ class DictionaryListAdapter: ListAdapter<ChineseCharacter, ChineseCharViewHolder
             tvTranslation.text = item.translation
         }
     }
-
-    companion object {
-        const val MAX_POOL_SIZE = 15
-    }
-
 }

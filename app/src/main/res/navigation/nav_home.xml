@@ -9,7 +9,7 @@
         android:id="@+id/gameFragment"
         android:name="com.panasetskaia.charactersudoku.presentation.fragments.GameFragment"
         android:label="fragment_game"
-        tools:layout="@layout/fragment_game" >
+        tools:layout="@layout/fragment_game">
         <action
             android:id="@+id/action_gameFragment_to_dictionaryFragment"
             app:destination="@id/dictionaryFragment"
@@ -20,7 +20,7 @@
         android:id="@+id/dictionaryFragment"
         android:name="com.panasetskaia.charactersudoku.presentation.fragments.DictionaryFragment"
         android:label="fragment_dictionary"
-        tools:layout="@layout/fragment_dictionary" >
+        tools:layout="@layout/fragment_dictionary">
         <action
             android:id="@+id/action_dictionaryFragment_to_gameFragment"
             app:destination="@id/gameFragment"
@@ -38,5 +38,9 @@
         android:id="@+id/singleCharacterFragment"
         android:name="com.panasetskaia.charactersudoku.presentation.fragments.SingleCharacterFragment"
         android:label="fragment_single_character"
-        tools:layout="@layout/fragment_single_character" />
+        tools:layout="@layout/fragment_single_character">
+        <argument
+            android:name="chinese"
+            app:argType="com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter" />
+    </fragment>
 </navigation>

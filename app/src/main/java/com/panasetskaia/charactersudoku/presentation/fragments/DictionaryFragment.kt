@@ -11,15 +11,17 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
 class DictionaryFragment : Fragment() {
 
     private lateinit var viewModel: ChineseCharacterViewModel
+    private lateinit var listAdapter: DictionaryListAdapter
 
     private val linearInterpolator = LinearInterpolator()
 
@@ -27,10 +29,6 @@ class DictionaryFragment : Fragment() {
     private val binding: FragmentDictionaryBinding
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +42,35 @@ class DictionaryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).characterViewModel
         setupMenu()
+        setupFab()
+        setupRecyclerView()
+        viewModel.dictionaryLiveData.observe(viewLifecycleOwner) {
+            listAdapter.submitList(it)
+        }
+    }
+
+    private fun setupRecyclerView() {
+        listAdapter = DictionaryListAdapter()
+        listAdapter.stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        with(binding.recyclerViewShopList) {
+            adapter = listAdapter
+            listAdapter.onCharacterItemLongClickListener = {
+                viewModel.changeIsChosenState(it)
+            }
+            listAdapter.onCharacterItemClickListener = {
+                val fragment = SingleCharacterFragment.newInstanceEditCharacter(it)
+//            todo: supportFragmentManager.popBackStack()
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.shop_item_container_main, fragment)
+//                .addToBackStack(null)
+//                .commit()
+
+            }
+        }
+    }
+
+    private fun setupFab() {
         requireActivity().runOnUiThread {
             AnimatorSet().apply {
                 play(shakeAnimator(binding.fabAdd, "rotation"))
@@ -51,10 +78,13 @@ class DictionaryFragment : Fragment() {
             }
         }
         binding.fabAdd.setOnClickListener {
-            binding.root.findNavController()
-                .navigate(R.id.action_dictionaryFragment_to_singleCharacterFragment)
+            val fragment = SingleCharacterFragment.newInstanceAddCharacter()
+//            todo: supportFragmentManager.popBackStack()
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.shop_item_container_main, fragment)
+//                .addToBackStack(null)
+//                .commit()
         }
-
     }
 
     private fun setupMenu() {

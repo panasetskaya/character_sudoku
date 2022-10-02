@@ -13,7 +13,6 @@ import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import kotlinx.coroutines.*
-import kotlin.random.Random
 
 class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
@@ -26,14 +25,14 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     override suspend fun getNineRandomCharFromDict(): List<String> {
         CoroutineScope(Dispatchers.Default).launch {
-            val idList = charactersDao.getAllIds()?.shuffled()
+            val idList = charactersDao.getAllChinese()?.shuffled()
             val listOfStringCharacters = mutableListOf<String>()
             if (idList!=null && idList.size>=9) {
                 for (i in 0 until 9) {
-                    val randomId = idList[i]
-                    val randomCharacter = charactersDao.getCharacterById(randomId)
-                    listOfStringCharacters.add(randomCharacter.character)
+                    val randomChinese = idList[i]
+                    listOfStringCharacters.add(randomChinese)
                 }
+                temporaryDict = listOfStringCharacters
             }
         }
         return temporaryDict
@@ -46,7 +45,7 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     override suspend fun deleteCharFromDict(character: ChineseCharacter) {
         val dbModel = mapper.mapDomainChineseCharacterToDbModel(character)
-        charactersDao.deleteCharFromDict(dbModel.id)
+        charactersDao.deleteCharFromDict(dbModel.character)
     }
 
     override fun searchForCharacter(character: String): LiveData<List<ChineseCharacter>> {

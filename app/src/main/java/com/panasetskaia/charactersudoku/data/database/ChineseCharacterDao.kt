@@ -6,14 +6,14 @@ import androidx.room.*
 @Dao
 interface ChineseCharacterDao {
 
-    @Query("SELECT id FROM chinesecharacterdb")
-    suspend fun getAllIds(): List<Int>?
+    @Query("SELECT character FROM chinesecharacterdb")
+    suspend fun getAllChinese(): List<String>?
 
     @Query("SELECT * FROM chinesecharacterdb")
     fun getWholeDictionary(): LiveData<List<ChineseCharacterDb>>
 
-    @Query("DELETE FROM chinesecharacterdb WHERE id=:characterId")
-    suspend fun deleteCharFromDict(characterId: Int)
+    @Query("DELETE FROM chinesecharacterdb WHERE character=:characterStr")
+    suspend fun deleteCharFromDict(characterStr: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addOrEditCharacter(character: ChineseCharacterDb)
@@ -21,8 +21,8 @@ interface ChineseCharacterDao {
     @Query("SELECT * FROM chinesecharacterdb WHERE character LIKE :characterQuery")
     fun searchForCharacter(characterQuery: String): LiveData<List<ChineseCharacterDb>>
 
-    @Query("SELECT * FROM chinesecharacterdb WHERE id=:characterId")
-    suspend fun getCharacterById(characterId: Int): ChineseCharacterDb
+    @Query("SELECT * FROM chinesecharacterdb WHERE character=:characterStr")
+    suspend fun getCharacterByChinese(characterStr: String): ChineseCharacterDb
 
     @Query("SELECT character FROM chinesecharacterdb WHERE isChosen=1")
     suspend fun getSelected(): List<String>?
