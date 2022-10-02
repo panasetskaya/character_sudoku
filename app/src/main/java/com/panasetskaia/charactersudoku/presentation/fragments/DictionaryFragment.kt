@@ -10,15 +10,18 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
+import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 
 class DictionaryFragment : Fragment() {
 
-    private lateinit var viewModel: GameViewModel
+    private lateinit var viewModel: ChineseCharacterViewModel
+    private lateinit var listAdapter: DictionaryListAdapter
 
     private val linearInterpolator = LinearInterpolator()
 
@@ -26,10 +29,6 @@ class DictionaryFragment : Fragment() {
     private val binding: FragmentDictionaryBinding
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,17 +40,48 @@ class DictionaryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as MainActivity).viewModel
+        viewModel = (activity as MainActivity).characterViewModel
         setupMenu()
+        setupFab()
+        setupRecyclerView()
+        viewModel.dictionaryLiveData.observe(viewLifecycleOwner) {
+            listAdapter.submitList(it)
+        }
+    }
+
+    private fun setupRecyclerView() {
+        listAdapter = DictionaryListAdapter()
+        listAdapter.stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        with(binding.recyclerViewShopList) {
+            adapter = listAdapter
+            listAdapter.onCharacterItemLongClickListener = {
+                viewModel.changeIsChosenState(it)
+            }
+            listAdapter.onCharacterItemClickListener = {
+                val fragment = SingleCharacterFragment.newInstanceEditCharacter(it)
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fcvMain,fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
+    }
+
+    private fun setupFab() {
         requireActivity().runOnUiThread {
             AnimatorSet().apply {
                 play(shakeAnimator(binding.fabAdd, "rotation"))
                 start()
             }
         }
-
-
-
+        binding.fabAdd.setOnClickListener {
+            val fragment = SingleCharacterFragment.newInstanceAddCharacter()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fcvMain,fragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     private fun setupMenu() {
@@ -63,15 +93,16 @@ class DictionaryFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.search_icon -> {
-                        Toast.makeText(context, "Will search", Toast.LENGTH_LONG).show() //todo
+                        Toast.makeText(context, "Will search", Toast.LENGTH_SHORT).show() //todo
                         true
                     }
                     R.id.sudoku_icon -> {
-                        findNavController().navigate(R.id.action_dictionaryFragment_to_gameFragment)
+                        binding.root.findNavController()
+                            .navigate(R.id.action_dictionaryFragment_to_gameFragment)
                         true
                     }
                     R.id.dict_help_icon -> {
-                        Toast.makeText(context, "Will go to Help", Toast.LENGTH_LONG).show() //todo
+                        Toast.makeText(context, "Will go to Help", Toast.LENGTH_SHORT).show() //todo
                         true
                     }
                     else -> true
@@ -92,4 +123,6 @@ class DictionaryFragment : Fragment() {
             duration = 400
             interpolator = linearInterpolator
         }
+
+
 }

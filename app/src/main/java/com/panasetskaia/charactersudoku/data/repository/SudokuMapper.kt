@@ -11,18 +11,19 @@ class SudokuMapper {
             model.transcription,
             model.translation,
             model.usages,
-            model.timesPlayed
+            model.timesPlayed,
+            model.isChosen
         )
     }
 
     fun mapDomainChineseCharacterToDbModel(entity: ChineseCharacter): ChineseCharacterDb {
         return ChineseCharacterDb(
-            0,
             entity.character,
-            entity.transcription,
+            entity.pinyin,
             entity.translation,
             entity.usages,
-            entity.timesPlayed
+            entity.timesPlayed,
+            entity.isChosen
         )
     }
 

@@ -9,5 +9,10 @@
     <string name="dict_icon_title">Словарь</string>
     <string name="help_icon_title">Помощь</string>
     <string name="board_icon_title">Игра</string>
+    <string name="check_icon_title">готово</string>
+    <string name="usages_hint">примеры</string>
+    <string name="translation_hint">перевод</string>
+    <string name="pinyin_hint">пиньинь</string>
+    <string name="character_hint">字</string>
 
 </resources>

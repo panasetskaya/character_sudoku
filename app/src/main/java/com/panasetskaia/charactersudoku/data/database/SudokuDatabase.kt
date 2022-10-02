@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [ChineseCharacterDb::class], version = 1, exportSchema = false)
+@Database(entities = [ChineseCharacterDb::class], version = 2, exportSchema = false)
 abstract class SudokuDatabase: RoomDatabase() {
 
     abstract fun chineseCharacterDao(): ChineseCharacterDao
@@ -22,7 +22,9 @@ abstract class SudokuDatabase: RoomDatabase() {
                 INSTANCE?.let {
                     return it
                 }
-                val db = Room.databaseBuilder(application, SudokuDatabase::class.java, DB_NAME).build()
+                val db = Room.databaseBuilder(application, SudokuDatabase::class.java, DB_NAME)
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = db
                 return db
             }

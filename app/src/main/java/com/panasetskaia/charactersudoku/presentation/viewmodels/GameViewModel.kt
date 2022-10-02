@@ -32,9 +32,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val boardLiveData: LiveData<Board>
         get() = _boardLiveData
 
-    private var _nineCharacters: List<String> = listOf()
-    val nineCharacters: List<String>
-        get() = _nineCharacters
+    private var _nineCharactersLiveData = MutableLiveData<List<String>>()
+    val nineCharactersLiveData: LiveData<List<String>>
+        get() = _nineCharactersLiveData
 
 
     init {
@@ -45,12 +45,14 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     fun handleInput(number: Int) {
         if (selectedRow == -1 || selectedCol == -1) return
         val board = _boardLiveData.value
-        if (board != null) {
+        board?.let { board ->
             if (!board.getCell(selectedRow, selectedCol).isFixed) {
-                val characterValue = nineCharacters[number]
-                board.getCell(selectedRow, selectedCol).value = characterValue
-                board.getCell(selectedRow, selectedCol).isDoubtful = false
-                _boardLiveData.postValue(board)
+                nineCharactersLiveData.value?.let { charList ->
+                    val characterValue = charList[number]
+                    board.getCell(selectedRow, selectedCol).value = characterValue
+                    board.getCell(selectedRow, selectedCol).isDoubtful = false
+                    _boardLiveData.postValue(board)
+                }
             }
         }
         checkForSolution()
@@ -64,10 +66,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     fun markSelectedAsDoubtful() {
         val board = _boardLiveData.value
-        if (board != null) {
-            val isCellDoubtful = board.getCell(selectedRow, selectedCol).isDoubtful
-            board.getCell(selectedRow, selectedCol).isDoubtful = !isCellDoubtful
-            _boardLiveData.postValue(board)
+        board?.let {
+            val isCellDoubtful = it.getCell(selectedRow, selectedCol).isDoubtful
+            it.getCell(selectedRow, selectedCol).isDoubtful = !isCellDoubtful
+            _boardLiveData.postValue(it)
         }
     }
 
@@ -106,26 +108,27 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun getNewGame() {
-        val tryToGetCharacters = getNineRandomCharacters()
-        if (tryToGetCharacters != null) {
-            _nineCharacters = tryToGetCharacters
-        } else {
-            Toast.makeText(
-                getApplication(),
-                getApplication<Application>().getString(R.string.dict_is_empty),
-                Toast.LENGTH_SHORT
-            )
-                .show()
-        }
+    fun getNewGame() {
+        // todo: у нас здесь рэндом пока!
+        selectedRow = -1
+        selectedCol = -1
         viewModelScope.launch {
-            val translatedBoard = repository.getNewGameTestFun()
-            _boardLiveData.postValue(translatedBoard)
-        }
-    }
+            _nineCharactersLiveData.value = getNineRandomCharFromDict.invoke()
+            nineCharactersLiveData.value?.let {
+                if (it.size < 9) {
+                    Toast.makeText(
+                        getApplication(),
+                        getApplication<Application>().getString(R.string.dict_is_empty),
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                } else {
+                    val translatedBoard = repository.getNewGameTestFun()
+                    _boardLiveData.postValue(translatedBoard)
+                }
+            }
 
-    private fun getNineRandomCharacters(): List<String>? {
-        return getNineRandomCharFromDict()
+        }
     }
 
     companion object {

@@ -12,8 +12,7 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
@@ -24,14 +23,18 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     private var temporaryDict = listOf("留", "融", "砌", "铝", "洞", "乳", "廖", "部", "伞")
 
-
     override suspend fun getNineRandomCharFromDict(): List<String> {
-        val nineRandom = charactersDao.getNineRandomCharacters()
-        val listOfStringCharacters = mutableListOf<String>()
-        for (i in nineRandom) {
-            listOfStringCharacters.add(i.character)
+        CoroutineScope(Dispatchers.Default).launch {
+            val idList = charactersDao.getAllChinese()?.shuffled()
+            val listOfStringCharacters = mutableListOf<String>()
+            if (idList!=null && idList.size>=9) {
+                for (i in 0 until 9) {
+                    val randomChinese = idList[i]
+                    listOfStringCharacters.add(randomChinese)
+                }
+                temporaryDict = listOfStringCharacters
+            }
         }
-        temporaryDict = listOfStringCharacters
         return temporaryDict
     }
 
@@ -42,7 +45,7 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     override suspend fun deleteCharFromDict(character: ChineseCharacter) {
         val dbModel = mapper.mapDomainChineseCharacterToDbModel(character)
-        charactersDao.deleteCharFromDict(dbModel.id)
+        charactersDao.deleteCharFromDict(dbModel.character)
     }
 
     override fun searchForCharacter(character: String): LiveData<List<ChineseCharacter>> {
@@ -92,7 +95,6 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         } else return FAILED
     }
 
-
     // Just to test the game itself
     suspend fun getNewGameTestFun(): Board {
         val grid = generateNumberGrid().values.toList()[0]
@@ -138,7 +140,6 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
             }
             gridString += number.toString()
         }
-
         return gridString
     }
 }

@@ -8,14 +8,25 @@
     tools:context=".presentation.fragments.GameFragment"
     >
 
+    <ImageView
+        android:id="@+id/refreshGame"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonsLayout"
+        app:layout_constraintTop_toBottomOf="@+id/sudoku_board"
+        android:src="@drawable/refresh_icon" />
+
 
     <com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
         android:id="@+id/sudoku_board"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="24dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
 
         />

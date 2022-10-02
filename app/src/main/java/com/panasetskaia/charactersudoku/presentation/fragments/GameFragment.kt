@@ -40,7 +40,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupMenu()
-        viewModel = (activity as MainActivity).viewModel
+        viewModel = (activity as MainActivity).gameViewModel
         binding.sudokuBoard.registerListener(this)
         viewModel.selectedCellLiveData.observe(viewLifecycleOwner) {
             updateSelectedCellUI(it)
@@ -59,15 +59,21 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             binding.eightButton,
             binding.nineButton
         )
-        buttons.forEachIndexed { index, button ->
-            button.text = viewModel.nineCharacters[buttons.indexOf(button)]
-            button.setOnClickListener {
-                viewModel.handleInput(index)
-                AnimatorSet().apply {
-                    play(shakeAnimator(it, "rotation"))
-                    start()
+        viewModel.nineCharactersLiveData.observe(viewLifecycleOwner) { nineCharacters ->
+            buttons.forEachIndexed { index, button ->
+                button.text = nineCharacters[buttons.indexOf(button)]
+                button.setOnClickListener {
+                    viewModel.handleInput(index)
+                    AnimatorSet().apply {
+                        play(shakeAnimator(it, "rotation"))
+                        start()
+                    }
                 }
             }
+        }
+
+        binding.refreshGame.setOnClickListener {
+            viewModel.getNewGame()
         }
     }
 
