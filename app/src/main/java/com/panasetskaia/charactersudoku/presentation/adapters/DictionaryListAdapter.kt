@@ -32,7 +32,8 @@ class DictionaryListAdapter: ListAdapter<ChineseCharacter, ChineseCharViewHolder
             tvHowOften.text = if (item.timesPlayed>=1) {item.timesPlayed.toString() } else ""
             tvCharacterChinese.text = item.character
             tvPinyin.text = item.pinyin
-            tvTranslation.text = item.translation
+            val translationCut = if (item.translation.length<=21) item.translation else item.translation.substring(0..21) + "..."
+            tvTranslation.text =  translationCut
         }
     }
 }
