@@ -47,7 +47,10 @@ class SingleCharacterFragment : Fragment() {
         when(screenMode){
             MODE_EDIT -> launchEditMode()
         }
+
     }
+
+
 
     private fun setupMenu() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
@@ -63,7 +66,7 @@ class SingleCharacterFragment : Fragment() {
                             val pinyin = binding.etPinyin.text.toString()
                             val translation = binding.etTranslation.text.toString()
                             val usages = binding.etUsages.text.toString()
-                            val newChar = ChineseCharacter(chineseChar,pinyin, translation, usages)
+                            val newChar = ChineseCharacter(chineseCharacter.id,chineseChar,pinyin, translation, usages)
                             viewModel.addOrEditCharacter(newChar)
                             Toast.makeText(context, "Добавлено", Toast.LENGTH_SHORT).show()
                             val fragment = DictionaryFragment()
@@ -87,7 +90,7 @@ class SingleCharacterFragment : Fragment() {
             etCharacter.setText(chineseCharacter.character)
             etPinyin.setText(chineseCharacter.pinyin)
             etTranslation.setText(chineseCharacter.translation)
-            etUsages.setText(chineseCharacter.translation)
+            etUsages.setText(chineseCharacter.usages)
         }
     }
 
@@ -138,4 +141,6 @@ class SingleCharacterFragment : Fragment() {
             }
         }
     }
+
+    //todo: проблема - при нажатии кнопки "назад" из SingleCharacterFragment происходит переход на игру, а не на словарь
 }

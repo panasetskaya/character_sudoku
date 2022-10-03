@@ -16,7 +16,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="sudokuButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+    <style name="sudokuButtonStyle" parent="Widget.AppCompat.Button.Borderless.Colored">
         <item name="android:textSize">28sp</item>
         <item name="android:textColor">@color/primaryDarkColor</item>
         <item name="android:backgroundTint">@color/transparent</item>

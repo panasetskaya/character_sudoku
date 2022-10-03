@@ -34,16 +34,9 @@ class ChineseCharacterViewModel(application: Application) : AndroidViewModel(app
     }
 
     fun changeIsChosenState(chineseCharacter: ChineseCharacter) {
-        val newChChar = ChineseCharacter(
-            chineseCharacter.character,
-            chineseCharacter.pinyin,
-            chineseCharacter.translation,
-            chineseCharacter.usages,
-            chineseCharacter.timesPlayed,
-            !chineseCharacter.isChosen,
-        )
+        val newChineseCharacter = chineseCharacter.copy(isChosen = !chineseCharacter.isChosen)
         viewModelScope.launch {
-            addCharacterToDict(newChChar)
+            addCharacterToDict(newChineseCharacter)
         }
     }
 }

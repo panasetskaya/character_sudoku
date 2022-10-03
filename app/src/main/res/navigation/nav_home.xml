@@ -13,8 +13,9 @@
         <action
             android:id="@+id/action_gameFragment_to_dictionaryFragment"
             app:destination="@id/dictionaryFragment"
+            app:launchSingleTop="false"
             app:popUpTo="@id/gameFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/dictionaryFragment"
@@ -27,23 +28,6 @@
             app:launchSingleTop="false"
             app:popUpTo="@id/dictionaryFragment"
             app:popUpToInclusive="false" />
-        <action
-            android:id="@+id/action_dictionaryFragment_to_singleCharacterFragment"
-            app:destination="@id/singleCharacterFragment"
-            app:launchSingleTop="false"
-            app:popUpTo="@id/dictionaryFragment"
-            app:popUpToInclusive="false" />
     </fragment>
-    <fragment
-        android:id="@+id/singleCharacterFragment"
-        android:name="com.panasetskaia.charactersudoku.presentation.fragments.SingleCharacterFragment"
-        android:label="fragment_single_character"
-        tools:layout="@layout/fragment_single_character">
-        <argument
-            android:name="chinese"
-            app:argType="com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter" />
-        <action
-            android:id="@+id/action_singleCharacterFragment_to_dictionaryFragment"
-            app:destination="@id/dictionaryFragment" />
-    </fragment>
+
 </navigation>

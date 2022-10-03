@@ -55,6 +55,14 @@ class DictionaryFragment : Fragment() {
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         with(binding.recyclerViewShopList) {
             adapter = listAdapter
+            recycledViewPool.setMaxRecycledViews(
+                DictionaryListAdapter.CHOSEN,
+                DictionaryListAdapter.MAX_POOL_SIZE
+            )
+            recycledViewPool.setMaxRecycledViews(
+                DictionaryListAdapter.NOT_CHOSEN,
+                DictionaryListAdapter.MAX_POOL_SIZE
+            )
             listAdapter.onCharacterItemLongClickListener = {
                 viewModel.changeIsChosenState(it)
             }

@@ -7,6 +7,7 @@ class SudokuMapper {
 
     fun mapDbChineseCharacterToDomainEntity(model: ChineseCharacterDb): ChineseCharacter {
         return ChineseCharacter(
+            model.id,
             model.character,
             model.transcription,
             model.translation,
@@ -18,6 +19,7 @@ class SudokuMapper {
 
     fun mapDomainChineseCharacterToDbModel(entity: ChineseCharacter): ChineseCharacterDb {
         return ChineseCharacterDb(
+            entity.id,
             entity.character,
             entity.pinyin,
             entity.translation,

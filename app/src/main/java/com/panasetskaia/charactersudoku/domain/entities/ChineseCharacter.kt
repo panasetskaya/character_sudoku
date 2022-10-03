@@ -5,10 +5,16 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ChineseCharacter(
+    var id: Int = UNDEFINED_ID,
     var character: String,
     var pinyin: String,
     var translation: String,
     var usages: String,
     var timesPlayed: Int = 0,
     var isChosen: Boolean = false
-): Parcelable
+): Parcelable {
+
+    companion object {
+        const val UNDEFINED_ID = 0
+    }
+}

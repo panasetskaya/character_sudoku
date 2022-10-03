@@ -5,7 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class ChineseCharacterDb (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    var id: Int,
     var character: String,
     var transcription: String,
     var translation: String,

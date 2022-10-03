@@ -24,7 +24,7 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
     private var temporaryDict = listOf("留", "融", "砌", "铝", "洞", "乳", "廖", "部", "伞")
 
     override suspend fun getNineRandomCharFromDict(): List<String> {
-        CoroutineScope(Dispatchers.Default).launch {
+        return withContext(Dispatchers.Default) {
             val idList = charactersDao.getAllChinese()?.shuffled()
             val listOfStringCharacters = mutableListOf<String>()
             if (idList!=null && idList.size>=9) {
@@ -34,8 +34,8 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
                 }
                 temporaryDict = listOfStringCharacters
             }
+            temporaryDict
         }
-        return temporaryDict
     }
 
     override suspend fun addOrEditCharToDict(character: ChineseCharacter) {
@@ -97,15 +97,15 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     // Just to test the game itself
     suspend fun getNewGameTestFun(): Board {
-        val grid = generateNumberGrid().values.toList()[0]
-        val board = mapStringGridToBoard(grid)
-        return translateNumbersToCharacters(board)
+        return withContext(Dispatchers.Default) {
+            val grid = generateNumberGrid().values.toList()[0]
+            val board = mapStringGridToBoard(grid)
+            translateNumbersToCharacters(board)
+        }
     }
 
     private suspend fun generateNumberGrid(): Map<String, String> {
-        return withContext(Dispatchers.Default) {
-            SudokuGame().fillGrid()
-        }
+        return SudokuGame().fillGrid()
     }
 
     private fun mapStringGridToBoard(stringGrid: String): Board {

@@ -47,7 +47,7 @@
         >
 
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/oneButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             style="@style/sudokuButtonStyle"
             android:text="1" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/twoButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             style="@style/sudokuButtonStyle"
             />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/threeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
             style="@style/sudokuButtonStyle"
             android:text="3" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/fourButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
             style="@style/sudokuButtonStyle"
             android:text="4" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/fiveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
             style="@style/sudokuButtonStyle"
             android:text="5" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sixButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
             style="@style/sudokuButtonStyle"
             android:text="6" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sevenButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
             style="@style/sudokuButtonStyle"
             android:text="7" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/eightButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -122,7 +122,7 @@
             style="@style/sudokuButtonStyle"
             android:text="8" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/nineButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -113,21 +113,19 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         selectedRow = -1
         selectedCol = -1
         viewModelScope.launch {
-            _nineCharactersLiveData.value = getNineRandomCharFromDict.invoke()
-            nineCharactersLiveData.value?.let {
-                if (it.size < 9) {
-                    Toast.makeText(
-                        getApplication(),
-                        getApplication<Application>().getString(R.string.dict_is_empty),
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                } else {
-                    val translatedBoard = repository.getNewGameTestFun()
-                    _boardLiveData.postValue(translatedBoard)
-                }
+            val nineChars = getNineRandomCharFromDict.invoke()
+            _nineCharactersLiveData.postValue(nineChars)
+            if (nineChars.size < 9) {
+                Toast.makeText(
+                    getApplication(),
+                    getApplication<Application>().getString(R.string.dict_is_empty),
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            } else {
+                val translatedBoard = repository.getNewGameTestFun()
+                _boardLiveData.postValue(translatedBoard)
             }
-
         }
     }
 
@@ -136,5 +134,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     //todo: сохранение текущей Board в базу данных
+
 }
 
