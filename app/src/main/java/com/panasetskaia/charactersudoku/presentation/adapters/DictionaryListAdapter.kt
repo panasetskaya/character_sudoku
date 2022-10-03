@@ -83,5 +83,3 @@ class DictionaryListAdapter :
         const val MAX_POOL_SIZE = 15
     }
 }
-
-//todo: проблема - при редактировании иероглифа либо выделении его он прыгает в конец списка

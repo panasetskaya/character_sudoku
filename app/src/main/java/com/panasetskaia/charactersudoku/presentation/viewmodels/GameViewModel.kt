@@ -129,6 +129,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun saveBoard() {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         internal const val EMPTY_CELLS_MINIMUM = 8
     }

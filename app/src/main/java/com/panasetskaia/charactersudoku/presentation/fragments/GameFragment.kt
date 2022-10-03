@@ -101,6 +101,11 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }, viewLifecycleOwner)
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.saveBoard()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
