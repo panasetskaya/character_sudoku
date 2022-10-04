@@ -18,4 +18,11 @@
     <string name="new_or_saved_dialog">Do you want to play a new game or the saved one?</string>
     <string name="new_game">New</string>
     <string name="old_game">Saved</string>
+    <string name="hello_blank_fragment">hello</string>
+    <string name="selectCharactersButton">Select</string>
+    <string name="randomButton">Random</string>
+    <string name="randomOrSelect">Random characters or select in your dictionary?</string>
+    <string name="yesButton">Yes</string>
+    <string name="cancelButton">Cancel</string>
+    <string name="confirmRefresh">Refresh the game?</string>
 </resources>
