@@ -17,11 +17,11 @@ interface CharacterSudokuRepository {
     fun getWholeDictionary(): LiveData<List<ChineseCharacter>>
 
 
-    fun getNewGame(nineCharacters: List<ChineseCharacter>): Board
+    suspend fun getNewGame(nineCharacters: List<ChineseCharacter>): Board
 
-    fun saveGame(board: Board)
+    suspend fun saveGame(board: Board)
 
-    fun getSavedGame(): Board
+    suspend fun getSavedGame(): Board
 
 
     suspend fun getGameResult(board: Board): GameResult

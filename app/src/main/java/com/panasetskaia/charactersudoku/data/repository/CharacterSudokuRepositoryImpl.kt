@@ -18,6 +18,8 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     private val charactersDao =
         SudokuDatabase.getInstance(SudokuApplication.instance).chineseCharacterDao()
+    private val boardDao =
+        SudokuDatabase.getInstance(SudokuApplication.instance).boardDao()
 
     private val mapper = SudokuMapper()
 
@@ -74,16 +76,19 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         }
     }
 
-    override fun getNewGame(nineCharacters: List<ChineseCharacter>): Board {
+    override suspend fun getNewGame(nineCharacters: List<ChineseCharacter>): Board {
         TODO("Not yet implemented")
     }
 
-    override fun saveGame(board: Board) {
-        TODO("Not yet implemented")
+    override suspend fun saveGame(board: Board) {
+        boardDao.deleteEverything()
+        val boardDbModel = mapper.mapDomainBoardToDbModel(board)
+        boardDao.saveGame(boardDbModel)
     }
 
-    override fun getSavedGame(): Board {
-        TODO("Not yet implemented")
+    override suspend fun getSavedGame(): Board {
+        val boardDbModel =boardDao.getSavedGame()
+        return mapper.mapBoardDbModelToDomainEntity(boardDbModel)
     }
 
     override suspend fun getGameResult(board: Board): GameResult {

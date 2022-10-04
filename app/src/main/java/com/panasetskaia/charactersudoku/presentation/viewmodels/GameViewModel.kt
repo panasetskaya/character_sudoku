@@ -12,14 +12,17 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.usecases.GetNineRandomCharFromDictUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.GetResultUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.GetSavedGameUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.SaveGameUseCase
 import kotlinx.coroutines.launch
-
 
 class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     val repository = CharacterSudokuRepositoryImpl()
     val getGameResult = GetResultUseCase(repository)
     val getNineRandomCharFromDict = GetNineRandomCharFromDictUseCase(repository)
+    val getSavedGameUseCase = GetSavedGameUseCase(repository)
+    val saveGameUseCase = SaveGameUseCase(repository)
 
     private var selectedRow = -1
     private var selectedCol = -1
@@ -130,14 +133,23 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveBoard() {
-        TODO("Not yet implemented")
+        val currentBoard = boardLiveData.value
+        currentBoard?.let { board ->
+            viewModelScope.launch {
+                saveGameUseCase(board)
+            }
+        }
+    }
+
+    fun getSavedBoard() {
+        viewModelScope.launch {
+            val savedBoard = getSavedGameUseCase()
+            _boardLiveData.postValue(savedBoard)
+        }
     }
 
     companion object {
         internal const val EMPTY_CELLS_MINIMUM = 8
     }
-
-    //todo: сохранение текущей Board в базу данных
-
 }
 

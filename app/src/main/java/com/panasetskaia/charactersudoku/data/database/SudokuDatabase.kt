@@ -5,10 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [ChineseCharacterDb::class], version = 3, exportSchema = false)
+@Database(entities = [ChineseCharacterDbModel::class, BoardDbModel::class], version = 4, exportSchema = false)
 abstract class SudokuDatabase: RoomDatabase() {
 
     abstract fun chineseCharacterDao(): ChineseCharacterDao
+    abstract fun boardDao(): BoardDao
 
     companion object {
 

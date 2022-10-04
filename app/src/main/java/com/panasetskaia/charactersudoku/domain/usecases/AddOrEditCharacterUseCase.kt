@@ -5,8 +5,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 
 class AddOrEditCharacterUseCase(private val repository: CharacterSudokuRepository) {
 
-    operator suspend fun invoke(character: ChineseCharacter){
+    suspend operator fun invoke(character: ChineseCharacter){
         repository.addOrEditCharToDict(character)
     }
-
 }

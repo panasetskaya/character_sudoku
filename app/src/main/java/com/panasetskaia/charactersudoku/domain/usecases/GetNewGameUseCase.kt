@@ -6,7 +6,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 
 class GetNewGameUseCase(private val repository: CharacterSudokuRepository) {
 
-    operator fun invoke(nineCharacters: List<ChineseCharacter>): Board {
+    suspend operator  fun invoke(nineCharacters: List<ChineseCharacter>): Board {
         return repository.getNewGame(nineCharacters)
     }
 }

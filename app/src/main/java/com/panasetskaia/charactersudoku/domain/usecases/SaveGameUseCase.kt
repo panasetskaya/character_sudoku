@@ -5,7 +5,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Board
 
 class SaveGameUseCase(private val repository: CharacterSudokuRepository) {
 
-    operator fun invoke(board: Board) {
+    suspend operator fun invoke(board: Board) {
         repository.saveGame(board)
     }
 }

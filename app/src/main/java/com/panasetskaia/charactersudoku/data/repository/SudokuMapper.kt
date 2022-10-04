@@ -1,11 +1,13 @@
 package com.panasetskaia.charactersudoku.data.repository
 
-import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDb
+import com.panasetskaia.charactersudoku.data.database.BoardDbModel
+import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
+import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 
 class SudokuMapper {
 
-    fun mapDbChineseCharacterToDomainEntity(model: ChineseCharacterDb): ChineseCharacter {
+    fun mapDbChineseCharacterToDomainEntity(model: ChineseCharacterDbModel): ChineseCharacter {
         return ChineseCharacter(
             model.id,
             model.character,
@@ -17,8 +19,8 @@ class SudokuMapper {
         )
     }
 
-    fun mapDomainChineseCharacterToDbModel(entity: ChineseCharacter): ChineseCharacterDb {
-        return ChineseCharacterDb(
+    fun mapDomainChineseCharacterToDbModel(entity: ChineseCharacter): ChineseCharacterDbModel {
+        return ChineseCharacterDbModel(
             entity.id,
             entity.character,
             entity.pinyin,
@@ -26,6 +28,22 @@ class SudokuMapper {
             entity.usages,
             entity.timesPlayed,
             entity.isChosen
+        )
+    }
+
+    fun mapDomainBoardToDbModel(domainBoard: Board): BoardDbModel {
+        return BoardDbModel(
+            domainBoard.id,
+            domainBoard.size,
+            domainBoard.cells
+        )
+    }
+
+    fun mapBoardDbModelToDomainEntity(boardDbModel: BoardDbModel): Board {
+        return Board(
+            boardDbModel.id,
+            boardDbModel.size,
+            boardDbModel.cells
         )
     }
 
