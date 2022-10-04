@@ -15,4 +15,7 @@
     <string name="translation_hint">translation</string>
     <string name="pinyin_hint">pinyin</string>
     <string name="character_hint">字</string>
+    <string name="new_or_saved_dialog">Do you want to play a new game or the saved one?</string>
+    <string name="new_game">New</string>
+    <string name="old_game">Saved</string>
 </resources>

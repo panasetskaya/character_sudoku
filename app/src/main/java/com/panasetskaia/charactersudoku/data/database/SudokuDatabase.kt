@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 @Database(entities = [ChineseCharacterDbModel::class, BoardDbModel::class], version = 4, exportSchema = false)
+@TypeConverters(SudokuConverters::class)
 abstract class SudokuDatabase: RoomDatabase() {
 
     abstract fun chineseCharacterDao(): ChineseCharacterDao
