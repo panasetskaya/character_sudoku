@@ -126,6 +126,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         // todo: у нас здесь рэндом пока!
         selectedRow = -1
         selectedCol = -1
+        _selectedCellLiveData.postValue(Pair(-1, -1))
         viewModelScope.launch {
             val nineChars = getNineRandomCharFromDict.invoke()
             _nineCharactersLiveData.postValue(nineChars)
