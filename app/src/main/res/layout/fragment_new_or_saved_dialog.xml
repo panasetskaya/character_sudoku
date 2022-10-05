@@ -8,15 +8,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.fragments.dialogFragments.NewOrSavedDialogFragment">
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/dialog_background"/>
-
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="270dp"
@@ -82,5 +73,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/dialog_background"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
