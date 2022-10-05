@@ -9,12 +9,9 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fcvMain"
-        app:defaultNavHost="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        app:navGraph="@navigation/nav_home"
-        tools:context=".presentation.MainActivity"
+        android:name="com.panasetskaia.charactersudoku.presentation.fragments.GameFragment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

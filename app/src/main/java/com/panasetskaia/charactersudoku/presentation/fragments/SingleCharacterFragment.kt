@@ -49,8 +49,6 @@ class SingleCharacterFragment : Fragment() {
 
     }
 
-
-
     private fun setupMenu() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

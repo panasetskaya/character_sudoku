@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
@@ -24,7 +23,7 @@ class DictionaryFragment : Fragment() {
 
     private lateinit var viewModel: ChineseCharacterViewModel
     private lateinit var listAdapter: DictionaryListAdapter
-    private lateinit var itemTouchCallback : MyItemTouchCallback
+    private lateinit var itemTouchCallback: MyItemTouchCallback
 
     private val linearInterpolator = LinearInterpolator()
 
@@ -73,7 +72,7 @@ class DictionaryFragment : Fragment() {
             listAdapter.onCharacterItemClickListener = {
                 val fragment = SingleCharacterFragment.newInstanceEditCharacter(it)
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.fcvMain,fragment)
+                    .replace(R.id.fcvMain, fragment)
                     .addToBackStack(null)
                     .commit()
             }
@@ -96,7 +95,7 @@ class DictionaryFragment : Fragment() {
         binding.fabAdd.setOnClickListener {
             val fragment = SingleCharacterFragment.newInstanceAddCharacter()
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fcvMain,fragment)
+                .replace(R.id.fcvMain, fragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -115,8 +114,12 @@ class DictionaryFragment : Fragment() {
                         true
                     }
                     R.id.sudoku_icon -> {
-                        binding.root.findNavController()
-                            .navigate(R.id.action_dictionaryFragment_to_gameFragment)
+                        parentFragmentManager.popBackStack()
+                        val fragment = GameFragment.newInstance()
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.fcvMain, fragment)
+                            .addToBackStack(null)
+                            .commit()
                         true
                     }
                     R.id.dict_help_icon -> {
@@ -142,5 +145,9 @@ class DictionaryFragment : Fragment() {
             interpolator = linearInterpolator
         }
 
+
+    companion object {
+        fun newInstance() = DictionaryFragment()
+    }
 
 }

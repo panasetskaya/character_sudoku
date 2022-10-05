@@ -10,13 +10,12 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
+import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
@@ -87,8 +86,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.dictionary_icon -> {
-                        binding.root.findNavController()
-                            .navigate(R.id.action_gameFragment_to_dictionaryFragment)
+                        val fragment = DictionaryFragment.newInstance()
+                        parentFragmentManager.popBackStack()
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.fcvMain,fragment)
+                            .addToBackStack(null)
+                            .commit()
                         true
                     }
                     R.id.game_help_icon -> {
@@ -136,6 +139,10 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             duration = 40
             interpolator = linearInterpolator
         }
+
+    companion object {
+        fun newInstance() = GameFragment()
+    }
 }
 
 //todo: добавить кнопку "ластик", чтобы стереть ненужное значение клетки
