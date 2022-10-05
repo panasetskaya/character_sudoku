@@ -45,9 +45,8 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         charactersDao.addOrEditCharacter(dbModel)
     }
 
-    override suspend fun deleteCharFromDict(character: ChineseCharacter) {
-        val dbModel = mapper.mapDomainChineseCharacterToDbModel(character)
-        charactersDao.deleteCharFromDict(dbModel.character)
+    override suspend fun deleteCharFromDict(characterId: Int) {
+        charactersDao.deleteCharFromDict(characterId)
     }
 
     override fun searchForCharacter(character: String): LiveData<List<ChineseCharacter>> {

@@ -11,17 +11,20 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
+import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 
 class DictionaryFragment : Fragment() {
 
     private lateinit var viewModel: ChineseCharacterViewModel
     private lateinit var listAdapter: DictionaryListAdapter
+    private lateinit var itemTouchCallback : MyItemTouchCallback
 
     private val linearInterpolator = LinearInterpolator()
 
@@ -51,9 +54,10 @@ class DictionaryFragment : Fragment() {
 
     private fun setupRecyclerView() {
         listAdapter = DictionaryListAdapter()
+        itemTouchCallback = object : MyItemTouchCallback(this, listAdapter, viewModel) {}
         listAdapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-        with(binding.recyclerViewShopList) {
+        with(binding.recyclerViewList) {
             adapter = listAdapter
             recycledViewPool.setMaxRecycledViews(
                 DictionaryListAdapter.CHOSEN,
@@ -73,7 +77,13 @@ class DictionaryFragment : Fragment() {
                     .addToBackStack(null)
                     .commit()
             }
+            setupSwipeListener(binding.recyclerViewList)
         }
+    }
+
+    private fun setupSwipeListener(rv: RecyclerView) {
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(rv)
     }
 
     private fun setupFab() {

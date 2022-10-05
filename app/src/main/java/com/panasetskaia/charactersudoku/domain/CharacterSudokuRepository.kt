@@ -10,7 +10,7 @@ interface CharacterSudokuRepository {
 
     suspend fun addOrEditCharToDict(character: ChineseCharacter)
 
-    suspend fun deleteCharFromDict(character: ChineseCharacter)
+    suspend fun deleteCharFromDict(characterId: Int)
 
     fun searchForCharacter(character: String): LiveData<List<ChineseCharacter>>
 

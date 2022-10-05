@@ -2,6 +2,8 @@ package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
@@ -21,10 +23,15 @@ class ChineseCharacterViewModel(application: Application) : AndroidViewModel(app
 
     val dictionaryLiveData = getWholeDict()
 
-    fun deleteCharacterFromDict(chineseCharacter: ChineseCharacter) {
+    private var _isDialogHiddenLiveData = MutableLiveData<Boolean>()
+    val isDialogHiddenLiveData: LiveData<Boolean>
+        get() = _isDialogHiddenLiveData
+
+    fun deleteCharacterFromDict(chineseCharacterId: Int) {
         viewModelScope.launch {
-            deleteCharacter(chineseCharacter)
+            deleteCharacter(chineseCharacterId)
         }
+        finishDeleting(true)
     }
 
     fun addOrEditCharacter(chineseCharacter: ChineseCharacter) {
@@ -38,5 +45,9 @@ class ChineseCharacterViewModel(application: Application) : AndroidViewModel(app
         viewModelScope.launch {
             addCharacterToDict(newChineseCharacter)
         }
+    }
+
+    fun finishDeleting(isDialogHidden: Boolean) {
+        _isDialogHiddenLiveData.postValue(isDialogHidden)
     }
 }
