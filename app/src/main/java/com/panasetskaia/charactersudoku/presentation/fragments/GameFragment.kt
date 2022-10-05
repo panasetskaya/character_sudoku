@@ -15,6 +15,7 @@ import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
+import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmRefreshFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
@@ -72,7 +73,11 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
 
         binding.refreshGame.setOnClickListener {
-            viewModel.getNewGame()
+            val fragment = ConfirmRefreshFragment.newInstance()
+            parentFragmentManager.beginTransaction()
+                .add(R.id.fcvMain,fragment)
+                .addToBackStack(null)
+                .commit()
         }
         binding.clearCell.setOnClickListener {
             viewModel.clearSelected()
@@ -147,5 +152,3 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         fun newInstance() = GameFragment()
     }
 }
-
-//todo: добавить кнопку "ластик", чтобы стереть ненужное значение клетки
