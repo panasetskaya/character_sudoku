@@ -27,5 +27,12 @@
     <string name="confirmRefreshButton">Обновить</string>
     <string name="confirmDeleteButton">Удалить</string>
     <string name="confirmDelete">Удалить этот иероглиф?</string>
+    <string name="help">ИГРА:/n/n
+        Пометьте сомнительную клетку черным цветом с помощью долгого нажатия./n/n
+        Используйте крестик, чтобы стереть значение клетки./n/n/n
+        СЛОВАРЬ:/n/n
+        Смахните влево, чтобы удалить иероглиф из словаря./n/n
+        Выберите иероглиф долгим нажатием.
+    </string>
 
 </resources>
