@@ -8,6 +8,8 @@
         <entry key="app/src/main/res/drawable/board_icon.xml" value="0.16" />
         <entry key="app/src/main/res/drawable/check_circle.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/check_circle_icon.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/chosen_background.xml" value="0.2305" />
+        <entry key="app/src/main/res/drawable/dialog_background.xml" value="0.2305" />
         <entry key="app/src/main/res/drawable/dictionary_icon.xml" value="0.2575" />
         <entry key="app/src/main/res/drawable/game_background.xml" value="0.22" />
         <entry key="app/src/main/res/drawable/help_icon.xml" value="0.2575" />
