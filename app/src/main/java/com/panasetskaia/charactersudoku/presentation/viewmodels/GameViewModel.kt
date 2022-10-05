@@ -77,6 +77,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearSelected() {
+        if (selectedRow == -1 || selectedCol == -1) return
         val board = _boardLiveData.value
         board?.let {
             if (!it.getCell(selectedRow, selectedCol).isFixed) {

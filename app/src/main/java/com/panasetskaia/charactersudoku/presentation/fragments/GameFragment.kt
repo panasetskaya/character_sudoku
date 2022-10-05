@@ -73,6 +73,10 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
 
         binding.refreshGame.setOnClickListener {
+            AnimatorSet().apply {
+                play(shakeAnimator(it, "rotation"))
+                start()
+            }
             val fragment = ConfirmRefreshFragment.newInstance()
             parentFragmentManager.beginTransaction()
                 .add(R.id.fcvMain,fragment)
@@ -80,6 +84,10 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 .commit()
         }
         binding.clearCell.setOnClickListener {
+            AnimatorSet().apply {
+                play(shakeAnimator(it, "rotation"))
+                start()
+            }
             viewModel.clearSelected()
         }
     }
