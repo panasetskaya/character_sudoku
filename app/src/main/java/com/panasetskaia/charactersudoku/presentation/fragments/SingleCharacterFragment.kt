@@ -68,6 +68,7 @@ class SingleCharacterFragment : Fragment() {
                             viewModel.addOrEditCharacter(newChar)
                             Toast.makeText(context, "Добавлено", Toast.LENGTH_SHORT).show()
                             val fragment = DictionaryFragment()
+                            parentFragmentManager.popBackStack()
                             parentFragmentManager.beginTransaction()
                                 .replace(R.id.fcvMain,fragment)
                                 .addToBackStack(null)

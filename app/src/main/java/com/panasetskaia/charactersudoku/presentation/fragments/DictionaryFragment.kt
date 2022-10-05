@@ -116,6 +116,7 @@ class DictionaryFragment : Fragment() {
                     R.id.sudoku_icon -> {
                         parentFragmentManager.popBackStack()
                         val fragment = GameFragment.newInstance()
+                        parentFragmentManager.popBackStack()
                         parentFragmentManager.beginTransaction()
                             .replace(R.id.fcvMain, fragment)
                             .addToBackStack(null)

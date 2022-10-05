@@ -152,3 +152,5 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         fun newInstance() = GameFragment()
     }
 }
+
+//todo: навигацию смотри! popBackStack
