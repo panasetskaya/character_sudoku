@@ -76,6 +76,16 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun clearSelected() {
+        val board = _boardLiveData.value
+        board?.let {
+            if (!it.getCell(selectedRow, selectedCol).isFixed) {
+                it.getCell(selectedRow, selectedCol).value = "0"
+            }
+            _boardLiveData.postValue(it)
+        }
+    }
+
     private fun checkForSolution() {
         val boardCells = boardLiveData.value?.cells
         var count = 0
@@ -89,7 +99,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         if (count < EMPTY_CELLS_MINIMUM) {
             viewModelScope.launch {
                 boardLiveData.value?.let { board ->
-                    val gameResult = getGameResult(board)
+                    val gameResult = getGameResult.invoke(board)
                     if (gameResult is SUCCESS) {
                         Toast.makeText(
                             getApplication(),

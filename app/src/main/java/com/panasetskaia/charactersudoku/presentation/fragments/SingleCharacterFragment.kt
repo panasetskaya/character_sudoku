@@ -139,6 +139,4 @@ class SingleCharacterFragment : Fragment() {
             }
         }
     }
-
-    //todo: проблема - при нажатии кнопки "назад" из SingleCharacterFragment происходит переход на игру, а не на словарь
 }

@@ -13,11 +13,21 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonsLayout"
-        app:layout_constraintTop_toBottomOf="@+id/sudoku_board"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
+        app:layout_constraintEnd_toStartOf="@+id/buttonsLayout"
+        app:layout_constraintTop_toTopOf="@+id/buttonsLayout"
+
         android:src="@drawable/refresh_icon" />
+
+    <ImageView
+        android:id="@+id/clearCell"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
+        app:layout_constraintStart_toEndOf="@+id/buttonsLayout"
+        app:layout_constraintTop_toTopOf="@+id/buttonsLayout"
+        android:src="@drawable/clear_cell_icon" />
 
 
     <com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView

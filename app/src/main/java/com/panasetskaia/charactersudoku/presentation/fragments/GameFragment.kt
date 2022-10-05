@@ -74,6 +74,9 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         binding.refreshGame.setOnClickListener {
             viewModel.getNewGame()
         }
+        binding.clearCell.setOnClickListener {
+            viewModel.clearSelected()
+        }
     }
 
     private fun setupMenu() {
