@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentConfirmRefreshBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
@@ -32,8 +33,12 @@ class ConfirmRefreshFragment : Fragment() {
             parentFragmentManager.popBackStack()
         }
         binding.yesButton.setOnClickListener {
-            viewModel.getNewGame()
             parentFragmentManager.popBackStack()
+            val fragment = RandomOrSelectDialogFragment.newInstance()
+            parentFragmentManager.beginTransaction()
+                .add(R.id.fcvMain,fragment)
+                .addToBackStack(null)
+                .commit()
         }
     }
 

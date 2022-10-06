@@ -120,6 +120,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }, viewLifecycleOwner)
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.refreshGame.isClickable = true
+        binding.clearCell.isClickable = true
+    }
+
     override fun onPause() {
         super.onPause()
         viewModel.saveBoard()
@@ -160,13 +166,3 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         fun newInstance() = GameFragment()
     }
 }
-
-//todo: навигацию смотри! popBackStack
-
-//todo: фрагмент Help
-
-//todo: поиск в словаре
-
-//todo: выбор между выбрать иероглифы/рэндом из Фрагмента игры -> запуск игры из фрагмента Словарь после выбора 9 иероглифов!!
-
-//todo: запуск с диалога о старой или новой игре

@@ -16,4 +16,8 @@ class RandomOrSelectDialogFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_random_or_select_dialog, container, false)
     }
 
+    companion object {
+        fun newInstance() = RandomOrSelectDialogFragment()
+    }
+
 }

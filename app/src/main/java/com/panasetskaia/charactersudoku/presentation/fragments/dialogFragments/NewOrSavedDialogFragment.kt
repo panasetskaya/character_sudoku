@@ -16,4 +16,13 @@ class NewOrSavedDialogFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_new_or_saved_dialog, container, false)
     }
 
+    companion object {
+        fun newInstance() = NewOrSavedDialogFragment()
+    }
+
+
+//todo: добавить во вьюмодель функцию finishSettings, пусть выдает лайвдату - по ней
+// todo: будем смотреть во фрагменте игры, активные кнопки или нет, активные кнопки или нет.
+    //todo: может, сделать проще? запулить контейнер-вью в игру и в словарь, специально под диалоги?
+    //todo: и там replace. надо проверить, живой ли родительский фрагмент в таком случае
 }

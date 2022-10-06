@@ -41,7 +41,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
 
     init {
-        getNewGame()
+        getNewRandomGame()
         _selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
     }
 
@@ -122,7 +122,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getNewGame() {
+    fun getNewRandomGame() {
         // todo: у нас здесь рэндом пока!
         selectedRow = -1
         selectedCol = -1
@@ -142,6 +142,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 _boardLiveData.postValue(translatedBoard)
             }
         }
+    }
+
+    fun getGameWithSelected() {
+
     }
 
     fun saveBoard() {
