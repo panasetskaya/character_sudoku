@@ -10,10 +10,8 @@ import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
-import com.panasetskaia.charactersudoku.domain.usecases.GetNineRandomCharFromDictUseCase
-import com.panasetskaia.charactersudoku.domain.usecases.GetResultUseCase
-import com.panasetskaia.charactersudoku.domain.usecases.GetSavedGameUseCase
-import com.panasetskaia.charactersudoku.domain.usecases.SaveGameUseCase
+import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import com.panasetskaia.charactersudoku.domain.usecases.*
 import kotlinx.coroutines.launch
 
 class GameViewModel(application: Application) : AndroidViewModel(application) {
@@ -21,6 +19,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val repository = CharacterSudokuRepositoryImpl()
     val getGameResult = GetResultUseCase(repository)
     val getNineRandomCharFromDict = GetNineRandomCharFromDictUseCase(repository)
+    val getNewGameWithSel = GetNewGameUseCase(repository)
     val getSavedGameUseCase = GetSavedGameUseCase(repository)
     val saveGameUseCase = SaveGameUseCase(repository)
 
@@ -149,8 +148,16 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getGameWithSelected() {
-
+    fun getGameWithSelected(selected: List<ChineseCharacter>) {
+        viewModelScope.launch {
+            val listString = mutableListOf<String>()
+            for (i in selected) {
+                listString.add(i.character)
+            }
+            _nineCharactersLiveData.postValue(listString)
+            val board = getNewGameWithSel(selected)
+            _boardLiveData.postValue(board)
+        }
     }
 
     fun setSettingsState(areSettingsDone: Boolean) {

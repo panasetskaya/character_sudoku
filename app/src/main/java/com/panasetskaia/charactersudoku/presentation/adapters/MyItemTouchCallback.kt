@@ -57,7 +57,7 @@ open class MyItemTouchCallback(
             isDialogShowed = !isDialogHidden
         }
         if (dX > -300f && !isDialogShowed) {
-            viewModel.finishDeleting(false)
+            viewModel.finishDialog(false)
             val item = adapter.currentList[viewHolder.adapterPosition]
             val fragment = ConfirmDeletingDialogFragment.newInstance(item.id)
             context.parentFragmentManager.beginTransaction()

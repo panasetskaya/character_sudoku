@@ -28,4 +28,6 @@
     <string name="confirmRefreshButton">Refresh</string>
     <string name="confirmDeleteButton">Delete</string>
     <string name="confirmDelete">Delete this character?</string>
+    <string name="confirmStartGame">Nine characters all ready! Let\'s start?</string>
+    <string name="confirmStartButton">Start</string>
 </resources>

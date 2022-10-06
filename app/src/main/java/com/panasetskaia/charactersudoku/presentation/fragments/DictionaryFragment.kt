@@ -17,11 +17,13 @@ import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
+import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmStartGameFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
+
 
 class DictionaryFragment : Fragment() {
 
-    private lateinit var viewModel: ChineseCharacterViewModel
+    private lateinit var characterViewModel: ChineseCharacterViewModel
     private lateinit var listAdapter: DictionaryListAdapter
     private lateinit var itemTouchCallback: MyItemTouchCallback
 
@@ -30,6 +32,8 @@ class DictionaryFragment : Fragment() {
     private var _binding: FragmentDictionaryBinding? = null
     private val binding: FragmentDictionaryBinding
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
+
+    private var isStartDialogHidden = true
 
 
 
@@ -43,18 +47,15 @@ class DictionaryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as MainActivity).characterViewModel
+        characterViewModel = (activity as MainActivity).characterViewModel
         setupMenu()
         setupFab()
         setupRecyclerView()
-        viewModel.dictionaryLiveData.observe(viewLifecycleOwner) {
-            listAdapter.submitList(it)
-        }
     }
 
     private fun setupRecyclerView() {
         listAdapter = DictionaryListAdapter()
-        itemTouchCallback = object : MyItemTouchCallback(this, listAdapter, viewModel) {}
+        itemTouchCallback = object : MyItemTouchCallback(this, listAdapter, characterViewModel) {}
         listAdapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         with(binding.recyclerViewList) {
@@ -68,7 +69,7 @@ class DictionaryFragment : Fragment() {
                 DictionaryListAdapter.MAX_POOL_SIZE
             )
             listAdapter.onCharacterItemLongClickListener = {
-                viewModel.changeIsChosenState(it)
+                characterViewModel.changeIsChosenState(it)
             }
             listAdapter.onCharacterItemClickListener = {
                 val fragment = SingleCharacterFragment.newInstanceEditCharacter(it)
@@ -78,6 +79,22 @@ class DictionaryFragment : Fragment() {
                     .commit()
             }
             setupSwipeListener(binding.recyclerViewList)
+        }
+        characterViewModel.dictionaryLiveData.observe(viewLifecycleOwner) {
+            listAdapter.submitList(it)
+        }
+        characterViewModel.isDialogHiddenLiveData.observe(viewLifecycleOwner) { isDialogHidden ->
+            isStartDialogHidden = isDialogHidden
+        }
+        characterViewModel.selectedCharactersLiveData.observe(viewLifecycleOwner) { selected ->
+            if (selected.size==9 && isStartDialogHidden) {
+                characterViewModel.finishDialog(false)
+                val fragment = ConfirmStartGameFragment.newInstance()
+                parentFragmentManager.beginTransaction()
+                    .add(R.id.dictionaryContainerView, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
     }
 
@@ -117,7 +134,6 @@ class DictionaryFragment : Fragment() {
                     R.id.sudoku_icon -> {
                         parentFragmentManager.popBackStack()
                         val fragment = GameFragment.newInstance()
-                        parentFragmentManager.popBackStack()
                         parentFragmentManager.beginTransaction()
                             .replace(R.id.fcvMain, fragment)
                             .addToBackStack(null)
@@ -133,6 +149,7 @@ class DictionaryFragment : Fragment() {
             }
         }, viewLifecycleOwner)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -153,3 +170,5 @@ class DictionaryFragment : Fragment() {
     }
 
 }
+
+//todo: почему возникает заново ConfrimStartGameFragment? Почему не успевает обновиться?

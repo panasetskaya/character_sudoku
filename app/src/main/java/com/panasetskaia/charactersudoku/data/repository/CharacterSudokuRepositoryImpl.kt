@@ -76,7 +76,16 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
     }
 
     override suspend fun getNewGame(nineCharacters: List<ChineseCharacter>): Board {
-        TODO("Not yet implemented")
+        val listString = mutableListOf<String>()
+        for (i in nineCharacters) {
+            listString.add(i.character)
+        }
+        temporaryDict = listString
+        return withContext(Dispatchers.Default) {
+            val grid = generateNumberGrid().values.toList()[0]
+            val board = mapStringGridToBoard(grid)
+            translateNumbersToCharacters(board)
+        }
     }
 
     override suspend fun saveGame(board: Board) {

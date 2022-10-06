@@ -34,5 +34,7 @@
         Смахните влево, чтобы удалить иероглиф из словаря./n/n
         Выберите иероглиф долгим нажатием.
     </string>
+    <string name="confirmStartGame">Есть девять иероглифов! Начнем?</string>
+    <string name="confirmStartButton">Играть</string>
 
 </resources>

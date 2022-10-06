@@ -39,7 +39,7 @@ class ConfirmDeletingDialogFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).characterViewModel
         binding.cancelButton.setOnClickListener {
-            viewModel.finishDeleting(true)
+            viewModel.finishDialog(true)
             parentFragmentManager.popBackStack()
         }
         binding.deleteButton.setOnClickListener {
