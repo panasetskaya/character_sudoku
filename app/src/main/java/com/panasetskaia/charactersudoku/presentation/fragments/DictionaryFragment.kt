@@ -32,6 +32,7 @@ class DictionaryFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
 
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

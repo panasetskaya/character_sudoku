@@ -24,4 +24,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
+
+    override fun onStop() {
+        characterViewModel.markAllUnselected()
+        super.onStop()
+    }
 }

@@ -50,4 +50,18 @@ class ChineseCharacterViewModel(application: Application) : AndroidViewModel(app
     fun finishDeleting(isDialogHidden: Boolean) {
         _isDialogHiddenLiveData.postValue(isDialogHidden)
     }
+
+    fun markAllUnselected() {
+        val dictionary = dictionaryLiveData.value
+        dictionary?.let { dictList ->
+            for (i in dictList) {
+                if (i.isChosen) {
+                    val newChineseCharacter = i.copy(isChosen = false)
+                    viewModelScope.launch {
+                        addCharacterToDict(newChineseCharacter)
+                    }
+                }
+            }
+        }
+    }
 }

@@ -39,10 +39,15 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val nineCharactersLiveData: LiveData<List<String>>
         get() = _nineCharactersLiveData
 
+    private var _settingsFinishedLiveData = MutableLiveData<Boolean>()
+    val settingsFinishedLiveData: LiveData<Boolean>
+        get() = _settingsFinishedLiveData
+
 
     init {
         getNewRandomGame()
         _selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
+        _settingsFinishedLiveData.postValue(true)
     }
 
     fun handleInput(number: Int) {
@@ -147,6 +152,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     fun getGameWithSelected() {
 
     }
+
+    fun setSettingsState(areSettingsDone: Boolean) {
+        _settingsFinishedLiveData.postValue(areSettingsDone)
+    }
+
 
     fun saveBoard() {
         val currentBoard = boardLiveData.value

@@ -48,6 +48,9 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewModel.boardLiveData.observe(viewLifecycleOwner) {
             updateCells(it.cells)
         }
+        viewModel.settingsFinishedLiveData.observe(viewLifecycleOwner) { areSettingsDone ->
+            binding.refreshGame.isClickable = areSettingsDone
+        }
         val buttons = listOf(
             binding.oneButton,
             binding.twoButton,
@@ -79,9 +82,10 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             }
             val fragment = ConfirmRefreshFragment.newInstance()
             parentFragmentManager.beginTransaction()
-                .add(R.id.fcvMain,fragment)
+                .add(R.id.gameContainerView,fragment)
                 .addToBackStack(null)
                 .commit()
+            viewModel.setSettingsState(false)
         }
         binding.clearCell.setOnClickListener {
             AnimatorSet().apply {

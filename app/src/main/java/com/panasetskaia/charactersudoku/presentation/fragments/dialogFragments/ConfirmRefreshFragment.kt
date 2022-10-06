@@ -30,13 +30,14 @@ class ConfirmRefreshFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).gameViewModel
         binding.cancelButton.setOnClickListener {
+            viewModel.setSettingsState(true)
             parentFragmentManager.popBackStack()
         }
         binding.yesButton.setOnClickListener {
             parentFragmentManager.popBackStack()
             val fragment = RandomOrSelectDialogFragment.newInstance()
             parentFragmentManager.beginTransaction()
-                .add(R.id.fcvMain,fragment)
+                .add(R.id.gameContainerView,fragment)
                 .addToBackStack(null)
                 .commit()
         }
