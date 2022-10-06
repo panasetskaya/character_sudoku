@@ -1,7 +1,10 @@
 package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.AddOrEditCharacterUseCase
@@ -24,23 +27,11 @@ class ChineseCharacterViewModel(application: Application) : AndroidViewModel(app
     val isDialogHiddenLiveData: LiveData<Boolean>
         get() = _isDialogHiddenLiveData
 
-
-    val selectedCharactersLiveData = Transformations.map(dictionaryLiveData) { wholeDictionary ->
-        val selectedCharacters = mutableListOf<ChineseCharacter>()
-        for (i in wholeDictionary) {
-            if (i.isChosen) {
-                selectedCharacters.add(i)
-            }
-        }
-        selectedCharacters.toList()
-    }
-
-
     fun deleteCharacterFromDict(chineseCharacterId: Int) {
         viewModelScope.launch {
             deleteCharacter(chineseCharacterId)
         }
-        finishDialog(true)
+        finishDeleting(true)
     }
 
     fun addOrEditCharacter(chineseCharacter: ChineseCharacter) {
@@ -56,28 +47,17 @@ class ChineseCharacterViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun updatePlayedCount(chineseCharacterList: List<ChineseCharacter>) {
-        viewModelScope.launch {
-            for (i in chineseCharacterList) {
-                val newChineseCharacter =
-                    i.copy(timesPlayed = i.timesPlayed++, isChosen = false)
-                addCharacterToDict(newChineseCharacter)
-            }
-        }
-        finishDialog(true)
-    }
-
-    fun finishDialog(isDialogHidden: Boolean) {
+    fun finishDeleting(isDialogHidden: Boolean) {
         _isDialogHiddenLiveData.postValue(isDialogHidden)
     }
 
     fun markAllUnselected() {
         val dictionary = dictionaryLiveData.value
         dictionary?.let { dictList ->
-            viewModelScope.launch {
-                for (i in dictList) {
-                    if (i.isChosen) {
-                        val newChineseCharacter = i.copy(isChosen = false)
+            for (i in dictList) {
+                if (i.isChosen) {
+                    val newChineseCharacter = i.copy(isChosen = false)
+                    viewModelScope.launch {
                         addCharacterToDict(newChineseCharacter)
                     }
                 }
