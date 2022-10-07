@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
+import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
@@ -26,6 +27,7 @@ class DictionaryFragment : Fragment() {
     private lateinit var gameViewModel: GameViewModel
     private lateinit var listAdapter: DictionaryListAdapter
     private lateinit var itemTouchCallback: MyItemTouchCallback
+    private lateinit var selectedCharacters: List<ChineseCharacter>
 
     private val linearInterpolator = LinearInterpolator()
 
@@ -45,6 +47,14 @@ class DictionaryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         characterViewModel = (activity as MainActivity).characterViewModel
         gameViewModel = (activity as MainActivity).gameViewModel
+        characterViewModel.selectedCharactersLiveData.observe(viewLifecycleOwner) { selected ->
+            if (selected.size==9) {
+                binding.fabPlay.isEnabled = true
+                selectedCharacters = selected
+            } else {
+                binding.fabPlay.isEnabled = false
+            }
+        }
         setupMenu()
         setupFab()
         setupRecyclerView()
@@ -96,6 +106,16 @@ class DictionaryFragment : Fragment() {
         }
         binding.fabAdd.setOnClickListener {
             val fragment = SingleCharacterFragment.newInstanceAddCharacter()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fcvMain, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+        binding.fabPlay.setOnClickListener {
+            gameViewModel.getGameWithSelected(selectedCharacters)
+            characterViewModel.markAllUnselected()
+            parentFragmentManager.popBackStack()
+            val fragment = GameFragment.newInstance()
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fcvMain, fragment)
                 .addToBackStack(null)
