@@ -47,14 +47,6 @@ class DictionaryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         characterViewModel = (activity as MainActivity).characterViewModel
         gameViewModel = (activity as MainActivity).gameViewModel
-        characterViewModel.selectedCharactersLiveData.observe(viewLifecycleOwner) { selected ->
-            if (selected.size==9) {
-                binding.fabPlay.isEnabled = true
-                selectedCharacters = selected
-            } else {
-                binding.fabPlay.isEnabled = false
-            }
-        }
         setupMenu()
         setupFab()
         setupRecyclerView()
@@ -98,10 +90,14 @@ class DictionaryFragment : Fragment() {
     }
 
     private fun setupFab() {
-        requireActivity().runOnUiThread {
-            AnimatorSet().apply {
-                play(shakeAnimator(binding.fabAdd, "rotation"))
-                start()
+        shakeAdd()
+        characterViewModel.selectedCharactersLiveData.observe(viewLifecycleOwner) { selected ->
+            if (selected.size==9) {
+                binding.fabPlay.isEnabled = true
+                selectedCharacters = selected
+                shakePlay()
+            } else {
+                binding.fabPlay.isEnabled = false
             }
         }
         binding.fabAdd.setOnClickListener {
@@ -160,19 +156,30 @@ class DictionaryFragment : Fragment() {
         _binding = null
     }
 
-    private fun shakeAnimator(shake: View, propertyName: String) =
-        ObjectAnimator.ofFloat(shake, propertyName, -180f, 90f).apply {
+    private fun shakeAdd(){
+        AnimatorSet().apply {
+            play(shakeAnimator(binding.fabAdd, "rotation", 90f),)
+            start()
+        }
+    }
+
+    private fun shakePlay() {
+        AnimatorSet().apply {
+            play(shakeAnimator(binding.fabPlay, "rotation", 120f),)
+            start()
+        }
+    }
+
+    private fun shakeAnimator(shake: View, propertyName: String, finalvalue: Float) =
+        ObjectAnimator.ofFloat(shake, propertyName, -180f, finalvalue).apply {
             repeatMode = ValueAnimator.RESTART
             repeatCount = 1
             duration = 400
             interpolator = linearInterpolator
         }
 
-
     companion object {
         fun newInstance() = DictionaryFragment()
     }
 
 }
-
-//todo: почему возникает заново ConfrimStartGameFragment? Почему не успевает обновиться?
