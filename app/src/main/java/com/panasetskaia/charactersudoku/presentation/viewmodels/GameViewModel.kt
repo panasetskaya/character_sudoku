@@ -46,7 +46,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         getNewRandomGame()
-        _selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
+        updateSelection(-1,-1)
         _settingsFinishedLiveData.postValue(true)
     }
 
@@ -129,9 +129,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getNewRandomGame() {
         // todo: у нас здесь рэндом пока!
-        selectedRow = -1
-        selectedCol = -1
-        _selectedCellLiveData.postValue(Pair(-1, -1))
+        updateSelection(-1,-1)
         viewModelScope.launch {
             val nineChars = getNineRandomCharFromDict.invoke()
             _nineCharactersLiveData.postValue(nineChars)
@@ -150,6 +148,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getGameWithSelected() {
+        updateSelection(-1,-1)
+        //todo
 
     }
 

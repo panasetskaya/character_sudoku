@@ -17,7 +17,6 @@ import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
-import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmStartGameFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
@@ -34,13 +33,6 @@ class DictionaryFragment : Fragment() {
     private val binding: FragmentDictionaryBinding
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
 
-    private var isStartDialogHidden = true
-
-    private var shouldGameStart = false
-
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,22 +48,6 @@ class DictionaryFragment : Fragment() {
         setupMenu()
         setupFab()
         setupRecyclerView()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        gameViewModel.shouldGameStartLiveData.observe(viewLifecycleOwner) { should ->
-            shouldGameStart = should
-        }
-        if (shouldGameStart) {
-            parentFragmentManager.popBackStack()
-            val fragment = GameFragment.newInstance()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fcvMain, fragment)
-                .addToBackStack(null)
-                .commit()
-
-        }
     }
 
     private fun setupRecyclerView() {
@@ -103,19 +79,6 @@ class DictionaryFragment : Fragment() {
         }
         characterViewModel.dictionaryLiveData.observe(viewLifecycleOwner) {
             listAdapter.submitList(it)
-        }
-        characterViewModel.isDialogHiddenLiveData.observe(viewLifecycleOwner) { isDialogHidden ->
-            isStartDialogHidden = isDialogHidden
-        }
-        characterViewModel.selectedCharactersLiveData.observe(viewLifecycleOwner) { selected ->
-            if (selected.size==9 && isStartDialogHidden) {
-                characterViewModel.finishDialog(false)
-                val fragment = ConfirmStartGameFragment.newInstance()
-                parentFragmentManager.beginTransaction()
-                    .add(R.id.dictionaryContainerView, fragment)
-                    .addToBackStack(null)
-                    .commit()
-            }
         }
     }
 
