@@ -56,12 +56,15 @@ class ChineseCharacterViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun updatePlayedCount(chineseCharacter: ChineseCharacter) {
-        val newChineseCharacter =
-            chineseCharacter.copy(timesPlayed = chineseCharacter.timesPlayed++)
+    fun updatePlayedCount(chineseCharacterList: List<ChineseCharacter>) {
         viewModelScope.launch {
-            addCharacterToDict(newChineseCharacter)
+            for (i in chineseCharacterList) {
+                val newChineseCharacter =
+                    i.copy(timesPlayed = i.timesPlayed++, isChosen = false)
+                addCharacterToDict(newChineseCharacter)
+            }
         }
+        finishDialog(true)
     }
 
     fun finishDialog(isDialogHidden: Boolean) {
@@ -78,7 +81,6 @@ class ChineseCharacterViewModel(application: Application) : AndroidViewModel(app
                         addCharacterToDict(newChineseCharacter)
                     }
                 }
-                finishDialog(true)
             }
         }
     }

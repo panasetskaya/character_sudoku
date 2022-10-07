@@ -19,11 +19,12 @@ import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdap
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmStartGameFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
-
+import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
 class DictionaryFragment : Fragment() {
 
     private lateinit var characterViewModel: ChineseCharacterViewModel
+    private lateinit var gameViewModel: GameViewModel
     private lateinit var listAdapter: DictionaryListAdapter
     private lateinit var itemTouchCallback: MyItemTouchCallback
 
@@ -34,6 +35,8 @@ class DictionaryFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
 
     private var isStartDialogHidden = true
+
+    private var shouldGameStart = false
 
 
 
@@ -48,9 +51,26 @@ class DictionaryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         characterViewModel = (activity as MainActivity).characterViewModel
+        gameViewModel = (activity as MainActivity).gameViewModel
         setupMenu()
         setupFab()
         setupRecyclerView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        gameViewModel.shouldGameStartLiveData.observe(viewLifecycleOwner) { should ->
+            shouldGameStart = should
+        }
+        if (shouldGameStart) {
+            parentFragmentManager.popBackStack()
+            val fragment = GameFragment.newInstance()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fcvMain, fragment)
+                .addToBackStack(null)
+                .commit()
+
+        }
     }
 
     private fun setupRecyclerView() {

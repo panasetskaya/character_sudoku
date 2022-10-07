@@ -42,11 +42,16 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val settingsFinishedLiveData: LiveData<Boolean>
         get() = _settingsFinishedLiveData
 
+    private var _shouldGameStartLiveData = MutableLiveData<Boolean>()
+    val shouldGameStartLiveData: LiveData<Boolean>
+        get() = _shouldGameStartLiveData
+
 
     init {
         getNewRandomGame()
-        _selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
+        updateSelection(-1,-1)
         _settingsFinishedLiveData.postValue(true)
+        _shouldGameStartLiveData.postValue(false)
     }
 
     fun handleInput(number: Int) {
@@ -128,9 +133,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getNewRandomGame() {
         // todo: у нас здесь рэндом пока!
-        selectedRow = -1
-        selectedCol = -1
-        _selectedCellLiveData.postValue(Pair(-1, -1))
+        updateSelection(-1,-1)
         viewModelScope.launch {
             val nineChars = getNineRandomCharFromDict.invoke()
             _nineCharactersLiveData.postValue(nineChars)
@@ -149,6 +152,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getGameWithSelected(selected: List<ChineseCharacter>) {
+        updateSelection(-1,-1)
         viewModelScope.launch {
             val listString = mutableListOf<String>()
             for (i in selected) {
@@ -174,7 +178,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun launchGame(shouldGameStart: Boolean) {
+        _shouldGameStartLiveData.postValue(shouldGameStart)
+    }
+
     fun getSavedBoard() {
+        updateSelection(-1,-1)
         viewModelScope.launch {
             val savedBoard = getSavedGameUseCase()
             _boardLiveData.postValue(savedBoard)

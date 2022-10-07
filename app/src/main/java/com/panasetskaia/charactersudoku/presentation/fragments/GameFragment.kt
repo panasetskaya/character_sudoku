@@ -128,6 +128,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         super.onResume()
         binding.refreshGame.isClickable = true
         binding.clearCell.isClickable = true
+        viewModel.launchGame(false)
     }
 
     override fun onPause() {

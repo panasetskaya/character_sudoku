@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentConfirmStartGameBinding
+import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.fragments.GameFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
@@ -17,6 +18,8 @@ class ConfirmStartGameFragment : Fragment() {
 
     private lateinit var characterViewModel: ChineseCharacterViewModel
     private lateinit var gameViewModel: GameViewModel
+
+    private lateinit var selected: List<ChineseCharacter>
 
     private var _binding: FragmentConfirmStartGameBinding? = null
     private val binding: FragmentConfirmStartGameBinding
@@ -38,22 +41,14 @@ class ConfirmStartGameFragment : Fragment() {
             characterViewModel.finishDialog(true)
             parentFragmentManager.popBackStack()
         }
+        characterViewModel.selectedCharactersLiveData.observe(viewLifecycleOwner) {
+            selected = it
+        }
         binding.startButton.setOnClickListener {
-            characterViewModel.selectedCharactersLiveData.observe(viewLifecycleOwner) { selected ->
-                if (selected.size == 9) {
-                    gameViewModel.getGameWithSelected(selected)
-                }
-                for (i in selected) {
-                    characterViewModel.updatePlayedCount(i)
-                }
-            }
-            characterViewModel.markAllUnselected()
+            gameViewModel.getGameWithSelected(selected)
+            characterViewModel.updatePlayedCount(selected)
+            gameViewModel.launchGame(true)
             parentFragmentManager.popBackStack()
-            val fragment = GameFragment.newInstance()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fcvMain, fragment)
-                .addToBackStack(null)
-                .commit()
         }
     }
 
