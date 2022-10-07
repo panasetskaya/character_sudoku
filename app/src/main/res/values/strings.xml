@@ -28,13 +28,17 @@
     <string name="confirmDeleteButton">Удалить</string>
     <string name="confirmDelete">Удалить этот иероглиф?</string>
     <string name="help">ИГРА:/n/n
-        Пометьте сомнительную клетку черным цветом с помощью долгого нажатия./n/n
+        Пометьте сомнительную клетку черным цветом с помощью долгого нажатия на клетку./n/n
         Используйте крестик, чтобы стереть значение клетки./n/n/n
         СЛОВАРЬ:/n/n
         Смахните влево, чтобы удалить иероглиф из словаря./n/n
         Выберите иероглиф долгим нажатием.
+        Выберите девять иероглифов, чтобы запустить новую игру.
     </string>
     <string name="confirmStartGame">Есть девять иероглифов! Начнем?</string>
     <string name="confirmStartButton">Играть</string>
+    <string name="added">Добавлено</string>
+    <string name="no_char">Отсутствует иероглиф</string>
+    <string name="too_many">Оставьте только один символ</string>
 
 </resources>

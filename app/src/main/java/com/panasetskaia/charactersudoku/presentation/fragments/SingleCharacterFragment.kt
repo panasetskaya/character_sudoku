@@ -59,23 +59,23 @@ class SingleCharacterFragment : Fragment() {
                 return when (menuItem.itemId) {
                     R.id.add_icon -> {
                         val chineseChar = binding.etCharacter.text.toString()
-                        if (chineseChar.length>0) {
+                        if (chineseChar.length==1) {
                             val pinyin = binding.etPinyin.text.toString()
                             val translation = binding.etTranslation.text.toString()
                             val usages = binding.etUsages.text.toString()
                             val id = if (screenMode == MODE_ADD) 0 else  chineseCharacter.id
                             val newChar = ChineseCharacter(id,chineseChar,pinyin, translation, usages)
                             viewModel.addOrEditCharacter(newChar)
-                            Toast.makeText(context, "Добавлено", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, R.string.added, Toast.LENGTH_SHORT).show()
                             val fragment = DictionaryFragment()
                             parentFragmentManager.popBackStack()
                             parentFragmentManager.beginTransaction()
                                 .replace(R.id.fcvMain,fragment)
                                 .addToBackStack(null)
                                 .commit()
-                        } else {
-                            Toast.makeText(context, "Отсутствует иероглиф", Toast.LENGTH_SHORT).show()
-                        }
+                        } else if (chineseChar.length<1) {
+                            Toast.makeText(context, R.string.no_char, Toast.LENGTH_SHORT).show()
+                        } else {Toast.makeText(context, R.string.too_many, Toast.LENGTH_SHORT).show()}
                         true
                     }
                     else -> true

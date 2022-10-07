@@ -30,4 +30,7 @@
     <string name="confirmDelete">Delete this character?</string>
     <string name="confirmStartGame">Nine characters all ready! Let\'s start?</string>
     <string name="confirmStartButton">Start</string>
+    <string name="added">Added successfully</string>
+    <string name="no_char">Character is missing</string>
+    <string name="too_many">There should be only 1 character</string>
 </resources>
