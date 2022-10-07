@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentSingleCharacterBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
@@ -50,8 +49,6 @@ class SingleCharacterFragment : Fragment() {
 
     }
 
-
-
     private fun setupMenu() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -66,10 +63,12 @@ class SingleCharacterFragment : Fragment() {
                             val pinyin = binding.etPinyin.text.toString()
                             val translation = binding.etTranslation.text.toString()
                             val usages = binding.etUsages.text.toString()
-                            val newChar = ChineseCharacter(chineseCharacter.id,chineseChar,pinyin, translation, usages)
+                            val id = if (screenMode == MODE_ADD) 0 else  chineseCharacter.id
+                            val newChar = ChineseCharacter(id,chineseChar,pinyin, translation, usages)
                             viewModel.addOrEditCharacter(newChar)
                             Toast.makeText(context, "Добавлено", Toast.LENGTH_SHORT).show()
                             val fragment = DictionaryFragment()
+                            parentFragmentManager.popBackStack()
                             parentFragmentManager.beginTransaction()
                                 .replace(R.id.fcvMain,fragment)
                                 .addToBackStack(null)
@@ -141,6 +140,4 @@ class SingleCharacterFragment : Fragment() {
             }
         }
     }
-
-    //todo: проблема - при нажатии кнопки "назад" из SingleCharacterFragment происходит переход на игру, а не на словарь
 }

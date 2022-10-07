@@ -56,9 +56,6 @@ class DictionaryListAdapter :
             }
             is CharacterItemNotChosenBinding -> {
                 with(binding) {
-                    tvHowOften.text = if (item.timesPlayed >= 1) {
-                        item.timesPlayed.toString()
-                    } else ""
                     tvCharacterChinese.text = item.character
                     tvPinyin.text = item.pinyin
                     val translationCut =

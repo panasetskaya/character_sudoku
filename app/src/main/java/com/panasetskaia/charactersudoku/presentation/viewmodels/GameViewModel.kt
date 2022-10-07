@@ -10,19 +10,18 @@ import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
-import com.panasetskaia.charactersudoku.domain.usecases.GetNineRandomCharFromDictUseCase
-import com.panasetskaia.charactersudoku.domain.usecases.GetResultUseCase
-import com.panasetskaia.charactersudoku.domain.usecases.GetSavedGameUseCase
-import com.panasetskaia.charactersudoku.domain.usecases.SaveGameUseCase
+import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import com.panasetskaia.charactersudoku.domain.usecases.*
 import kotlinx.coroutines.launch
 
 class GameViewModel(application: Application) : AndroidViewModel(application) {
 
-    val repository = CharacterSudokuRepositoryImpl()
-    val getGameResult = GetResultUseCase(repository)
-    val getNineRandomCharFromDict = GetNineRandomCharFromDictUseCase(repository)
-    val getSavedGameUseCase = GetSavedGameUseCase(repository)
-    val saveGameUseCase = SaveGameUseCase(repository)
+    private val repository = CharacterSudokuRepositoryImpl()
+    private val getGameResult = GetResultUseCase(repository)
+    private val getNineRandomCharFromDict = GetNineRandomCharFromDictUseCase(repository)
+    private val getSavedGameUseCase = GetSavedGameUseCase(repository)
+    private val saveGameUseCase = SaveGameUseCase(repository)
+    private val getNewGameWithSel = GetNewGameUseCase(repository)
 
     private var selectedRow = -1
     private var selectedCol = -1
@@ -39,10 +38,15 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val nineCharactersLiveData: LiveData<List<String>>
         get() = _nineCharactersLiveData
 
+    private var _settingsFinishedLiveData = MutableLiveData<Boolean>()
+    val settingsFinishedLiveData: LiveData<Boolean>
+        get() = _settingsFinishedLiveData
+
 
     init {
-        getNewGame()
-        _selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
+        getNewRandomGame()
+        updateSelection(-1,-1)
+        _settingsFinishedLiveData.postValue(true)
     }
 
     fun handleInput(number: Int) {
@@ -76,6 +80,17 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun clearSelected() {
+        if (selectedRow == -1 || selectedCol == -1) return
+        val board = _boardLiveData.value
+        board?.let {
+            if (!it.getCell(selectedRow, selectedCol).isFixed) {
+                it.getCell(selectedRow, selectedCol).value = "0"
+            }
+            _boardLiveData.postValue(it)
+        }
+    }
+
     private fun checkForSolution() {
         val boardCells = boardLiveData.value?.cells
         var count = 0
@@ -89,7 +104,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         if (count < EMPTY_CELLS_MINIMUM) {
             viewModelScope.launch {
                 boardLiveData.value?.let { board ->
-                    val gameResult = getGameResult(board)
+                    val gameResult = getGameResult.invoke(board)
                     if (gameResult is SUCCESS) {
                         Toast.makeText(
                             getApplication(),
@@ -111,10 +126,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getNewGame() {
+    fun getNewRandomGame() {
         // todo: у нас здесь рэндом пока!
-        selectedRow = -1
-        selectedCol = -1
+        updateSelection(-1,-1)
         viewModelScope.launch {
             val nineChars = getNineRandomCharFromDict.invoke()
             _nineCharactersLiveData.postValue(nineChars)
@@ -131,6 +145,24 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    fun getGameWithSelected(selected: List<ChineseCharacter>) {
+        updateSelection(-1,-1)
+        viewModelScope.launch {
+            val listString = mutableListOf<String>()
+            for (i in selected) {
+                listString.add(i.character)
+            }
+            _nineCharactersLiveData.postValue(listString)
+            val board = getNewGameWithSel(selected)
+            _boardLiveData.postValue(board)
+        }
+    }
+
+    fun setSettingsState(areSettingsDone: Boolean) {
+        _settingsFinishedLiveData.postValue(areSettingsDone)
+    }
+
 
     fun saveBoard() {
         val currentBoard = boardLiveData.value

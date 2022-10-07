@@ -1,8 +1,7 @@
 package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.AddOrEditCharacterUseCase
@@ -21,10 +20,25 @@ class ChineseCharacterViewModel(application: Application) : AndroidViewModel(app
 
     val dictionaryLiveData = getWholeDict()
 
-    fun deleteCharacterFromDict(chineseCharacter: ChineseCharacter) {
-        viewModelScope.launch {
-            deleteCharacter(chineseCharacter)
+    private var _isDialogHiddenLiveData = MutableLiveData<Boolean>()
+    val isDialogHiddenLiveData: LiveData<Boolean>
+        get() = _isDialogHiddenLiveData
+
+    val selectedCharactersLiveData = Transformations.map(dictionaryLiveData) { wholeDictionary ->
+        val selectedCharacters = mutableListOf<ChineseCharacter>()
+        for (i in wholeDictionary) {
+            if (i.isChosen) {
+                selectedCharacters.add(i)
+            }
         }
+        selectedCharacters.toList()
+    }
+
+    fun deleteCharacterFromDict(chineseCharacterId: Int) {
+        viewModelScope.launch {
+            deleteCharacter(chineseCharacterId)
+        }
+        finishDeleting(true)
     }
 
     fun addOrEditCharacter(chineseCharacter: ChineseCharacter) {
@@ -37,6 +51,24 @@ class ChineseCharacterViewModel(application: Application) : AndroidViewModel(app
         val newChineseCharacter = chineseCharacter.copy(isChosen = !chineseCharacter.isChosen)
         viewModelScope.launch {
             addCharacterToDict(newChineseCharacter)
+        }
+    }
+
+    fun finishDeleting(isDialogHidden: Boolean) {
+        _isDialogHiddenLiveData.postValue(isDialogHidden)
+    }
+
+    fun markAllUnselected() {
+        val dictionary = dictionaryLiveData.value
+        dictionary?.let { dictList ->
+            viewModelScope.launch {
+                for (i in dictList) {
+                    if (i.isChosen) {
+                        val newChineseCharacter = i.copy(isChosen = false)
+                        addCharacterToDict(newChineseCharacter)
+                    }
+                }
+            }
         }
     }
 }

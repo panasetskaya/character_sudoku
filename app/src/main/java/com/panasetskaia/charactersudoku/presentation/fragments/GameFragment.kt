@@ -10,13 +10,13 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
+import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmRefreshFragment
+import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
@@ -48,6 +48,9 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewModel.boardLiveData.observe(viewLifecycleOwner) {
             updateCells(it.cells)
         }
+        viewModel.settingsFinishedLiveData.observe(viewLifecycleOwner) { areSettingsDone ->
+            binding.refreshGame.isClickable = areSettingsDone
+        }
         val buttons = listOf(
             binding.oneButton,
             binding.twoButton,
@@ -73,7 +76,23 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
 
         binding.refreshGame.setOnClickListener {
-            viewModel.getNewGame()
+            AnimatorSet().apply {
+                play(shakeAnimator(it, "rotation"))
+                start()
+            }
+            val fragment = ConfirmRefreshFragment.newInstance()
+            parentFragmentManager.beginTransaction()
+                .add(R.id.gameContainerView,fragment)
+                .addToBackStack(null)
+                .commit()
+            viewModel.setSettingsState(false)
+        }
+        binding.clearCell.setOnClickListener {
+            AnimatorSet().apply {
+                play(shakeAnimator(it, "rotation"))
+                start()
+            }
+            viewModel.clearSelected()
         }
     }
 
@@ -87,8 +106,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.dictionary_icon -> {
-                        binding.root.findNavController()
-                            .navigate(R.id.action_gameFragment_to_dictionaryFragment)
+                        val fragment = DictionaryFragment.newInstance()
+                        parentFragmentManager.popBackStack()
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.fcvMain,fragment)
+                            .addToBackStack(null)
+                            .commit()
                         true
                     }
                     R.id.game_help_icon -> {
@@ -99,6 +122,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 }
             }
         }, viewLifecycleOwner)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.refreshGame.isClickable = true
+        binding.clearCell.isClickable = true
     }
 
     override fun onPause() {
@@ -136,6 +165,8 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             duration = 40
             interpolator = linearInterpolator
         }
-}
 
-//todo: добавить кнопку "ластик", чтобы стереть ненужное значение клетки
+    companion object {
+        fun newInstance() = GameFragment()
+    }
+}

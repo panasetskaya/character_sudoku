@@ -14,7 +14,27 @@
     <string name="translation_hint">перевод</string>
     <string name="pinyin_hint">пиньинь</string>
     <string name="character_hint">字</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="new_or_saved_dialog">Загрузить новую или сохраненную игру?</string>
+    <string name="new_game">Новую</string>
+    <string name="old_game">Старую</string>
+    <string name="selectCharactersButton">Выбрать</string>
+    <string name="randomButton">Случайно</string>
+    <string name="randomOrSelect">Случайные иероглифы или выбрать?</string>
+    <string name="yesButton">Да</string>
+    <string name="cancelButton">Назад</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="confirmRefresh">Обновить игру?</string>
+    <string name="confirmRefreshButton">Обновить</string>
+    <string name="confirmDeleteButton">Удалить</string>
+    <string name="confirmDelete">Удалить этот иероглиф?</string>
+    <string name="help">ИГРА:/n/n
+        Пометьте сомнительную клетку черным цветом с помощью долгого нажатия./n/n
+        Используйте крестик, чтобы стереть значение клетки./n/n/n
+        СЛОВАРЬ:/n/n
+        Смахните влево, чтобы удалить иероглиф из словаря./n/n
+        Выберите иероглиф долгим нажатием.
+    </string>
+    <string name="confirmStartGame">Есть девять иероглифов! Начнем?</string>
+    <string name="confirmStartButton">Играть</string>
 
 </resources>

@@ -45,9 +45,8 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         charactersDao.addOrEditCharacter(dbModel)
     }
 
-    override suspend fun deleteCharFromDict(character: ChineseCharacter) {
-        val dbModel = mapper.mapDomainChineseCharacterToDbModel(character)
-        charactersDao.deleteCharFromDict(dbModel.character)
+    override suspend fun deleteCharFromDict(characterId: Int) {
+        charactersDao.deleteCharFromDict(characterId)
     }
 
     override fun searchForCharacter(character: String): LiveData<List<ChineseCharacter>> {
@@ -77,7 +76,16 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
     }
 
     override suspend fun getNewGame(nineCharacters: List<ChineseCharacter>): Board {
-        TODO("Not yet implemented")
+        val listString = mutableListOf<String>()
+        for (i in nineCharacters) {
+            listString.add(i.character)
+        }
+        temporaryDict = listString
+        return withContext(Dispatchers.Default) {
+            val grid = generateNumberGrid().values.toList()[0]
+            val board = mapStringGridToBoard(grid)
+            translateNumbersToCharacters(board)
+        }
     }
 
     override suspend fun saveGame(board: Board) {

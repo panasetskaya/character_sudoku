@@ -24,9 +24,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
+
+    override fun onStop() {
+        characterViewModel.markAllUnselected()
+        super.onStop()
+    }
 }
-
-//todo: альбомная ориентация!! особенно с твоей customview.
-
-// todo: диалоговые окна: удаление, "здесь нет ироглифа, не можем сохранить",
-// todo: "начать заново?" "рэндомные или выбрать?" "загрузить сохраненную игру?"

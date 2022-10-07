@@ -15,4 +15,19 @@
     <string name="translation_hint">translation</string>
     <string name="pinyin_hint">pinyin</string>
     <string name="character_hint">字</string>
+    <string name="new_or_saved_dialog">Do you want to play a new game or the saved one?</string>
+    <string name="new_game">New</string>
+    <string name="old_game">Saved</string>
+    <string name="hello_blank_fragment">hello</string>
+    <string name="selectCharactersButton">Select</string>
+    <string name="randomButton">Random</string>
+    <string name="randomOrSelect">Random characters or selected?</string>
+    <string name="yesButton">Yes</string>
+    <string name="cancelButton">Cancel</string>
+    <string name="confirmRefresh">Refresh the game?</string>
+    <string name="confirmRefreshButton">Refresh</string>
+    <string name="confirmDeleteButton">Delete</string>
+    <string name="confirmDelete">Delete this character?</string>
+    <string name="confirmStartGame">Nine characters all ready! Let\'s start?</string>
+    <string name="confirmStartButton">Start</string>
 </resources>

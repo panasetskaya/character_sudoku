@@ -10,25 +10,30 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
+import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
+import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
+import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 
 class DictionaryFragment : Fragment() {
 
-    private lateinit var viewModel: ChineseCharacterViewModel
+    private lateinit var characterViewModel: ChineseCharacterViewModel
+    private lateinit var gameViewModel: GameViewModel
     private lateinit var listAdapter: DictionaryListAdapter
+    private lateinit var itemTouchCallback: MyItemTouchCallback
+    private lateinit var selectedCharacters: List<ChineseCharacter>
 
     private val linearInterpolator = LinearInterpolator()
 
     private var _binding: FragmentDictionaryBinding? = null
     private val binding: FragmentDictionaryBinding
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,20 +45,19 @@ class DictionaryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as MainActivity).characterViewModel
+        characterViewModel = (activity as MainActivity).characterViewModel
+        gameViewModel = (activity as MainActivity).gameViewModel
         setupMenu()
         setupFab()
         setupRecyclerView()
-        viewModel.dictionaryLiveData.observe(viewLifecycleOwner) {
-            listAdapter.submitList(it)
-        }
     }
 
     private fun setupRecyclerView() {
         listAdapter = DictionaryListAdapter()
+        itemTouchCallback = object : MyItemTouchCallback(this, listAdapter, characterViewModel) {}
         listAdapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-        with(binding.recyclerViewShopList) {
+        with(binding.recyclerViewList) {
             adapter = listAdapter
             recycledViewPool.setMaxRecycledViews(
                 DictionaryListAdapter.CHOSEN,
@@ -64,29 +68,52 @@ class DictionaryFragment : Fragment() {
                 DictionaryListAdapter.MAX_POOL_SIZE
             )
             listAdapter.onCharacterItemLongClickListener = {
-                viewModel.changeIsChosenState(it)
+                characterViewModel.changeIsChosenState(it)
             }
             listAdapter.onCharacterItemClickListener = {
                 val fragment = SingleCharacterFragment.newInstanceEditCharacter(it)
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.fcvMain,fragment)
+                    .replace(R.id.fcvMain, fragment)
                     .addToBackStack(null)
                     .commit()
             }
+            setupSwipeListener(binding.recyclerViewList)
+        }
+        characterViewModel.dictionaryLiveData.observe(viewLifecycleOwner) {
+            listAdapter.submitList(it)
         }
     }
 
+    private fun setupSwipeListener(rv: RecyclerView) {
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(rv)
+    }
+
     private fun setupFab() {
-        requireActivity().runOnUiThread {
-            AnimatorSet().apply {
-                play(shakeAnimator(binding.fabAdd, "rotation"))
-                start()
+        shakeAdd()
+        characterViewModel.selectedCharactersLiveData.observe(viewLifecycleOwner) { selected ->
+            if (selected.size==9) {
+                binding.fabPlay.isEnabled = true
+                selectedCharacters = selected
+                shakePlay()
+            } else {
+                binding.fabPlay.isEnabled = false
             }
         }
         binding.fabAdd.setOnClickListener {
             val fragment = SingleCharacterFragment.newInstanceAddCharacter()
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fcvMain,fragment)
+                .replace(R.id.fcvMain, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+        binding.fabPlay.setOnClickListener {
+            gameViewModel.getGameWithSelected(selectedCharacters)
+            characterViewModel.markAllUnselected()
+            parentFragmentManager.popBackStack()
+            val fragment = GameFragment.newInstance()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fcvMain, fragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -105,8 +132,12 @@ class DictionaryFragment : Fragment() {
                         true
                     }
                     R.id.sudoku_icon -> {
-                        binding.root.findNavController()
-                            .navigate(R.id.action_dictionaryFragment_to_gameFragment)
+                        parentFragmentManager.popBackStack()
+                        val fragment = GameFragment.newInstance()
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.fcvMain, fragment)
+                            .addToBackStack(null)
+                            .commit()
                         true
                     }
                     R.id.dict_help_icon -> {
@@ -119,18 +150,36 @@ class DictionaryFragment : Fragment() {
         }, viewLifecycleOwner)
     }
 
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
-    private fun shakeAnimator(shake: View, propertyName: String) =
-        ObjectAnimator.ofFloat(shake, propertyName, -180f, 90f).apply {
+    private fun shakeAdd(){
+        AnimatorSet().apply {
+            play(shakeAnimator(binding.fabAdd, "rotation", 90f),)
+            start()
+        }
+    }
+
+    private fun shakePlay() {
+        AnimatorSet().apply {
+            play(shakeAnimator(binding.fabPlay, "rotation", 120f),)
+            start()
+        }
+    }
+
+    private fun shakeAnimator(shake: View, propertyName: String, finalvalue: Float) =
+        ObjectAnimator.ofFloat(shake, propertyName, -180f, finalvalue).apply {
             repeatMode = ValueAnimator.RESTART
             repeatCount = 1
             duration = 400
             interpolator = linearInterpolator
         }
 
+    companion object {
+        fun newInstance() = DictionaryFragment()
+    }
 
 }

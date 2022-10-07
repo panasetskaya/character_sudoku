@@ -12,8 +12,8 @@ interface ChineseCharacterDao {
     @Query("SELECT * FROM chinesecharacterdbmodel")
     fun getWholeDictionary(): LiveData<List<ChineseCharacterDbModel>>
 
-    @Query("DELETE FROM chinesecharacterdbmodel WHERE character=:characterStr")
-    suspend fun deleteCharFromDict(characterStr: String)
+    @Query("DELETE FROM chinesecharacterdbmodel WHERE id=:characterId")
+    suspend fun deleteCharFromDict(characterId: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addOrEditCharacter(characterModel: ChineseCharacterDbModel)
