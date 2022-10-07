@@ -23,9 +23,10 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     private val mapper = SudokuMapper()
 
-    private var temporaryDict = listOf("留", "融", "砌", "铝", "洞", "乳", "廖", "部", "伞")
+    private var temporaryDict = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
 
     override suspend fun getNineRandomCharFromDict(): List<String> {
+        temporaryDict = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
         return withContext(Dispatchers.Default) {
             val idList = charactersDao.getAllChinese()?.shuffled()
             val listOfStringCharacters = mutableListOf<String>()
