@@ -115,7 +115,11 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         true
                     }
                     R.id.game_help_icon -> {
-                        Toast.makeText(context, "Will go to Help", Toast.LENGTH_LONG).show()
+                        val fragment = HelpFragment.newInstance()
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.fcvMain, fragment)
+                            .addToBackStack(null)
+                            .commit()
                         true
                     }
                     else -> true

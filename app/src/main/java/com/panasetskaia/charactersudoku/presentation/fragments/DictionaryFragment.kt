@@ -143,7 +143,11 @@ class DictionaryFragment : Fragment() {
                         true
                     }
                     R.id.dict_help_icon -> {
-                        Toast.makeText(context, "Will go to Help", Toast.LENGTH_SHORT).show() //todo
+                        val fragment = HelpFragment.newInstance()
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.fcvMain, fragment)
+                            .addToBackStack(null)
+                            .commit()
                         true
                     }
                     else -> true

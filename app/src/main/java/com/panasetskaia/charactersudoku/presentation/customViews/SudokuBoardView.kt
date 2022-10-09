@@ -59,7 +59,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         style = Paint.Style.FILL_AND_STROKE
         color = resources.getColor(R.color.primaryLightColor)
         textSize = 65F
-        typeface = Typeface.DEFAULT_BOLD
+       // typeface = Typeface.DEFAULT_BOLD
     }
 
     private val doubtfulTextPaint = Paint().apply {
