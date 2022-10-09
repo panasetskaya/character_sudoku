@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -47,6 +48,7 @@ class DictionaryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         characterViewModel = (activity as MainActivity).characterViewModel
         gameViewModel = (activity as MainActivity).gameViewModel
+
         setupMenu()
         setupFab()
         setupRecyclerView()

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mandarin-doku</string>
+    <string name="app_name">Mandarindoku</string>
     <string name="check_again">There is an error somewhere, check again!</string>
     <string name="game_succesful">Hooray, you\'ve finished the game!</string>
     <string name="dict_is_empty">Your dictionary is empty. Add some characters please!</string>
