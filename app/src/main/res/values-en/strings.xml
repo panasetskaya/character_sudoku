@@ -33,4 +33,6 @@
     <string name="added">Added successfully</string>
     <string name="no_char">Character is missing</string>
     <string name="too_many">There should be only 1 character</string>
-</resources>
+    <string name="help_game">You can mark the selected cell as doubtful with a long click on the cell.\n\nThe button on the right erases the selected cell value.</string>
+    <string name="help_dict">Swipe left to delete the character from the dictionary.\n\nSelect characters for the game with a long click.\n\nThe play button will become active once you have selected 9 characters.</string>
+  </resources>
