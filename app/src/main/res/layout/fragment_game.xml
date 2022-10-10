@@ -31,8 +31,8 @@
 
     <ImageView
         android:id="@+id/refreshGame"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
         app:layout_constraintEnd_toStartOf="@+id/buttonsLayout"
@@ -41,8 +41,8 @@
 
     <ImageView
         android:id="@+id/clearCell"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
         app:layout_constraintStart_toEndOf="@+id/buttonsLayout"

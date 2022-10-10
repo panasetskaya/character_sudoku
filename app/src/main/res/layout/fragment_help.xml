@@ -10,22 +10,21 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="0dp">
+        app:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/app_bar"
+            style="@style/Widget.Sudoku.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            style="@style/Widget.Sudoku.Toolbar"
             android:paddingStart="12dp"
             android:paddingLeft="12dp"
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
-            app:contentInsetStart="0dp"
-            />
+            app:contentInsetStart="0dp" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.card.MaterialCardView
@@ -33,11 +32,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-
+        app:cardBackgroundColor="@color/primaryColor"
         android:elevation="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,28 +47,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/chosen_background"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
+
+            <ImageView
+                android:id="@+id/game_icon"
+                android:layout_width="40dp"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_sudoku_icon_stroke_and_fill"
+                android:layout_margin="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tv_help_game_title"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"/>
 
             <TextView
                 android:id="@+id/tv_help_game_title"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:gravity="center"
                 android:text="@string/to_game"
                 android:textAllCaps="true"
-                android:textColor="@color/primaryLightColor"
+                android:textColor="@color/primaryTextColor"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/game_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -92,11 +96,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
         android:elevation="16dp"
+        app:cardBackgroundColor="@color/primaryColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/game_rules"
@@ -106,29 +111,34 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <View
-                android:layout_width="0dp"
+
+
+            <ImageView
+                android:id="@+id/dict_icon"
+                android:layout_width="40dp"
                 android:layout_height="0dp"
-                android:background="@drawable/chosen_background"
+                android:layout_margin="4dp"
+                android:src="@drawable/ic_sudoku_icon_dict_stroke_and_fill"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toStartOf="@+id/help_dict_title"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"/>
 
             <TextView
                 android:id="@+id/help_dict_title"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/dict_icon_title"
-                android:textColor="@color/primaryLightColor"
-                android:textAllCaps="true"
                 android:gravity="center"
+                android:text="@string/dict_icon_title"
+                android:textAllCaps="true"
+                android:textColor="@color/primaryTextColor"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintStart_toEndOf="@+id/dict_icon"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -144,7 +154,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardViewDict" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -130,10 +130,6 @@ class DictionaryFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
-                    R.id.search_icon -> {
-                        Toast.makeText(context, "Will search", Toast.LENGTH_SHORT).show() //todo
-                        true
-                    }
                     R.id.sudoku_icon -> {
                         parentFragmentManager.popBackStack()
                         val fragment = GameFragment.newInstance()

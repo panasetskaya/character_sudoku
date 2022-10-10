@@ -2,12 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/search_icon"
-        android:icon="@drawable/ic_search_stroke_and_fill"
-        android:title="@string/search_icon_title"
-        app:showAsAction="always" />
-
 
     <item
         android:id="@+id/dict_help_icon"
