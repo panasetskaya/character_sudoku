@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/add_icon"
-        android:icon="@drawable/check_circle"
+        android:icon="@drawable/ic_check_stroke_and_fill"
         android:title="@string/check_icon_title"
         app:showAsAction="always" />
 

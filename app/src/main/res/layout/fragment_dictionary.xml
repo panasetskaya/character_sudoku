@@ -8,6 +8,26 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            style="@style/Widget.Sudoku.Toolbar"
+            android:paddingStart="12dp"
+            android:paddingLeft="12dp"
+            android:paddingEnd="12dp"
+            android:paddingRight="12dp"
+            app:contentInsetStart="0dp"
+            />
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewList"
         android:layout_width="0dp"
@@ -16,30 +36,37 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         tools:listitem="@layout/character_item_not_chosen" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/add_base"
-        android:layout_margin="30dp"
-        android:clickable="true"
-        app:backgroundTint="@color/primaryLightColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+    <ImageView
+        android:id="@+id/fabAdd"
+        android:elevation="16dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:visibility="visible"
+        android:layout_margin="20dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_add_button_stroke_and_fill" />
+
+
+
+    <ImageView
         android:id="@+id/fabPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/play_arrow"
-        app:backgroundTint="@color/secondaryColor"
-        android:layout_margin="30dp"
+        android:elevation="16dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:visibility="visible"
+        android:layout_margin="20dp"
+        android:clickable="true"
         android:enabled="false"
         app:layout_constraintBottom_toTopOf="@+id/fabAdd"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_play_button_stroke_and_fill" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/dictionaryContainerView"
@@ -48,7 +75,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         />
 
 

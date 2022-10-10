@@ -6,6 +6,26 @@
     tools:context=".presentation.fragments.SingleCharacterFragment"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            style="@style/Widget.Sudoku.Toolbar"
+            android:paddingStart="12dp"
+            android:paddingLeft="12dp"
+            android:paddingEnd="12dp"
+            android:paddingRight="12dp"
+            app:contentInsetStart="0dp"
+            />
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
@@ -21,8 +41,9 @@
         android:layout_marginStart="20dp"
         android:layout_marginBottom="20dp"
         android:layout_marginEnd="10dp"
+
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
 
         app:hintTextColor="@color/primaryLightColor"
@@ -30,6 +51,7 @@
         app:endIconMode="clear_text"
         app:boxStrokeColor="@color/secondaryColor"
         app:shapeAppearance="@style/Rounded"
+
         app:counterEnabled="true"
         app:counterMaxLength="1">
 
@@ -38,6 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/character_hint"
+
             android:inputType="textCapWords"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,7 +79,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:boxStrokeColor="@color/secondaryColor"
         app:layout_constraintStart_toEndOf="@+id/guideline2"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         app:shapeAppearance="@style/Rounded">
 
         <com.google.android.material.textfield.TextInputEditText

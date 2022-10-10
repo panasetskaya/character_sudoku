@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/long_cang</item>
+        <item>@font/ma_shan_zheng</item>
+    </array>
+</resources>

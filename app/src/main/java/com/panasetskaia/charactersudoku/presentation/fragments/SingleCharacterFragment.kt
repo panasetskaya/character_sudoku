@@ -3,6 +3,7 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -36,6 +37,7 @@ class SingleCharacterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSingleCharacterBinding.inflate(inflater, container, false)
+        (activity as AppCompatActivity).setSupportActionBar(binding.appBar)
         return binding.root
     }
 

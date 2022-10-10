@@ -4,14 +4,14 @@
 
     <item
         android:id="@+id/search_icon"
-        android:icon="@drawable/search_icon"
+        android:icon="@drawable/ic_search_stroke_and_fill"
         android:title="@string/search_icon_title"
         app:showAsAction="always" />
 
 
     <item
         android:id="@+id/dict_help_icon"
-        android:icon="@drawable/help_icon"
+        android:icon="@drawable/ic_question_stroke_and_fill"
         android:title="@string/help_icon_title"
         app:showAsAction="always" />
 

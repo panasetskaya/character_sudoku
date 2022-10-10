@@ -41,6 +41,7 @@ class DictionaryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDictionaryBinding.inflate(inflater, container, false)
+        (activity as AppCompatActivity).setSupportActionBar(binding.appBar)
         return binding.root
     }
 
@@ -164,20 +165,20 @@ class DictionaryFragment : Fragment() {
 
     private fun shakeAdd(){
         AnimatorSet().apply {
-            play(shakeAnimator(binding.fabAdd, "rotation", 90f),)
+            play(shakeAnimator(binding.fabAdd, "rotation", 0f),)
             start()
         }
     }
 
     private fun shakePlay() {
         AnimatorSet().apply {
-            play(shakeAnimator(binding.fabPlay, "rotation", 120f),)
+            play(shakeAnimator(binding.fabPlay, "rotation", 0f),)
             start()
         }
     }
 
     private fun shakeAnimator(shake: View, propertyName: String, finalvalue: Float) =
-        ObjectAnimator.ofFloat(shake, propertyName, -180f, finalvalue).apply {
+        ObjectAnimator.ofFloat(shake, propertyName, -270f, finalvalue).apply {
             repeatMode = ValueAnimator.RESTART
             repeatCount = 1
             duration = 400

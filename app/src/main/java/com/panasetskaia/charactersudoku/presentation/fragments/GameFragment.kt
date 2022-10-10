@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -34,6 +35,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentGameBinding.inflate(inflater, container, false)
+        (activity as AppCompatActivity).setSupportActionBar(binding.appBar)
         return binding.root
     }
 
