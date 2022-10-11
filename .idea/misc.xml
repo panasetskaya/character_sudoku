@@ -32,6 +32,8 @@
         <entry key="app/src/main/res/drawable/rectangle.xml" value="0.228" />
         <entry key="app/src/main/res/drawable/refresh_icon.xml" value="0.2305" />
         <entry key="app/src/main/res/drawable/search_icon.xml" value="0.2575" />
+        <entry key="app/src/main/res/drawable/white_background.xml" value="0.161" />
+        <entry key="app/src/main/res/layout-land/fragment_game.xml" value="0.31084656084656087" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/character_item_chosen.xml" value="0.25" />
         <entry key="app/src/main/res/layout/character_item_not_chosen.xml" value="0.25" />
