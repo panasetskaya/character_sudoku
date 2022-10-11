@@ -70,7 +70,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 button.setOnClickListener {
                     viewModel.handleInput(index)
                     AnimatorSet().apply {
-                        play(shakeAnimator(it, "rotation"))
+                        play(shakeAnimator(it, -10f, 0f,40,2))
                         start()
                     }
                 }
@@ -79,7 +79,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
         binding.refreshGame.setOnClickListener {
             AnimatorSet().apply {
-                play(shakeAnimator(it, "rotation"))
+                play(shakeAnimator(it, -360f,0f, 250,0))
                 start()
             }
             val fragment = ConfirmRefreshFragment.newInstance()
@@ -91,7 +91,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
         binding.clearCell.setOnClickListener {
             AnimatorSet().apply {
-                play(shakeAnimator(it, "rotation"))
+                play(shakeAnimator(it, -10f, 0f,40,2))
                 start()
             }
             viewModel.clearSelected()
@@ -164,11 +164,11 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
 
-    private fun shakeAnimator(shake: View, propertyName: String) =
-        ObjectAnimator.ofFloat(shake, propertyName, -10f, 0f).apply {
+    private fun shakeAnimator(shake: View, startValue: Float, endValue: Float, dur: Long, repeat: Int) =
+        ObjectAnimator.ofFloat(shake, "rotation", startValue, endValue).apply {
             repeatMode = ValueAnimator.RESTART
-            repeatCount = 2
-            duration = 40
+            repeatCount = repeat
+            duration = dur
             interpolator = linearInterpolator
         }
 

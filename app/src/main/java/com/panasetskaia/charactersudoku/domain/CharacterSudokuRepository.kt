@@ -21,7 +21,7 @@ interface CharacterSudokuRepository {
 
     suspend fun saveGame(board: Board)
 
-    suspend fun getSavedGame(): Board
+    suspend fun getSavedGame(): Board?
 
 
     suspend fun getGameResult(board: Board): GameResult

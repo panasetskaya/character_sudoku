@@ -22,7 +22,7 @@ interface ChineseCharacterDao {
     fun searchForCharacter(characterQuery: String): LiveData<List<ChineseCharacterDbModel>>
 
     @Query("SELECT * FROM chinesecharacterdbmodel WHERE character=:characterStr")
-    suspend fun getCharacterByChinese(characterStr: String): ChineseCharacterDbModel
+    suspend fun getCharacterByChinese(characterStr: String): ChineseCharacterDbModel?
 
     @Query("SELECT character FROM chinesecharacterdbmodel WHERE isChosen=1")
     suspend fun getSelected(): List<String>?

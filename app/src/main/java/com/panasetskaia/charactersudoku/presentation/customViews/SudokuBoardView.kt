@@ -5,6 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import java.util.*
@@ -45,28 +46,30 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private val notSelectedTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = resources.getColor(R.color.secondaryColor)
-        textSize = 65F
+        textSize = 80F
+        typeface =  ResourcesCompat.getFont(context, MY_FONT)
     }
 
     private val selectedTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.WHITE
-        textSize = 65F
+        textSize = 80F
+        typeface =  ResourcesCompat.getFont(context, MY_FONT)
     }
 
 
     private val fixedTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = resources.getColor(R.color.primaryLightColor)
-        textSize = 65F
-       // typeface = Typeface.DEFAULT_BOLD
+        textSize = 80F
+        typeface =  ResourcesCompat.getFont(context, MY_FONT)
     }
 
     private val doubtfulTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-
-        textSize = 65F
+        typeface =  ResourcesCompat.getFont(context, MY_FONT)
+        textSize = 80F
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -152,8 +155,10 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             val textWidth = paintToUse.measureText(valueString)
             val textHeight = textBounds.height()
             canvas.drawText(
-                valueString, (col * cellSizePixels) + cellSizePixels / 2 - textWidth / 2,
-                (row * cellSizePixels) + cellSizePixels / 2 + textHeight / 2, paintToUse
+                valueString,
+                (col * cellSizePixels) + cellSizePixels / 2 - textWidth / 2,
+                (row * cellSizePixels) + cellSizePixels / 2 + textHeight / 2,
+                paintToUse
             )
         }
     }
@@ -216,5 +221,9 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     interface OnTouchListener {
         fun onCellTouched(row: Int, col: Int)
         fun onCellLongTouched(row: Int, col: Int)
+    }
+
+    companion object {
+        private const val MY_FONT = R.font.ma_shan_zheng
     }
 }

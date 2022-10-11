@@ -48,5 +48,19 @@ class SudokuConverters {
         return s
     }
 
+    @TypeConverter
+    fun fromListOfStrings(list: List<String>): String {
+        var s = ""
+        for (string in list) {
+            s += "$string,"
+        }
+        return s
+    }
+
+    @TypeConverter
+    fun toListOfStrings(s: String): List<String> {
+        return s.split(",")
+    }
+
 
 }

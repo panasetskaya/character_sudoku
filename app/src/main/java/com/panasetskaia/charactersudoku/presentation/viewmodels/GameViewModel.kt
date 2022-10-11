@@ -23,8 +23,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val saveGameUseCase = SaveGameUseCase(repository)
     private val getNewGameWithSel = GetNewGameUseCase(repository)
 
-    private var selectedRow = -1
-    private var selectedCol = -1
+    private var selectedRow = NO_SELECTION
+    private var selectedCol = NO_SELECTION
 
     private val _selectedCellLiveData = MutableLiveData<Pair<Int, Int>>()
     val selectedCellLiveData: LiveData<Pair<Int, Int>>
@@ -44,13 +44,13 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
 
     init {
-        getNewRandomGame()
-        updateSelection(-1,-1)
+        getSavedBoard()
+        updateSelection(NO_SELECTION, NO_SELECTION)
         _settingsFinishedLiveData.postValue(true)
     }
 
     fun handleInput(number: Int) {
-        if (selectedRow == -1 || selectedCol == -1) return
+        if (selectedRow == NO_SELECTION || selectedCol == NO_SELECTION) return
         val board = _boardLiveData.value
         board?.let { board ->
             if (!board.getCell(selectedRow, selectedCol).isFixed) {
@@ -81,11 +81,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearSelected() {
-        if (selectedRow == -1 || selectedCol == -1) return
+        if (selectedRow == NO_SELECTION || selectedCol == NO_SELECTION) return
         val board = _boardLiveData.value
         board?.let {
             if (!it.getCell(selectedRow, selectedCol).isFixed) {
-                it.getCell(selectedRow, selectedCol).value = "0"
+                it.getCell(selectedRow, selectedCol).value = EMPTY_CELL
             }
             _boardLiveData.postValue(it)
         }
@@ -96,7 +96,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         var count = 0
         boardCells?.let { cellsList ->
             for (i in cellsList) {
-                if (i.value == "0") {
+                if (i.value == EMPTY_CELL) {
                     count++
                 }
             }
@@ -127,8 +127,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getNewRandomGame() {
-        // todo: у нас здесь рэндом пока!
-        updateSelection(-1,-1)
+        updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val nineChars = getNineRandomCharFromDict.invoke()
             _nineCharactersLiveData.postValue(nineChars)
@@ -147,7 +146,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getGameWithSelected(selected: List<ChineseCharacter>) {
-        updateSelection(-1,-1)
+        updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val listString = mutableListOf<String>()
             for (i in selected) {
@@ -173,15 +172,23 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getSavedBoard() {
+    private fun getSavedBoard() {
         viewModelScope.launch {
             val savedBoard = getSavedGameUseCase()
-            _boardLiveData.postValue(savedBoard)
+            savedBoard?.let {
+                _nineCharactersLiveData.postValue(it.nineChars)
+                _boardLiveData.postValue(it)
+            }
+            if (savedBoard==null) {
+                getNewRandomGame()
+            }
         }
     }
 
     companion object {
         internal const val EMPTY_CELLS_MINIMUM = 8
+        private const val EMPTY_CELL = "0"
+        private const val NO_SELECTION = -1
     }
 }
 

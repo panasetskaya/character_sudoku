@@ -33,7 +33,8 @@ class SudokuMapper {
         return BoardDbModel(
             domainBoard.id,
             domainBoard.size,
-            domainBoard.cells
+            domainBoard.cells,
+            domainBoard.nineChars
         )
     }
 
@@ -41,7 +42,8 @@ class SudokuMapper {
         return Board(
             boardDbModel.id,
             boardDbModel.size,
-            boardDbModel.cells
+            boardDbModel.cells,
+            boardDbModel.nineChars
         )
     }
 

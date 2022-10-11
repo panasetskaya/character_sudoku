@@ -23,10 +23,10 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     private val mapper = SudokuMapper()
 
-    private var temporaryDict = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
+    private var temporaryDict = INITIAL_9_CHAR
 
     override suspend fun getNineRandomCharFromDict(): List<String> {
-        temporaryDict = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
+        temporaryDict = INITIAL_9_CHAR
         return withContext(Dispatchers.Default) {
             val idList = charactersDao.getAllChinese()?.shuffled()
             val listOfStringCharacters = mutableListOf<String>()
@@ -95,9 +95,16 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         boardDao.saveGame(boardDbModel)
     }
 
-    override suspend fun getSavedGame(): Board {
-        val boardDbModel =boardDao.getSavedGame()
-        return mapper.mapBoardDbModelToDomainEntity(boardDbModel)
+    override suspend fun getSavedGame(): Board? {
+        val boardDbModel = boardDao.getSavedGame()
+        return boardDbModel?.let {
+            val nineChars = mutableListOf<String>()
+            for (i in it.nineChars) {
+                nineChars.add(i)
+            }
+            temporaryDict = nineChars
+            mapper.mapBoardDbModelToDomainEntity(it)
+        }
     }
 
     override suspend fun getGameResult(board: Board): GameResult {
@@ -130,13 +137,13 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
                 stringGrid[i].toString()
             )
         }
-        val board = Board(cells = cells)
+        val board = Board(cells = cells, nineChars = temporaryDict)
         return board
     }
 
     private fun translateNumbersToCharacters(board: Board): Board {
         for (i in board.cells) {
-            if (i.value != "0") {
+            if (i.value != EMPTY_CELL) {
                 i.isFixed = true
                 val index = i.value.toInt() - 1
                 i.value = temporaryDict[index] // поменять на нужный словарь
@@ -149,11 +156,16 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         var gridString = ""
         for (i in board.cells) {
             var number = 0
-            if (i.value != "0") {
+            if (i.value != EMPTY_CELL) {
                 number = temporaryDict.indexOf(i.value) + 1  // поменять на нужный словарь
             }
             gridString += number.toString()
         }
         return gridString
+    }
+
+    companion object {
+        private val INITIAL_9_CHAR = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
+        private const val EMPTY_CELL = "0"
     }
 }

@@ -10,7 +10,7 @@ interface BoardDao {
     suspend fun saveGame(boardDbModel: BoardDbModel)
 
     @Query("SELECT * FROM BoardDbModel LIMIT 1")
-    suspend fun getSavedGame(): BoardDbModel
+    suspend fun getSavedGame(): BoardDbModel?
 
     @Query("DELETE FROM BoardDbModel")
     suspend fun deleteEverything()
