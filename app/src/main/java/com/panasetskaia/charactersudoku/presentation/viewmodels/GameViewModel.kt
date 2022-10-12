@@ -178,7 +178,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             savedBoard?.let {
                 _nineCharactersLiveData.postValue(it.nineChars)
                 _boardLiveData.postValue(it)
-                updateSelection(1,1)
+                updateSelection(0,0)
             }
             if (savedBoard==null) {
                 getNewRandomGame()

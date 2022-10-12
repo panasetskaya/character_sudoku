@@ -20,6 +20,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var listener: OnTouchListener? = null
     private var cells: List<Cell>? = null
     private var startCLickTime: Long = 0
+    private var textSizeForCell = 80F
 
     private val thinLinePaint = Paint().apply {
         style = Paint.Style.STROKE
@@ -31,6 +32,11 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         style = Paint.Style.STROKE
         color = Color.BLACK
         strokeWidth = 4F
+    }
+
+    private val notSelectedCellPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = resources.getColor(R.color.primaryTextColor)
     }
 
     private val selectedCellPaint = Paint().apply {
@@ -46,14 +52,14 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private val notSelectedTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = resources.getColor(R.color.secondaryColor)
-        textSize = 80F
+        textSize = textSizeForCell
         typeface =  ResourcesCompat.getFont(context, MY_FONT)
     }
 
     private val selectedTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.WHITE
-        textSize = 80F
+        textSize = textSizeForCell
         typeface =  ResourcesCompat.getFont(context, MY_FONT)
     }
 
@@ -61,7 +67,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private val fixedTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = resources.getColor(R.color.primaryLightColor)
-        textSize = 80F
+        textSize = textSizeForCell
         typeface =  ResourcesCompat.getFont(context, MY_FONT)
     }
 
@@ -69,12 +75,11 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
         typeface =  ResourcesCompat.getFont(context, MY_FONT)
-        textSize = 80F
+        textSize = textSizeForCell
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val sizePixels = Math.min(widthMeasureSpec, heightMeasureSpec)
+        val sizePixels = widthMeasureSpec.coerceAtMost(heightMeasureSpec)
         setMeasuredDimension(sizePixels, sizePixels)
     }
 
@@ -94,7 +99,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 fillCell(canvas, r, c, selectedCellPaint)
             } else if (isCellInConflictingSelection(it)) {
                 fillCell(canvas, r, c, cellToWatchForPaint)
-            }
+            } else fillCell(canvas, r, c, notSelectedCellPaint)
         }
     }
 

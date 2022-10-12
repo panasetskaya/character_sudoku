@@ -6,7 +6,6 @@ import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -70,7 +69,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 button.setOnClickListener {
                     viewModel.handleInput(index)
                     AnimatorSet().apply {
-                        play(shakeAnimator(it, -10f, 0f,40,2))
+                        play(shakeAnimator(it, -10f, 0f, 40, 2))
                         start()
                     }
                 }
@@ -79,19 +78,19 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
         binding.refreshGame.setOnClickListener {
             AnimatorSet().apply {
-                play(shakeAnimator(it, -360f,0f, 250,0))
+                play(shakeAnimator(it, -360f, 0f, 250, 0))
                 start()
             }
             val fragment = ConfirmRefreshFragment.newInstance()
             parentFragmentManager.beginTransaction()
-                .add(R.id.gameContainerView,fragment)
+                .add(R.id.gameContainerView, fragment)
                 .addToBackStack(null)
                 .commit()
             viewModel.setSettingsState(false)
         }
         binding.clearCell.setOnClickListener {
             AnimatorSet().apply {
-                play(shakeAnimator(it, -10f, 0f,40,2))
+                play(shakeAnimator(it, -10f, 0f, 40, 2))
                 start()
             }
             viewModel.clearSelected()
@@ -111,7 +110,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         val fragment = DictionaryFragment.newInstance()
                         parentFragmentManager.popBackStack()
                         parentFragmentManager.beginTransaction()
-                            .replace(R.id.fcvMain,fragment)
+                            .replace(R.id.fcvMain, fragment)
                             .addToBackStack(null)
                             .commit()
                         true
@@ -164,7 +163,13 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
 
-    private fun shakeAnimator(shake: View, startValue: Float, endValue: Float, dur: Long, repeat: Int) =
+    private fun shakeAnimator(
+        shake: View,
+        startValue: Float,
+        endValue: Float,
+        dur: Long,
+        repeat: Int
+    ) =
         ObjectAnimator.ofFloat(shake, "rotation", startValue, endValue).apply {
             repeatMode = ValueAnimator.RESTART
             repeatCount = repeat
