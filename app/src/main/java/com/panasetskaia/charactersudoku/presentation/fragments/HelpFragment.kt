@@ -1,7 +1,6 @@
 package com.panasetskaia.charactersudoku.presentation.fragments
 
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
