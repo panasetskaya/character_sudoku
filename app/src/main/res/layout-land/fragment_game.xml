@@ -27,6 +27,7 @@
             android:paddingRight="12dp"
             app:contentInsetStart="0dp"
             />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <ImageView
@@ -57,9 +58,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/buttonsLayout"
+        app:layout_constraintEnd_toStartOf="@id/guidelineHalf"
+
         />
 
     <GridLayout
@@ -70,10 +72,10 @@
         android:layout_centerHorizontal="true"
         android:columnCount="3"
         android:rowCount="3"
-        android:layout_margin="8dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sudoku_board"
+        app:layout_constraintStart_toEndOf="@+id/guidelineHalf"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         >
 
@@ -171,5 +173,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineHalf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

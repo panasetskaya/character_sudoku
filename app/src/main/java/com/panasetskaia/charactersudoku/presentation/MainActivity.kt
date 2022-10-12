@@ -1,6 +1,7 @@
 package com.panasetskaia.charactersudoku.presentation
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.panasetskaia.charactersudoku.databinding.ActivityMainBinding
