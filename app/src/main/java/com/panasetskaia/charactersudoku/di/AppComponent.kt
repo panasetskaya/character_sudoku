@@ -11,7 +11,8 @@ import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.R
 import dagger.BindsInstance
 import dagger.Component
 
-@Component
+@SudokuAppScope
+@Component(modules = [DataModule::class])
 interface AppComponent {
 
     fun inject(activity: MainActivity)
