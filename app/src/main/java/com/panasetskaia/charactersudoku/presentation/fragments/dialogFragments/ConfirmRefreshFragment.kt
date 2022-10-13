@@ -18,6 +18,7 @@ class ConfirmRefreshFragment : Fragment() {
     private val binding: FragmentConfirmRefreshBinding
         get() = _binding ?: throw RuntimeException("FragmentConfirmRefreshBinding is null")
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,7 +38,7 @@ class ConfirmRefreshFragment : Fragment() {
             parentFragmentManager.popBackStack()
             val fragment = RandomOrSelectDialogFragment.newInstance()
             parentFragmentManager.beginTransaction()
-                .add(R.id.gameContainerView,fragment)
+                .add(R.id.gameContainerView, fragment)
                 .addToBackStack(null)
                 .commit()
         }

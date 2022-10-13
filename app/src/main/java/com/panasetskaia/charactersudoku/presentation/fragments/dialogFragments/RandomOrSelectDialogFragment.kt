@@ -19,6 +19,7 @@ class RandomOrSelectDialogFragment : Fragment() {
     private val binding: FragmentRandomOrSelectDialogBinding
         get() = _binding ?: throw RuntimeException("FragmentRandomOrSelectDialogBinding is null")
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,10 +33,8 @@ class RandomOrSelectDialogFragment : Fragment() {
         viewModel = (activity as MainActivity).gameViewModel
 
         binding.randomButton.setOnClickListener {
-            viewModel.setSettingsState(true)
             parentFragmentManager.popBackStack()
             viewModel.getNewRandomGame()
-
         }
         binding.selectCharactersButton.setOnClickListener {
             viewModel.setSettingsState(true)

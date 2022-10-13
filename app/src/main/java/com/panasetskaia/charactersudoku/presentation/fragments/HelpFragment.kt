@@ -1,7 +1,6 @@
 package com.panasetskaia.charactersudoku.presentation.fragments
 
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
@@ -20,7 +19,7 @@ class HelpFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentHelpBinding.inflate(inflater, container, false)
         (activity as AppCompatActivity).setSupportActionBar(binding.appBar)
         return binding.root

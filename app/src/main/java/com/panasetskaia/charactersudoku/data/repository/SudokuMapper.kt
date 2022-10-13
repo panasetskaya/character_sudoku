@@ -4,8 +4,9 @@ import com.panasetskaia.charactersudoku.data.database.BoardDbModel
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import javax.inject.Inject
 
-class SudokuMapper {
+class SudokuMapper @Inject constructor() {
 
     fun mapDbChineseCharacterToDomainEntity(model: ChineseCharacterDbModel): ChineseCharacter {
         return ChineseCharacter(

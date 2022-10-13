@@ -6,7 +6,6 @@ import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider

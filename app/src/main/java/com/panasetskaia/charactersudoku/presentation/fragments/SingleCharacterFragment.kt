@@ -25,7 +25,6 @@ class SingleCharacterFragment : Fragment() {
     private var screenMode = SCREEN_MODE_DEFAULT
     private lateinit var chineseCharacter: ChineseCharacter
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseParams()

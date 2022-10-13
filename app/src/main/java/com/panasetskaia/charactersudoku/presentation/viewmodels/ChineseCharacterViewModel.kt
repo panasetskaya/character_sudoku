@@ -2,22 +2,19 @@ package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.AddOrEditCharacterUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.DeleteCharacterFromDictUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.GetWholeDictionaryUseCase
-import com.panasetskaia.charactersudoku.domain.usecases.SearchForCharacterUseCase
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChineseCharacterViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = CharacterSudokuRepositoryImpl()
-    private val addCharacterToDict = AddOrEditCharacterUseCase(repository)
-    private val deleteCharacter = DeleteCharacterFromDictUseCase(repository)
-    private val getWholeDict = GetWholeDictionaryUseCase(repository)
-    private val searchForCharacter = SearchForCharacterUseCase(repository) //todo: подключить поиск
-
+class ChineseCharacterViewModel @Inject constructor(
+    application: Application,
+    private val addCharacterToDict: AddOrEditCharacterUseCase,
+    private val deleteCharacter: DeleteCharacterFromDictUseCase,
+    private val getWholeDict: GetWholeDictionaryUseCase
+) : AndroidViewModel(application) {
     val dictionaryLiveData = getWholeDict()
 
     private var _isDialogHiddenLiveData = MutableLiveData<Boolean>()

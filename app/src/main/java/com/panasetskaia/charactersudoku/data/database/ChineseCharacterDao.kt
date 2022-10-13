@@ -7,7 +7,7 @@ import androidx.room.*
 interface ChineseCharacterDao {
 
     @Query("SELECT character FROM chinesecharacterdbmodel")
-    suspend fun getAllChinese(): List<String>
+    suspend fun getAllChineseAsList(): List<String>
 
     @Query("SELECT * FROM chinesecharacterdbmodel")
     fun getWholeDictionary(): LiveData<List<ChineseCharacterDbModel>>
