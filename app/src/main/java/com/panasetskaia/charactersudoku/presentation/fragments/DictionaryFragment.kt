@@ -3,7 +3,6 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
-import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
@@ -11,11 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
-import com.panasetskaia.charactersudoku.application.SudokuApplication
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
@@ -23,17 +20,8 @@ import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdap
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
-import javax.inject.Inject
 
 class DictionaryFragment : Fragment() {
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private val component by lazy {
-        (requireActivity().application as SudokuApplication).component
-    }
 
     private lateinit var characterViewModel: ChineseCharacterViewModel
     private lateinit var gameViewModel: GameViewModel
@@ -47,11 +35,6 @@ class DictionaryFragment : Fragment() {
     private val binding: FragmentDictionaryBinding
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
 
-    override fun onAttach(context: Context) {
-        component.inject(this)
-        super.onAttach(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,8 +46,8 @@ class DictionaryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        characterViewModel = ViewModelProvider(this,viewModelFactory)[ChineseCharacterViewModel::class.java]
-        gameViewModel = ViewModelProvider(this,viewModelFactory)[GameViewModel::class.java]
+        characterViewModel = (activity as MainActivity).characterViewModel
+        gameViewModel = (activity as MainActivity).gameViewModel
 
         setupMenu()
         setupFab()

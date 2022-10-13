@@ -1,27 +1,17 @@
 package com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.panasetskaia.charactersudoku.application.SudokuApplication
 import com.panasetskaia.charactersudoku.databinding.FragmentConfirmDeletingDialogBinding
+import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
-import javax.inject.Inject
 
 
 class ConfirmDeletingDialogFragment : Fragment() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private val component by lazy {
-        (requireActivity().application as SudokuApplication).component
-    }
 
     private lateinit var viewModel: ChineseCharacterViewModel
 
@@ -30,11 +20,6 @@ class ConfirmDeletingDialogFragment : Fragment() {
     private var _binding: FragmentConfirmDeletingDialogBinding? = null
     private val binding: FragmentConfirmDeletingDialogBinding
         get() = _binding ?: throw RuntimeException("FragmentConfirmDeletingDialogBinding is null")
-
-    override fun onAttach(context: Context) {
-        component.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +37,7 @@ class ConfirmDeletingDialogFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)[ChineseCharacterViewModel::class.java]
+        viewModel = (activity as MainActivity).characterViewModel
         binding.cancelButton.setOnClickListener {
             viewModel.finishDeleting(true)
             parentFragmentManager.popBackStack()
