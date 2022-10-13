@@ -1,5 +1,6 @@
 package com.panasetskaia.charactersudoku.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -7,14 +8,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.panasetskaia.charactersudoku.R
+import com.panasetskaia.charactersudoku.application.SudokuApplication
 import com.panasetskaia.charactersudoku.databinding.FragmentSingleCharacterBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
+import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
+import javax.inject.Inject
 
 
 class SingleCharacterFragment : Fragment() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as SudokuApplication).component
+    }
 
     private lateinit var viewModel: ChineseCharacterViewModel
 
@@ -25,6 +37,10 @@ class SingleCharacterFragment : Fragment() {
     private var screenMode = SCREEN_MODE_DEFAULT
     private lateinit var chineseCharacter: ChineseCharacter
 
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +59,7 @@ class SingleCharacterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as MainActivity).characterViewModel
+        viewModel = ViewModelProvider(this,viewModelFactory)[ChineseCharacterViewModel::class.java]
         setupMenu()
         when(screenMode){
             MODE_EDIT -> launchEditMode()

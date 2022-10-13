@@ -3,6 +3,7 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
@@ -10,15 +11,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.panasetskaia.charactersudoku.R
+import com.panasetskaia.charactersudoku.application.SudokuApplication
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
-import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmRefreshFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
+import javax.inject.Inject
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as SudokuApplication).component
+    }
 
     private val linearInterpolator = LinearInterpolator()
 
@@ -28,6 +39,10 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private val binding: FragmentGameBinding
         get() = _binding ?: throw RuntimeException("FragmentGameBinding is null")
 
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +56,8 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupMenu()
-        viewModel = (activity as MainActivity).gameViewModel
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
         binding.sudokuBoard.registerListener(this)
         viewModel.selectedCellLiveData.observe(viewLifecycleOwner) {
             updateSelectedCellUI(it)

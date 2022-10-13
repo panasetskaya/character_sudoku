@@ -19,7 +19,7 @@ class HelpFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentHelpBinding.inflate(inflater, container, false)
         (activity as AppCompatActivity).setSupportActionBar(binding.appBar)
         return binding.root

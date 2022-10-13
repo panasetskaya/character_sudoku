@@ -1,27 +1,29 @@
 package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.R
-import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class GameViewModel(application: Application) : AndroidViewModel(application) {
+class GameViewModel @Inject constructor(
+    application: Application,
+    private val getGameResult: GetResultUseCase,
+    private val getRandomBoard: GetRandomBoard,
+    private val getSavedGameUseCase: GetSavedGameUseCase,
+    private val saveGameUseCase: SaveGameUseCase,
+    private val getNewGameWithSel: GetNewGameUseCase,
+) : AndroidViewModel(application) {
 
-    private val repository = CharacterSudokuRepositoryImpl()
-    private val getGameResult = GetResultUseCase(repository)
-    private val getNineRandomCharFromDict = GetNineRandomCharFromDictUseCase(repository)
-    private val getSavedGameUseCase = GetSavedGameUseCase(repository)
-    private val saveGameUseCase = SaveGameUseCase(repository)
-    private val getNewGameWithSel = GetNewGameUseCase(repository)
 
     private var selectedRow = NO_SELECTION
     private var selectedCol = NO_SELECTION
@@ -129,19 +131,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     fun getNewRandomGame() {
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val nineChars = getNineRandomCharFromDict.invoke()
-            _nineCharactersLiveData.postValue(nineChars)
-            if (nineChars.size < 9) {
-                Toast.makeText(
-                    getApplication(),
-                    getApplication<Application>().getString(R.string.dict_is_empty),
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-            } else {
-                val translatedBoard = repository.getNewGameTestFun()
-                _boardLiveData.postValue(translatedBoard)
-            }
+            val randomBoard = getRandomBoard.invoke()
+            Log.d("My_RES", randomBoard.nineChars.toString())
+            _nineCharactersLiveData.postValue(randomBoard.nineChars)
+            _boardLiveData.postValue(randomBoard)
+            setSettingsState(true)
         }
     }
 
@@ -178,9 +172,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             savedBoard?.let {
                 _nineCharactersLiveData.postValue(it.nineChars)
                 _boardLiveData.postValue(it)
-                updateSelection(0,0)
+                updateSelection(0, 0)
             }
-            if (savedBoard==null) {
+            if (savedBoard == null) {
                 getNewRandomGame()
             }
         }

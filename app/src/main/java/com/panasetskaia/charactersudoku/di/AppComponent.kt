@@ -12,7 +12,7 @@ import dagger.BindsInstance
 import dagger.Component
 
 @SudokuAppScope
-@Component(modules = [DataModule::class])
+@Component(modules = [DataModule::class, ViewModelModule::class])
 interface AppComponent {
 
     fun inject(activity: MainActivity)

@@ -2,8 +2,9 @@ package com.panasetskaia.charactersudoku.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import com.panasetskaia.charactersudoku.application.SudokuApplication
-import com.panasetskaia.charactersudoku.data.database.SudokuDatabase
+import com.panasetskaia.charactersudoku.data.database.BoardDao
+import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
@@ -12,32 +13,32 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
-
-    private val charactersDao =
-        SudokuDatabase.getInstance(SudokuApplication.instance).chineseCharacterDao()
-    private val boardDao =
-        SudokuDatabase.getInstance(SudokuApplication.instance).boardDao()
-
-    private val mapper = SudokuMapper()
+class CharacterSudokuRepositoryImpl @Inject constructor(
+    private val mapper: SudokuMapper,
+    private val charactersDao: ChineseCharacterDao,
+    private val boardDao: BoardDao
+) : CharacterSudokuRepository {
 
     private var temporaryDict = INITIAL_9_CHAR
 
-    override suspend fun getNineRandomCharFromDict(): List<String> {
+    override suspend fun getRandomBoard(): Board {
         temporaryDict = INITIAL_9_CHAR
-        return withContext(Dispatchers.Default) {
-            val idList = charactersDao.getAllChinese()?.shuffled()
-            val listOfStringCharacters = mutableListOf<String>()
-            if (idList!=null && idList.size>=9) {
-                for (i in 0 until 9) {
-                    val randomChinese = idList[i]
-                    listOfStringCharacters.add(randomChinese)
-                }
-                temporaryDict = listOfStringCharacters
+        val wholeList = charactersDao.getAllChineseAsList().shuffled()
+        return if (wholeList.size >= 9) {
+            val randomCharacters = mutableListOf<String>()
+            for (i in 0 until 9) {
+                val randomChinese = wholeList[i]
+                randomCharacters.add(randomChinese)
             }
-            temporaryDict
+            getNewGameWithStrings(randomCharacters)
+        } else {
+            val grid = generateNumberGrid().values.toList()[0]
+            val board = mapStringGridToBoard(grid)
+            translateNumbersToCharacters(board)
         }
     }
 
@@ -50,18 +51,6 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
         charactersDao.deleteCharFromDict(characterId)
     }
 
-    override fun searchForCharacter(character: String): LiveData<List<ChineseCharacter>> {
-        return Transformations.map(
-            charactersDao.searchForCharacter(character)
-        ) { dbModelList ->
-            val entityList = mutableListOf<ChineseCharacter>()
-            for (i in dbModelList) {
-                val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
-                entityList.add(entity)
-            }
-            entityList
-        }
-    }
 
     override fun getWholeDictionary(): LiveData<List<ChineseCharacter>> {
         return Transformations.map(
@@ -82,6 +71,15 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
             listString.add(i.character)
         }
         temporaryDict = listString
+        return withContext(Dispatchers.Default) {
+            val grid = generateNumberGrid().values.toList()[0]
+            val board = mapStringGridToBoard(grid)
+            translateNumbersToCharacters(board)
+        }
+    }
+
+    private suspend fun getNewGameWithStrings(nineCharacters: List<String>): Board {
+        temporaryDict = nineCharacters
         return withContext(Dispatchers.Default) {
             val grid = generateNumberGrid().values.toList()[0]
             val board = mapStringGridToBoard(grid)
@@ -114,15 +112,6 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
             val solutionBoard = mapStringGridToBoard(solution)
             return SUCCESS(solutionBoard)
         } else return FAILED
-    }
-
-    // Just to test the game itself
-    suspend fun getNewGameTestFun(): Board {
-        return withContext(Dispatchers.Default) {
-            val grid = generateNumberGrid().values.toList()[0]
-            val board = mapStringGridToBoard(grid)
-            translateNumbersToCharacters(board)
-        }
     }
 
     private suspend fun generateNumberGrid(): Map<String, String> {
