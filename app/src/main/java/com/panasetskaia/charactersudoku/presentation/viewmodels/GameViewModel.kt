@@ -24,7 +24,6 @@ class GameViewModel @Inject constructor(
     private val getNewGameWithSel: GetNewGameUseCase,
 ) : AndroidViewModel(application) {
 
-
     private var selectedRow = NO_SELECTION
     private var selectedCol = NO_SELECTION
 

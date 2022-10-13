@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.panasetskaia.charactersudoku.data.database.BoardDao
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
-import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
@@ -41,7 +40,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
             translateNumbersToCharacters(board)
 
         }
-        return temporaryDict
     }
 
     override suspend fun addOrEditCharToDict(character: ChineseCharacter) {
