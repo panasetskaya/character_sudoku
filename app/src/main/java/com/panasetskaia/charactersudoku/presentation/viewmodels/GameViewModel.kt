@@ -136,6 +136,7 @@ class GameViewModel @Inject constructor(
             _nineCharactersLiveData.postValue(randomBoard.nineChars)
             _boardLiveData.postValue(randomBoard)
             setSettingsState(true)
+
         }
     }
 

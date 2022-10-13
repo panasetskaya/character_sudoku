@@ -39,7 +39,9 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
             val grid = generateNumberGrid().values.toList()[0]
             val board = mapStringGridToBoard(grid)
             translateNumbersToCharacters(board)
+
         }
+        return temporaryDict
     }
 
     override suspend fun addOrEditCharToDict(character: ChineseCharacter) {
