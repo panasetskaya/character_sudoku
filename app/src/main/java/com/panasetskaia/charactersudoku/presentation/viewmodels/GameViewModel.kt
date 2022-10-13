@@ -131,17 +131,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val nineChars = getNineRandomCharFromDict.invoke()
             _nineCharactersLiveData.postValue(nineChars)
-            if (nineChars.size < 9) {
-                Toast.makeText(
-                    getApplication(),
-                    getApplication<Application>().getString(R.string.dict_is_empty),
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-            } else {
-                val translatedBoard = repository.getNewGameTestFun()
-                _boardLiveData.postValue(translatedBoard)
-            }
+            val translatedBoard = repository.getNewGameTestFun()
+            _boardLiveData.postValue(translatedBoard)
         }
     }
 
@@ -178,9 +169,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             savedBoard?.let {
                 _nineCharactersLiveData.postValue(it.nineChars)
                 _boardLiveData.postValue(it)
-                updateSelection(0,0)
+                updateSelection(0, 0)
             }
-            if (savedBoard==null) {
+            if (savedBoard == null) {
                 getNewRandomGame()
             }
         }

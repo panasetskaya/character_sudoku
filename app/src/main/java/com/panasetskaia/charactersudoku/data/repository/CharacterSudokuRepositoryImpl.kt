@@ -27,18 +27,16 @@ class CharacterSudokuRepositoryImpl : CharacterSudokuRepository {
 
     override suspend fun getNineRandomCharFromDict(): List<String> {
         temporaryDict = INITIAL_9_CHAR
-        return withContext(Dispatchers.Default) {
-            val idList = charactersDao.getAllChinese()?.shuffled()
-            val listOfStringCharacters = mutableListOf<String>()
-            if (idList!=null && idList.size>=9) {
-                for (i in 0 until 9) {
-                    val randomChinese = idList[i]
-                    listOfStringCharacters.add(randomChinese)
-                }
-                temporaryDict = listOfStringCharacters
+        val idList = charactersDao.getAllChinese()?.shuffled()
+        val listOfStringCharacters = mutableListOf<String>()
+        if (idList.size >= 9) {
+            for (i in 0 until 9) {
+                val randomChinese = idList[i]
+                listOfStringCharacters.add(randomChinese)
             }
-            temporaryDict
+            temporaryDict = listOfStringCharacters
         }
+        return temporaryDict
     }
 
     override suspend fun addOrEditCharToDict(character: ChineseCharacter) {
