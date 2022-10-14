@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.animation.LinearInterpolator
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,7 @@ import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmRefreshFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
@@ -55,23 +57,22 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
+                    viewModel.boardSharedFlow.collectLatest {
+                        updateCells(it.cells)
+                    }
+                }
+                launch {
                     viewModel.selectedCellFlow.collectLatest {
                         updateSelectedCellUI(it)
                     }
                 }
-                launch {
-                    // second flow here!!!!
-                }
-                launch {
-                    // second flow here!!!!
-                }
-                launch {
-                    // second flow here!!!!
-                }
+//                launch {
+//                    // second flow here!!!!
+//                }
+//                launch {
+//                    // second flow here!!!!
+//                }
             }
-        }
-        viewModel.boardLiveData.observe(viewLifecycleOwner) {
-            updateCells(it.cells)
         }
         viewModel.settingsFinishedLiveData.observe(viewLifecycleOwner) { areSettingsDone ->
             binding.refreshGame.isClickable = areSettingsDone

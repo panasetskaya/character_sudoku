@@ -1,7 +1,6 @@
 package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -12,9 +11,11 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.*
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,13 +36,9 @@ class GameViewModel @Inject constructor(
     private var selectedCol = NO_SELECTION
     private var currentBoard = Board(-1, 9, listOf(), listOf())
 
-    private val _boardLiveData = MutableLiveData<Board>()
-    val boardLiveData: LiveData<Board>
-        get() = _boardLiveData
-
-    private val _boardFlow = MutableStateFlow(currentBoard)
-    val boardFlow: StateFlow<Board>
-        get() = _boardFlow.asStateFlow()
+    private val _boardSharedFlow = MutableSharedFlow<Board>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val boardSharedFlow: SharedFlow<Board>
+    get() = _boardSharedFlow
 
     private var _nineCharactersLiveData = MutableLiveData<List<String>>()
     val nineCharactersLiveData: LiveData<List<String>>
@@ -60,15 +57,14 @@ class GameViewModel @Inject constructor(
 
     fun handleInput(number: Int) {
         if (selectedRow == NO_SELECTION || selectedCol == NO_SELECTION) return
-        val board = _boardLiveData.value
-        board?.let { board ->
-            if (!board.getCell(selectedRow, selectedCol).isFixed) {
-                nineCharactersLiveData.value?.let { charList ->
-                    val characterValue = charList[number]
-                    board.getCell(selectedRow, selectedCol).value = characterValue
-                    board.getCell(selectedRow, selectedCol).isDoubtful = false
-                    _boardLiveData.postValue(board)
-                }
+        if (!currentBoard.getCell(selectedRow, selectedCol).isFixed) {
+            nineCharactersLiveData.value?.let { charList ->
+                val characterValue = charList[number]
+                val selR = selectedCellFlow.value.first
+                val selC = selectedCellFlow.value.second
+                currentBoard.getCell(selR, selC).value = characterValue
+                currentBoard.getCell(selR, selC).isDoubtful = false
+                updateBoard(currentBoard)
             }
         }
         checkForSolution()
@@ -77,7 +73,7 @@ class GameViewModel @Inject constructor(
     private fun updateBoard(newBoard: Board) {
         currentBoard = newBoard
         viewModelScope.launch {
-            _boardFlow.emit(newBoard)
+            _boardSharedFlow.tryEmit(newBoard)
         }
     }
 
@@ -85,61 +81,56 @@ class GameViewModel @Inject constructor(
         selectedRow = row
         selectedCol = col
         viewModelScope.launch {
-            _selectedCellFlow.emit(Pair(row,col))
+            _selectedCellFlow.emit(Pair(row, col))
         }
     }
 
     fun markSelectedAsDoubtful() {
-        val board = _boardLiveData.value
-        board?.let {
-            val isCellDoubtful = it.getCell(selectedRow, selectedCol).isDoubtful
-            it.getCell(selectedRow, selectedCol).isDoubtful = !isCellDoubtful
-            _boardLiveData.postValue(it)
-        }
+        val board = currentBoard
+        val isCellDoubtful = board.getCell(selectedRow, selectedCol).isDoubtful
+        board.getCell(selectedRow, selectedCol).isDoubtful = !isCellDoubtful
+        updateBoard(board)
     }
 
     fun clearSelected() {
         if (selectedRow == NO_SELECTION || selectedCol == NO_SELECTION) return
-        val board = _boardLiveData.value
-        board?.let {
-            if (!it.getCell(selectedRow, selectedCol).isFixed) {
-                it.getCell(selectedRow, selectedCol).value = EMPTY_CELL
-            }
-            _boardLiveData.postValue(it)
+        val board = currentBoard
+        if (!board.getCell(selectedRow, selectedCol).isFixed) {
+            board.getCell(selectedRow, selectedCol).value = EMPTY_CELL
         }
+        updateBoard(board)
+
     }
 
     private fun checkForSolution() {
-        val boardCells = boardLiveData.value?.cells
+        val boardCells = currentBoard.cells
         var count = 0
-        boardCells?.let { cellsList ->
-            for (i in cellsList) {
-                if (i.value == EMPTY_CELL) {
-                    count++
-                }
+        for (i in boardCells) {
+            if (i.value == EMPTY_CELL) {
+                count++
             }
         }
         if (count < EMPTY_CELLS_MINIMUM) {
             viewModelScope.launch {
-                boardLiveData.value?.let { board ->
-                    val gameResult = getGameResult.invoke(board)
-                    if (gameResult is SUCCESS) {
-                        Toast.makeText(
-                            getApplication(),
-                            getApplication<Application>().getString(R.string.game_succesful),
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                        _boardLiveData.postValue(gameResult.solution)
-                    } else {
-                        Toast.makeText(
-                            getApplication(),
-                            getApplication<Application>().getString(R.string.check_again),
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                    }
+
+                val gameResult = getGameResult.invoke(currentBoard)
+                if (gameResult is SUCCESS) {
+                    Toast.makeText(
+                        getApplication(),
+                        getApplication<Application>().getString(R.string.game_succesful),
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                    updateBoard(gameResult.solution)
+                } else {
+                    Toast.makeText(
+                        getApplication(),
+                        getApplication<Application>().getString(R.string.check_again),
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
                 }
+
             }
         }
     }
@@ -148,9 +139,8 @@ class GameViewModel @Inject constructor(
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val randomBoard = getRandomBoard.invoke()
-            Log.d("My_RES", randomBoard.nineChars.toString())
             _nineCharactersLiveData.postValue(randomBoard.nineChars)
-            _boardLiveData.postValue(randomBoard)
+            updateBoard(randomBoard)
             setSettingsState(true)
 
         }
@@ -165,7 +155,7 @@ class GameViewModel @Inject constructor(
             }
             _nineCharactersLiveData.postValue(listString)
             val board = getNewGameWithSel(selected)
-            _boardLiveData.postValue(board)
+            updateBoard(board)
         }
     }
 
@@ -175,12 +165,11 @@ class GameViewModel @Inject constructor(
 
 
     fun saveBoard() {
-        val currentBoard = boardLiveData.value
-        currentBoard?.let { board ->
-            viewModelScope.launch {
-                saveGameUseCase(board)
-            }
+
+        viewModelScope.launch {
+            saveGameUseCase(currentBoard)
         }
+
     }
 
     private fun getSavedBoard() {
@@ -188,9 +177,9 @@ class GameViewModel @Inject constructor(
             val savedBoard = getSavedGameUseCase()
             savedBoard?.let {
                 _nineCharactersLiveData.postValue(it.nineChars)
-                _boardLiveData.postValue(it)
+                updateBoard(it)
                 updateSelection(0, 0)
-            }  ?: getNewRandomGame()
+            } ?: getNewRandomGame()
         }
     }
 
