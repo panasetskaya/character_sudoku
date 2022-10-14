@@ -4,7 +4,6 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.animation.LinearInterpolator
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +21,6 @@ import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmRefreshFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
@@ -54,6 +52,26 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     private fun setupViewModel() {
         viewModel = (activity as MainActivity).gameViewModel
+        val buttons = listOf(
+            binding.oneButton,
+            binding.twoButton,
+            binding.threeButton,
+            binding.fourButton,
+            binding.fiveButton,
+            binding.sixButton,
+            binding.sevenButton,
+            binding.eightButton,
+            binding.nineButton
+        )
+        buttons.forEachIndexed { index, button ->
+            button.setOnClickListener {
+                viewModel.handleInput(index)
+                AnimatorSet().apply {
+                    play(shakeAnimator(it, -10f, 0f, 40, 2))
+                    start()
+                }
+            }
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -66,9 +84,13 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         updateSelectedCellUI(it)
                     }
                 }
-//                launch {
-//                    // second flow here!!!!
-//                }
+                launch {
+                    viewModel.nineCharSharedFlow.collectLatest {
+                        buttons.forEachIndexed { index, button ->
+                            button.text = it[index]
+                        }
+                    }
+                }
 //                launch {
 //                    // second flow here!!!!
 //                }
@@ -76,29 +98,6 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
         viewModel.settingsFinishedLiveData.observe(viewLifecycleOwner) { areSettingsDone ->
             binding.refreshGame.isClickable = areSettingsDone
-        }
-        val buttons = listOf(
-            binding.oneButton,
-            binding.twoButton,
-            binding.threeButton,
-            binding.fourButton,
-            binding.fiveButton,
-            binding.sixButton,
-            binding.sevenButton,
-            binding.eightButton,
-            binding.nineButton
-        )
-        viewModel.nineCharactersLiveData.observe(viewLifecycleOwner) { nineCharacters ->
-            buttons.forEachIndexed { index, button ->
-                button.text = nineCharacters[buttons.indexOf(button)]
-                button.setOnClickListener {
-                    viewModel.handleInput(index)
-                    AnimatorSet().apply {
-                        play(shakeAnimator(it, -10f, 0f, 40, 2))
-                        start()
-                    }
-                }
-            }
         }
         binding.refreshGame.setOnClickListener {
             AnimatorSet().apply {

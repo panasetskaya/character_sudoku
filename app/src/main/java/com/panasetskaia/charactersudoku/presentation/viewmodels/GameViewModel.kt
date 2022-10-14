@@ -35,14 +35,18 @@ class GameViewModel @Inject constructor(
     private var selectedRow = NO_SELECTION
     private var selectedCol = NO_SELECTION
     private var currentBoard = Board(-1, 9, listOf(), listOf())
+    private var nineChars = listOf<String>()
 
-    private val _boardSharedFlow = MutableSharedFlow<Board>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _boardSharedFlow =
+        MutableSharedFlow<Board>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val boardSharedFlow: SharedFlow<Board>
-    get() = _boardSharedFlow
+        get() = _boardSharedFlow
 
-    private var _nineCharactersLiveData = MutableLiveData<List<String>>()
-    val nineCharactersLiveData: LiveData<List<String>>
-        get() = _nineCharactersLiveData
+    private val _nineCharSharedFlow =
+        MutableSharedFlow<List<String>>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val nineCharSharedFlow: SharedFlow<List<String>>
+        get() = _nineCharSharedFlow
+
 
     private var _settingsFinishedLiveData = MutableLiveData<Boolean>()
     val settingsFinishedLiveData: LiveData<Boolean>
@@ -58,14 +62,12 @@ class GameViewModel @Inject constructor(
     fun handleInput(number: Int) {
         if (selectedRow == NO_SELECTION || selectedCol == NO_SELECTION) return
         if (!currentBoard.getCell(selectedRow, selectedCol).isFixed) {
-            nineCharactersLiveData.value?.let { charList ->
-                val characterValue = charList[number]
-                val selR = selectedCellFlow.value.first
-                val selC = selectedCellFlow.value.second
-                currentBoard.getCell(selR, selC).value = characterValue
-                currentBoard.getCell(selR, selC).isDoubtful = false
-                updateBoard(currentBoard)
-            }
+            val characterValue = nineChars[number]
+            val selR = selectedCellFlow.value.first
+            val selC = selectedCellFlow.value.second
+            currentBoard.getCell(selR, selC).value = characterValue
+            currentBoard.getCell(selR, selC).isDoubtful = false
+            updateBoard(currentBoard)
         }
         checkForSolution()
     }
@@ -75,6 +77,11 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch {
             _boardSharedFlow.tryEmit(newBoard)
         }
+    }
+
+    private fun updateNineChars(newNineChars: List<String>) {
+        nineChars = newNineChars
+        _nineCharSharedFlow.tryEmit(newNineChars)
     }
 
     fun updateSelection(row: Int, col: Int) {
@@ -139,7 +146,7 @@ class GameViewModel @Inject constructor(
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val randomBoard = getRandomBoard.invoke()
-            _nineCharactersLiveData.postValue(randomBoard.nineChars)
+            updateNineChars(randomBoard.nineChars)
             updateBoard(randomBoard)
             setSettingsState(true)
 
@@ -153,7 +160,7 @@ class GameViewModel @Inject constructor(
             for (i in selected) {
                 listString.add(i.character)
             }
-            _nineCharactersLiveData.postValue(listString)
+            updateNineChars(listString)
             val board = getNewGameWithSel(selected)
             updateBoard(board)
         }
@@ -176,7 +183,7 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch {
             val savedBoard = getSavedGameUseCase()
             savedBoard?.let {
-                _nineCharactersLiveData.postValue(it.nineChars)
+                updateNineChars(it.nineChars)
                 updateBoard(it)
                 updateSelection(0, 0)
             } ?: getNewRandomGame()
