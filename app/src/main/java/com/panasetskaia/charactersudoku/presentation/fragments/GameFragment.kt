@@ -46,9 +46,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupMenu()
-
-        viewModel = (activity as MainActivity).gameViewModel
         binding.sudokuBoard.registerListener(this)
+        setupViewModel()
+    }
+
+    private fun setupViewModel() {
+        viewModel = (activity as MainActivity).gameViewModel
         lifecycleScope.launchWhenStarted {
             viewModel.selectedCellFlow.collectLatest {
                 updateSelectedCellUI(it)

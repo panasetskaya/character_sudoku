@@ -26,7 +26,6 @@ class GameViewModel @Inject constructor(
     private val getNewGameWithSel: GetNewGameUseCase,
 ) : AndroidViewModel(application) {
 
-
     private val _selectedCellFlow = MutableStateFlow(Pair(NO_SELECTION, NO_SELECTION))
     val selectedCellFlow: StateFlow<Pair<Int, Int>>
         get() = _selectedCellFlow
@@ -38,7 +37,7 @@ class GameViewModel @Inject constructor(
     val boardLiveData: LiveData<Board>
         get() = _boardLiveData
 
-    private var currentBoard = boardLiveData.value ?: Board(-1, 9,listOf(), listOf())
+    private var currentBoard = Board(-1, 9,listOf(), listOf())
 
     private var _nineCharactersLiveData = MutableLiveData<List<String>>()
     val nineCharactersLiveData: LiveData<List<String>>
@@ -182,10 +181,7 @@ class GameViewModel @Inject constructor(
                 _nineCharactersLiveData.postValue(it.nineChars)
                 _boardLiveData.postValue(it)
                 updateSelection(0, 0)
-            }
-            if (savedBoard == null) {
-                getNewRandomGame()
-            }
+            }  ?: getNewRandomGame()
         }
     }
 
