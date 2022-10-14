@@ -14,6 +14,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,12 +33,15 @@ class GameViewModel @Inject constructor(
 
     private var selectedRow = NO_SELECTION
     private var selectedCol = NO_SELECTION
+    private var currentBoard = Board(-1, 9, listOf(), listOf())
 
     private val _boardLiveData = MutableLiveData<Board>()
     val boardLiveData: LiveData<Board>
         get() = _boardLiveData
 
-    private var currentBoard = Board(-1, 9,listOf(), listOf())
+    private val _boardFlow = MutableStateFlow(currentBoard)
+    val boardFlow: StateFlow<Board>
+        get() = _boardFlow.asStateFlow()
 
     private var _nineCharactersLiveData = MutableLiveData<List<String>>()
     val nineCharactersLiveData: LiveData<List<String>>
@@ -71,13 +75,18 @@ class GameViewModel @Inject constructor(
     }
 
     private fun updateBoard(newBoard: Board) {
-
+        currentBoard = newBoard
+        viewModelScope.launch {
+            _boardFlow.emit(newBoard)
+        }
     }
 
     fun updateSelection(row: Int, col: Int) {
         selectedRow = row
         selectedCol = col
-        _selectedCellFlow.value = Pair(row,col)
+        viewModelScope.launch {
+            _selectedCellFlow.emit(Pair(row,col))
+        }
     }
 
     fun markSelectedAsDoubtful() {

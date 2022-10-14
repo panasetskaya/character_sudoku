@@ -52,10 +52,21 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     private fun setupViewModel() {
         viewModel = (activity as MainActivity).gameViewModel
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.selectedCellFlow.collectLatest {
-                    updateSelectedCellUI(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.selectedCellFlow.collectLatest {
+                        updateSelectedCellUI(it)
+                    }
+                }
+                launch {
+                    // second flow here!!!!
+                }
+                launch {
+                    // second flow here!!!!
+                }
+                launch {
+                    // second flow here!!!!
                 }
             }
         }
