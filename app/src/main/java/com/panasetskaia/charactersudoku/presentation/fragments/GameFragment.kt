@@ -10,9 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
@@ -21,9 +21,9 @@ import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmRefreshFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
-
 
     private val linearInterpolator = LinearInterpolator()
 
@@ -52,9 +52,11 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     private fun setupViewModel() {
         viewModel = (activity as MainActivity).gameViewModel
-        lifecycleScope.launchWhenStarted {
-            viewModel.selectedCellFlow.collectLatest {
-                updateSelectedCellUI(it)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.selectedCellFlow.collectLatest {
+                    updateSelectedCellUI(it)
+                }
             }
         }
         viewModel.boardLiveData.observe(viewLifecycleOwner) {
@@ -86,7 +88,6 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 }
             }
         }
-
         binding.refreshGame.setOnClickListener {
             AnimatorSet().apply {
                 play(shakeAnimator(it, -360f, 0f, 250, 0))
