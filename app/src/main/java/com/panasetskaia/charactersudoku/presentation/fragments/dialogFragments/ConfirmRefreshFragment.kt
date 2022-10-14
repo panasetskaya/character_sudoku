@@ -36,9 +36,9 @@ class ConfirmRefreshFragment : Fragment() {
         }
         binding.yesButton.setOnClickListener {
             parentFragmentManager.popBackStack()
-            val fragment = RandomOrSelectDialogFragment.newInstance()
             parentFragmentManager.beginTransaction()
-                .add(R.id.gameContainerView, fragment)
+                .setReorderingAllowed(true)
+                .add(R.id.gameContainerView, RandomOrSelectDialogFragment::class.java, null)
                 .addToBackStack(null)
                 .commit()
         }
@@ -47,9 +47,5 @@ class ConfirmRefreshFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        fun newInstance() = ConfirmRefreshFragment()
     }
 }

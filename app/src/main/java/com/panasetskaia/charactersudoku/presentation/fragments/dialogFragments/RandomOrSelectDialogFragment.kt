@@ -38,23 +38,17 @@ class RandomOrSelectDialogFragment : Fragment() {
         }
         binding.selectCharactersButton.setOnClickListener {
             viewModel.setSettingsState(true)
-            val fragment = DictionaryFragment.newInstance()
             parentFragmentManager.popBackStack()
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fcvMain,fragment)
+                .setReorderingAllowed(true)
+                .replace(R.id.fcvMain, DictionaryFragment::class.java, null)
                 .addToBackStack(null)
                 .commit()
         }
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-    companion object {
-        fun newInstance() = RandomOrSelectDialogFragment()
-    }
-
 }

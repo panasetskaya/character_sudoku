@@ -68,13 +68,9 @@ class SingleCharacterFragment : Fragment() {
                             val newChar = ChineseCharacter(id,chineseChar,pinyin, translation, usages)
                             viewModel.addOrEditCharacter(newChar)
                             Toast.makeText(context, R.string.added, Toast.LENGTH_SHORT).show()
-                            val fragment = DictionaryFragment()
                             parentFragmentManager.popBackStack()
-                            parentFragmentManager.beginTransaction()
-                                .replace(R.id.fcvMain,fragment)
-                                .addToBackStack(null)
-                                .commit()
-                        } else if (chineseChar.length<1) {
+                            replaceWithThisFragment(DictionaryFragment::class.java,null)
+                        } else if (chineseChar.length < MIN_LENGTH) {
                             Toast.makeText(context, R.string.no_char, Toast.LENGTH_SHORT).show()
                         } else {Toast.makeText(context, R.string.too_many, Toast.LENGTH_SHORT).show()}
                         true
@@ -117,28 +113,20 @@ class SingleCharacterFragment : Fragment() {
         _binding = null
     }
 
+    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
+        parentFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
+            .replace(R.id.fcvMain, fragment, args)
+            .addToBackStack(null)
+            .commit()
+    }
+
     companion object {
-        private const val EXTRA_SCREEN_MODE = "extra_mode"
-        private const val EXTRA_CHINESE = "extra_chinese"
-        private const val MODE_EDIT = "mode_edit"
-        private const val MODE_ADD = "mode_add"
+        const val EXTRA_SCREEN_MODE = "extra_mode"
+        const val EXTRA_CHINESE = "extra_chinese"
+        const val MODE_EDIT = "mode_edit"
+        const val MODE_ADD = "mode_add"
         private const val SCREEN_MODE_DEFAULT = ""
-
-        fun newInstanceAddCharacter(): SingleCharacterFragment {
-            return SingleCharacterFragment().apply {
-                arguments = Bundle().apply {
-                    putString(EXTRA_SCREEN_MODE, MODE_ADD)
-                }
-            }
-        }
-
-        fun newInstanceEditCharacter(chineseCharacter: ChineseCharacter): SingleCharacterFragment  {
-            return SingleCharacterFragment().apply {
-                arguments = Bundle().apply {
-                    putString(EXTRA_SCREEN_MODE, MODE_EDIT)
-                    putParcelable(EXTRA_CHINESE, chineseCharacter)
-                }
-            }
-        }
+        private const val MIN_LENGTH = 1
     }
 }

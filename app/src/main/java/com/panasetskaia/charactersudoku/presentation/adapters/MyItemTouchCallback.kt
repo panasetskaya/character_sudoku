@@ -2,6 +2,7 @@ package com.panasetskaia.charactersudoku.presentation.adapters
 
 import android.annotation.SuppressLint
 import android.graphics.Canvas
+import android.os.Bundle
 import android.view.MotionEvent
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -59,9 +60,12 @@ open class MyItemTouchCallback(
         if (dX > -300f && !isDialogShowed) {
             viewModel.finishDeleting(false)
             val item = adapter.currentList[viewHolder.adapterPosition]
-            val fragment = ConfirmDeletingDialogFragment.newInstance(item.id)
+            val arguments = Bundle().apply {
+                putInt(ConfirmDeletingDialogFragment.ITEM_ID_EXTRA, item.id)
+            }
             context.parentFragmentManager.beginTransaction()
-                .add(R.id.fcvMain,fragment)
+                .setReorderingAllowed(true)
+                .add(R.id.fcvMain,ConfirmDeletingDialogFragment::class.java, arguments)
                 .addToBackStack(null)
                 .commit()
         }

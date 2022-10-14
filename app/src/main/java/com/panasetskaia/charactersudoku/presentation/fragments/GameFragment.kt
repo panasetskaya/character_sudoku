@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
@@ -83,11 +85,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 play(shakeAnimator(it, -360f, 0f, 250, 0))
                 start()
             }
-            val fragment = ConfirmRefreshFragment.newInstance()
-            parentFragmentManager.beginTransaction()
-                .add(R.id.gameContainerView, fragment)
-                .addToBackStack(null)
-                .commit()
+            addThisFragment(ConfirmRefreshFragment::class.java,null)
             viewModel.setSettingsState(false)
         }
         binding.clearCell.setOnClickListener {
@@ -109,20 +107,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.dictionary_icon -> {
-                        val fragment = DictionaryFragment.newInstance()
                         parentFragmentManager.popBackStack()
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fcvMain, fragment)
-                            .addToBackStack(null)
-                            .commit()
+                        replaceWithThisFragment(DictionaryFragment::class.java,null)
                         true
                     }
                     R.id.game_help_icon -> {
-                        val fragment = HelpFragment.newInstance()
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fcvMain, fragment)
-                            .addToBackStack(null)
-                            .commit()
+                        replaceWithThisFragment(HelpFragment::class.java, null)
                         true
                     }
                     else -> true
@@ -179,7 +169,20 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             interpolator = linearInterpolator
         }
 
-    companion object {
-        fun newInstance() = GameFragment()
+    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
+        parentFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
+            .replace(R.id.fcvMain, fragment, args)
+            .addToBackStack(null)
+            .commit()
     }
+
+    private fun addThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
+        parentFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
+            .add(R.id.gameContainerView, fragment, args)
+            .addToBackStack(null)
+            .commit()
+    }
+
 }

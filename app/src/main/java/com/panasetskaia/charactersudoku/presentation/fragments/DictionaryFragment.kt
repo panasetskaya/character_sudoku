@@ -48,7 +48,6 @@ class DictionaryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         characterViewModel = (activity as MainActivity).characterViewModel
         gameViewModel = (activity as MainActivity).gameViewModel
-
         setupMenu()
         setupFab()
         setupRecyclerView()
@@ -73,11 +72,17 @@ class DictionaryFragment : Fragment() {
                 characterViewModel.changeIsChosenState(it)
             }
             listAdapter.onCharacterItemClickListener = {
-                val fragment = SingleCharacterFragment.newInstanceEditCharacter(it)
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fcvMain, fragment)
-                    .addToBackStack(null)
-                    .commit()
+                val arguments = Bundle().apply {
+                    putString(
+                        SingleCharacterFragment.EXTRA_SCREEN_MODE,
+                        SingleCharacterFragment.MODE_EDIT
+                    )
+                    putParcelable(
+                        SingleCharacterFragment.EXTRA_CHINESE,
+                        it
+                    )
+                }
+                replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
             }
             setupSwipeListener(binding.recyclerViewList)
         }
@@ -94,7 +99,7 @@ class DictionaryFragment : Fragment() {
     private fun setupFab() {
         shakeAdd()
         characterViewModel.selectedCharactersLiveData.observe(viewLifecycleOwner) { selected ->
-            if (selected.size==9) {
+            if (selected.size == 9) {
                 binding.fabPlay.isEnabled = true
                 selectedCharacters = selected
                 shakePlay()
@@ -103,21 +108,19 @@ class DictionaryFragment : Fragment() {
             }
         }
         binding.fabAdd.setOnClickListener {
-            val fragment = SingleCharacterFragment.newInstanceAddCharacter()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fcvMain, fragment)
-                .addToBackStack(null)
-                .commit()
+            val arguments = Bundle().apply {
+                putString(
+                    SingleCharacterFragment.EXTRA_SCREEN_MODE,
+                    SingleCharacterFragment.MODE_ADD
+                )
+            }
+            replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
         }
         binding.fabPlay.setOnClickListener {
             gameViewModel.getGameWithSelected(selectedCharacters)
             characterViewModel.markAllUnselected()
             parentFragmentManager.popBackStack()
-            val fragment = GameFragment.newInstance()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fcvMain, fragment)
-                .addToBackStack(null)
-                .commit()
+            replaceWithThisFragment(GameFragment::class.java, null)
         }
     }
 
@@ -131,19 +134,11 @@ class DictionaryFragment : Fragment() {
                 return when (menuItem.itemId) {
                     R.id.sudoku_icon -> {
                         parentFragmentManager.popBackStack()
-                        val fragment = GameFragment.newInstance()
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fcvMain, fragment)
-                            .addToBackStack(null)
-                            .commit()
+                        replaceWithThisFragment(GameFragment::class.java, null)
                         true
                     }
                     R.id.dict_help_icon -> {
-                        val fragment = HelpFragment.newInstance()
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fcvMain, fragment)
-                            .addToBackStack(null)
-                            .commit()
+                        replaceWithThisFragment(HelpFragment::class.java, null)
                         true
                     }
                     else -> true
@@ -158,16 +153,16 @@ class DictionaryFragment : Fragment() {
         _binding = null
     }
 
-    private fun shakeAdd(){
+    private fun shakeAdd() {
         AnimatorSet().apply {
-            play(shakeAnimator(binding.fabAdd, "rotation", 0f),)
+            play(shakeAnimator(binding.fabAdd, "rotation", 0f))
             start()
         }
     }
 
     private fun shakePlay() {
         AnimatorSet().apply {
-            play(shakeAnimator(binding.fabPlay, "rotation", 0f),)
+            play(shakeAnimator(binding.fabPlay, "rotation", 0f))
             start()
         }
     }
@@ -180,8 +175,11 @@ class DictionaryFragment : Fragment() {
             interpolator = linearInterpolator
         }
 
-    companion object {
-        fun newInstance() = DictionaryFragment()
+    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
+        parentFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
+            .replace(R.id.fcvMain, fragment, args)
+            .addToBackStack(null)
+            .commit()
     }
-
 }

@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentHelpBinding
 
-
 class HelpFragment : Fragment() {
 
     private var _binding: FragmentHelpBinding? = null
@@ -45,20 +44,12 @@ class HelpFragment : Fragment() {
                 return when (menuItem.itemId) {
                     R.id.help_dict_icon -> {
                         parentFragmentManager.popBackStack()
-                        val fragment = DictionaryFragment.newInstance()
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fcvMain, fragment)
-                            .addToBackStack(null)
-                            .commit()
+                        replaceWithThisFragment(DictionaryFragment::class.java,null)
                         true
                     }
                     R.id.help_sudoku_icon -> {
                         parentFragmentManager.popBackStack()
-                        val fragment = GameFragment.newInstance()
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fcvMain, fragment)
-                            .addToBackStack(null)
-                            .commit()
+                        replaceWithThisFragment(GameFragment::class.java, null)
                         true
                     }
                     else -> true
@@ -67,8 +58,11 @@ class HelpFragment : Fragment() {
         }, viewLifecycleOwner)
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance() = HelpFragment()
+    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
+        parentFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
+            .replace(R.id.fcvMain, fragment, args)
+            .addToBackStack(null)
+            .commit()
     }
 }

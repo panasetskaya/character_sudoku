@@ -53,7 +53,7 @@ class ConfirmDeletingDialogFragment : Fragment() {
         if (!args.containsKey(ITEM_ID_EXTRA)) {
             throw RuntimeException("No ITEM_ID_EXTRA param")
         }
-        characterId = args.getInt(ITEM_ID_EXTRA, -1)
+        characterId = args.getInt(ITEM_ID_EXTRA, DEFAULT_ID)
     }
 
 
@@ -63,15 +63,7 @@ class ConfirmDeletingDialogFragment : Fragment() {
     }
 
     companion object {
-
-        private const val ITEM_ID_EXTRA = "item_id"
-
-        fun newInstance(itemId: Int): ConfirmDeletingDialogFragment {
-            return ConfirmDeletingDialogFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ITEM_ID_EXTRA, itemId)
-                }
-            }
-        }
+        const val ITEM_ID_EXTRA = "item_id"
+        private const val DEFAULT_ID = -1
     }
 }
