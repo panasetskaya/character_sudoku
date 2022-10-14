@@ -12,6 +12,7 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import androidx.lifecycle.lifecycleScope
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Cell
@@ -19,6 +20,7 @@ import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmRefreshFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
@@ -47,8 +49,10 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
         viewModel = (activity as MainActivity).gameViewModel
         binding.sudokuBoard.registerListener(this)
-        viewModel.selectedCellLiveData.observe(viewLifecycleOwner) {
-            updateSelectedCellUI(it)
+        lifecycleScope.launchWhenStarted {
+            viewModel.selectedCellFlow.collectLatest {
+                updateSelectedCellUI(it)
+            }
         }
         viewModel.boardLiveData.observe(viewLifecycleOwner) {
             updateCells(it.cells)

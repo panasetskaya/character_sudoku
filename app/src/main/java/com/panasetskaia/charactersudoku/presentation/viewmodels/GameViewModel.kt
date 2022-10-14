@@ -12,6 +12,8 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,16 +26,19 @@ class GameViewModel @Inject constructor(
     private val getNewGameWithSel: GetNewGameUseCase,
 ) : AndroidViewModel(application) {
 
+
+    private val _selectedCellFlow = MutableStateFlow(Pair(NO_SELECTION, NO_SELECTION))
+    val selectedCellFlow: StateFlow<Pair<Int, Int>>
+        get() = _selectedCellFlow
+
     private var selectedRow = NO_SELECTION
     private var selectedCol = NO_SELECTION
-
-    private val _selectedCellLiveData = MutableLiveData<Pair<Int, Int>>()
-    val selectedCellLiveData: LiveData<Pair<Int, Int>>
-        get() = _selectedCellLiveData
 
     private val _boardLiveData = MutableLiveData<Board>()
     val boardLiveData: LiveData<Board>
         get() = _boardLiveData
+
+    private var currentBoard = boardLiveData.value ?: Board(-1, 9,listOf(), listOf())
 
     private var _nineCharactersLiveData = MutableLiveData<List<String>>()
     val nineCharactersLiveData: LiveData<List<String>>
@@ -66,10 +71,14 @@ class GameViewModel @Inject constructor(
         checkForSolution()
     }
 
+    private fun updateBoard(newBoard: Board) {
+
+    }
+
     fun updateSelection(row: Int, col: Int) {
         selectedRow = row
         selectedCol = col
-        _selectedCellLiveData.postValue(Pair(row, col))
+        _selectedCellFlow.value = Pair(row,col)
     }
 
     fun markSelectedAsDoubtful() {
