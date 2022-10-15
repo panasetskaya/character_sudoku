@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentConfirmRefreshBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
@@ -36,11 +37,11 @@ class ConfirmRefreshFragment : Fragment() {
         }
         binding.yesButton.setOnClickListener {
             parentFragmentManager.popBackStack()
-            parentFragmentManager.beginTransaction()
-                .setReorderingAllowed(true)
-                .add<RandomOrSelectDialogFragment>(R.id.gameContainerView)
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.commit {
+                setReorderingAllowed(true)
+                add<RandomOrSelectDialogFragment>(R.id.gameContainerView)
+                addToBackStack(null)
+            }
         }
     }
 
