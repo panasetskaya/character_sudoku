@@ -13,6 +13,9 @@ import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -52,10 +55,8 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     }
 
 
-    override fun getWholeDictionary(): LiveData<List<ChineseCharacter>> {
-        return Transformations.map(
-            charactersDao.getWholeDictionary()
-        ) { dbModelList ->
+    override fun getWholeDictionary(): Flow<List<ChineseCharacter>> {
+        return charactersDao.getWholeDictionary().map { dbModelList ->
             val entityList = mutableListOf<ChineseCharacter>()
             for (i in dbModelList) {
                 val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
