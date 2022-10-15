@@ -3,8 +3,6 @@ package com.panasetskaia.charactersudoku.presentation.viewmodels
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.SUCCESS
@@ -28,14 +26,14 @@ class GameViewModel @Inject constructor(
     private val getNewGameWithSel: GetNewGameUseCase,
 ) : AndroidViewModel(application) {
 
+    private var selectedRow = NO_SELECTION
+    private var selectedCol = NO_SELECTION
+    private lateinit var currentBoard: Board
+    private lateinit var nineChars: List<String>
+
     private val _selectedCellFlow = MutableStateFlow(Pair(NO_SELECTION, NO_SELECTION))
     val selectedCellFlow: StateFlow<Pair<Int, Int>>
         get() = _selectedCellFlow
-
-    private var selectedRow = NO_SELECTION
-    private var selectedCol = NO_SELECTION
-    private var currentBoard = Board(-1, 9, listOf(), listOf())
-    private var nineChars = listOf<String>()
 
     private val _boardSharedFlow =
         MutableSharedFlow<Board>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
@@ -47,47 +45,23 @@ class GameViewModel @Inject constructor(
     val nineCharSharedFlow: SharedFlow<List<String>>
         get() = _nineCharSharedFlow
 
-
-    private var _settingsFinishedLiveData = MutableLiveData<Boolean>()
-    val settingsFinishedLiveData: LiveData<Boolean>
-        get() = _settingsFinishedLiveData
-
+    private var _settingsFinishedStateFlow = MutableStateFlow(true)
+    val settingsFinishedStateFlow: StateFlow<Boolean>
+        get() = _settingsFinishedStateFlow
 
     init {
         getSavedBoard()
-        updateSelection(NO_SELECTION, NO_SELECTION)
-        _settingsFinishedLiveData.postValue(true)
     }
 
     fun handleInput(number: Int) {
         if (selectedRow == NO_SELECTION || selectedCol == NO_SELECTION) return
         if (!currentBoard.getCell(selectedRow, selectedCol).isFixed) {
             val characterValue = nineChars[number]
-            val selR = selectedCellFlow.value.first
-            val selC = selectedCellFlow.value.second
-            currentBoard.getCell(selR, selC).value = characterValue
-            currentBoard.getCell(selR, selC).isDoubtful = false
+            currentBoard.getCell(selectedRow, selectedCol).value = characterValue
+            currentBoard.getCell(selectedRow, selectedCol).isDoubtful = false
             updateBoard(currentBoard)
         }
         checkForSolution()
-    }
-
-    private fun updateBoard(newBoard: Board) {
-        currentBoard = newBoard
-        _boardSharedFlow.tryEmit(newBoard)
-
-    }
-
-    private fun updateNineChars(newNineChars: List<String>) {
-        nineChars = newNineChars
-        _nineCharSharedFlow.tryEmit(newNineChars)
-    }
-
-    fun updateSelection(row: Int, col: Int) {
-        selectedRow = row
-        selectedCol = col
-        _selectedCellFlow.value = Pair(row, col)
-
     }
 
     fun markSelectedAsDoubtful() {
@@ -104,6 +78,50 @@ class GameViewModel @Inject constructor(
             board.getCell(selectedRow, selectedCol).value = EMPTY_CELL
         }
         updateBoard(board)
+    }
+
+    fun getNewRandomGame() {
+        updateSelection(NO_SELECTION, NO_SELECTION)
+        viewModelScope.launch {
+            val randomBoard = getRandomBoard.invoke()
+            updateNineChars(randomBoard.nineChars)
+            updateBoard(randomBoard)
+            setSettingsState(true)
+        }
+    }
+
+    fun getGameWithSelected(selected: List<ChineseCharacter>) {
+        updateSelection(NO_SELECTION, NO_SELECTION)
+        viewModelScope.launch {
+            val listString = mutableListOf<String>()
+            for (i in selected) {
+                listString.add(i.character)
+            }
+            updateNineChars(listString)
+            val board = getNewGameWithSel(selected)
+            updateBoard(board)
+        }
+    }
+
+    fun setSettingsState(areSettingsDone: Boolean) {
+        _settingsFinishedStateFlow.value = areSettingsDone
+    }
+
+    fun saveBoard() {
+        viewModelScope.launch {
+            saveGameUseCase(currentBoard)
+        }
+    }
+
+    private fun getSavedBoard() {
+        viewModelScope.launch {
+            val savedBoard = getSavedGameUseCase()
+            savedBoard?.let {
+                updateNineChars(it.nineChars)
+                updateBoard(it)
+                updateSelection(0, 0)
+            } ?: getNewRandomGame()
+        }
     }
 
     private fun checkForSolution() {
@@ -133,55 +151,24 @@ class GameViewModel @Inject constructor(
                     )
                         .show()
                 }
-
             }
         }
     }
 
-    fun getNewRandomGame() {
-        updateSelection(NO_SELECTION, NO_SELECTION)
-        viewModelScope.launch {
-            val randomBoard = getRandomBoard.invoke()
-            updateNineChars(randomBoard.nineChars)
-            updateBoard(randomBoard)
-            setSettingsState(true)
-
-        }
+    private fun updateBoard(newBoard: Board) {
+        currentBoard = newBoard
+        _boardSharedFlow.tryEmit(newBoard)
     }
 
-    fun getGameWithSelected(selected: List<ChineseCharacter>) {
-        updateSelection(NO_SELECTION, NO_SELECTION)
-        viewModelScope.launch {
-            val listString = mutableListOf<String>()
-            for (i in selected) {
-                listString.add(i.character)
-            }
-            updateNineChars(listString)
-            val board = getNewGameWithSel(selected)
-            updateBoard(board)
-        }
+    private fun updateNineChars(newNineChars: List<String>) {
+        nineChars = newNineChars
+        _nineCharSharedFlow.tryEmit(newNineChars)
     }
 
-    fun setSettingsState(areSettingsDone: Boolean) {
-        _settingsFinishedLiveData.postValue(areSettingsDone)
-    }
-
-
-    fun saveBoard() {
-        viewModelScope.launch {
-            saveGameUseCase(currentBoard)
-        }
-    }
-
-    private fun getSavedBoard() {
-        viewModelScope.launch {
-            val savedBoard = getSavedGameUseCase()
-            savedBoard?.let {
-                updateNineChars(it.nineChars)
-                updateBoard(it)
-                updateSelection(0, 0)
-            } ?: getNewRandomGame()
-        }
+    fun updateSelection(row: Int, col: Int) {
+        selectedRow = row
+        selectedCol = col
+        _selectedCellFlow.value = Pair(row, col)
     }
 
     companion object {

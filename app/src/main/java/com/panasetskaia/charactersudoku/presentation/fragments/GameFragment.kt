@@ -91,13 +91,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         }
                     }
                 }
-//                launch {
-//                    // second flow here!!!!
-//                }
+                launch {
+                    viewModel.settingsFinishedStateFlow.collectLatest { areSettingsDone ->
+                        binding.refreshGame.isClickable = areSettingsDone
+                    }
+                }
             }
-        }
-        viewModel.settingsFinishedLiveData.observe(viewLifecycleOwner) { areSettingsDone ->
-            binding.refreshGame.isClickable = areSettingsDone
         }
         binding.refreshGame.setOnClickListener {
             AnimatorSet().apply {
