@@ -4,12 +4,17 @@ import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.os.Bundle
 import android.view.MotionEvent
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.presentation.fragments.DictionaryFragment
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmDeletingDialogFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 open class MyItemTouchCallback(
     private val context: DictionaryFragment,
@@ -54,8 +59,12 @@ open class MyItemTouchCallback(
         isCurrentlyActive: Boolean
     ) {
         setTouchListener(recyclerView)
-        viewModel.isDialogHiddenLiveData.observe(context.viewLifecycleOwner) { isDialogHidden ->
-            isDialogShowed = !isDialogHidden
+        context.viewLifecycleOwner.lifecycleScope.launch {
+            context.viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isDialogHiddenStateFlow.collectLatest { isDialogHidden ->
+                    isDialogShowed = !isDialogHidden
+                }
+            }
         }
         if (dX > -300f && !isDialogShowed) {
             viewModel.finishDeleting(false)
@@ -65,7 +74,7 @@ open class MyItemTouchCallback(
             }
             context.parentFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
-                .add(R.id.fcvMain,ConfirmDeletingDialogFragment::class.java, arguments)
+                .add(R.id.fcvMain, ConfirmDeletingDialogFragment::class.java, arguments)
                 .addToBackStack(null)
                 .commit()
         }

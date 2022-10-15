@@ -6,6 +6,8 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.AddOrEditCharacterUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.DeleteCharacterFromDictUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.GetWholeDictionaryUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,11 +17,16 @@ class ChineseCharacterViewModel @Inject constructor(
     private val deleteCharacter: DeleteCharacterFromDictUseCase,
     private val getWholeDict: GetWholeDictionaryUseCase
 ) : AndroidViewModel(application) {
+
     val dictionaryLiveData = getWholeDict()
 
-    private var _isDialogHiddenLiveData = MutableLiveData<Boolean>()
-    val isDialogHiddenLiveData: LiveData<Boolean>
-        get() = _isDialogHiddenLiveData
+//    private var _isDialogHiddenLiveData = MutableLiveData<Boolean>()
+//    val isDialogHiddenLiveData: LiveData<Boolean>
+//        get() = _isDialogHiddenLiveData
+
+    private var _isDialogHiddenStateFlow = MutableStateFlow(true)
+    val isDialogHiddenStateFlow: StateFlow<Boolean>
+        get() = _isDialogHiddenStateFlow
 
     val selectedCharactersLiveData = Transformations.map(dictionaryLiveData) { wholeDictionary ->
         val selectedCharacters = mutableListOf<ChineseCharacter>()
@@ -52,7 +59,7 @@ class ChineseCharacterViewModel @Inject constructor(
     }
 
     fun finishDeleting(isDialogHidden: Boolean) {
-        _isDialogHiddenLiveData.postValue(isDialogHidden)
+        _isDialogHiddenStateFlow.value = isDialogHidden
     }
 
     fun markAllUnselected() {
