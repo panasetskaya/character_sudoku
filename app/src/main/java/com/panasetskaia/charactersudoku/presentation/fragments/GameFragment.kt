@@ -6,6 +6,7 @@ import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -26,13 +27,10 @@ import kotlinx.coroutines.launch
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     private val linearInterpolator = LinearInterpolator()
-
     private lateinit var viewModel: GameViewModel
-
     private var _binding: FragmentGameBinding? = null
     private val binding: FragmentGameBinding
         get() = _binding ?: throw RuntimeException("FragmentGameBinding is null")
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,88 +43,9 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupMenu()
         binding.sudokuBoard.registerListener(this)
-        setupViewModel()
-    }
-
-    private fun setupViewModel() {
-        viewModel = (activity as MainActivity).gameViewModel
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.selectedCellFlow.collectLatest {
-                    updateSelectedCellUI(it)
-                }
-            }
-        }
-        viewModel.boardLiveData.observe(viewLifecycleOwner) {
-            updateCells(it.cells)
-        }
-        viewModel.settingsFinishedLiveData.observe(viewLifecycleOwner) { areSettingsDone ->
-            binding.refreshGame.isClickable = areSettingsDone
-        }
-        val buttons = listOf(
-            binding.oneButton,
-            binding.twoButton,
-            binding.threeButton,
-            binding.fourButton,
-            binding.fiveButton,
-            binding.sixButton,
-            binding.sevenButton,
-            binding.eightButton,
-            binding.nineButton
-        )
-        viewModel.nineCharactersLiveData.observe(viewLifecycleOwner) { nineCharacters ->
-            buttons.forEachIndexed { index, button ->
-                button.text = nineCharacters[buttons.indexOf(button)]
-                button.setOnClickListener {
-                    viewModel.handleInput(index)
-                    AnimatorSet().apply {
-                        play(shakeAnimator(it, -10f, 0f, 40, 2))
-                        start()
-                    }
-                }
-            }
-        }
-        binding.refreshGame.setOnClickListener {
-            AnimatorSet().apply {
-                play(shakeAnimator(it, -360f, 0f, 250, 0))
-                start()
-            }
-            addThisFragment(ConfirmRefreshFragment::class.java,null)
-            viewModel.setSettingsState(false)
-        }
-        binding.clearCell.setOnClickListener {
-            AnimatorSet().apply {
-                play(shakeAnimator(it, -10f, 0f, 40, 2))
-                start()
-            }
-            viewModel.clearSelected()
-        }
-    }
-
-    private fun setupMenu() {
-        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
-
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.game_toolbar_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.dictionary_icon -> {
-                        parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(DictionaryFragment::class.java,null)
-                        true
-                    }
-                    R.id.game_help_icon -> {
-                        replaceWithThisFragment(HelpFragment::class.java, null)
-                        true
-                    }
-                    else -> true
-                }
-            }
-        }, viewLifecycleOwner)
+        setupMenu()
+        interactWithViewModel()
     }
 
     override fun onResume() {
@@ -145,13 +64,100 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         _binding = null
     }
 
-    override fun onCellTouched(row: Int, col: Int) {
-        viewModel.updateSelection(row, col)
+    private fun setupMenu() {
+        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.game_toolbar_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.dictionary_icon -> {
+                        parentFragmentManager.popBackStack()
+                        replaceWithThisFragment(DictionaryFragment::class.java, null)
+                        true
+                    }
+                    R.id.game_help_icon -> {
+                        replaceWithThisFragment(HelpFragment::class.java, null)
+                        true
+                    }
+                    else -> true
+                }
+            }
+        }, viewLifecycleOwner)
     }
 
-    override fun onCellLongTouched(row: Int, col: Int) {
-        viewModel.updateSelection(row, col)
-        viewModel.markSelectedAsDoubtful()
+    private fun interactWithViewModel() {
+        viewModel = (activity as MainActivity).gameViewModel
+        val buttons = listOf(
+            binding.oneButton,
+            binding.twoButton,
+            binding.threeButton,
+            binding.fourButton,
+            binding.fiveButton,
+            binding.sixButton,
+            binding.sevenButton,
+            binding.eightButton,
+            binding.nineButton
+        )
+        setListeners(buttons)
+        collectFlows(buttons)
+    }
+
+    private fun setListeners(buttons: List<Button>) {
+        buttons.forEachIndexed { index, button ->
+            button.setOnClickListener {
+                viewModel.handleInput(index)
+                AnimatorSet().apply {
+                    play(shakeAnimator(it, -10f, 0f, 40, 2))
+                    start()
+                }
+            }
+        }
+        binding.refreshGame.setOnClickListener {
+            AnimatorSet().apply {
+                play(shakeAnimator(it, -360f, 0f, 250, 0))
+                start()
+            }
+            addThisFragment(ConfirmRefreshFragment::class.java, null)
+            viewModel.setSettingsState(false)
+        }
+        binding.clearCell.setOnClickListener {
+            AnimatorSet().apply {
+                play(shakeAnimator(it, -10f, 0f, 40, 2))
+                start()
+            }
+            viewModel.clearSelected()
+        }
+    }
+
+    private fun collectFlows(buttons: List<Button>) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.boardSharedFlow.collectLatest {
+                        updateCells(it.cells)
+                    }
+                }
+                launch {
+                    viewModel.selectedCellFlow.collectLatest {
+                        updateSelectedCellUI(it)
+                    }
+                }
+                launch {
+                    viewModel.nineCharSharedFlow.collectLatest {
+                        buttons.forEachIndexed { index, button ->
+                            button.text = it[index]
+                        }
+                    }
+                }
+                launch {
+                    viewModel.settingsFinishedStateFlow.collectLatest { areSettingsDone ->
+                        binding.refreshGame.isClickable = areSettingsDone
+                    }
+                }
+            }
+        }
     }
 
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {
@@ -161,7 +167,6 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private fun updateCells(cells: List<Cell>?) = cells?.let {
         binding.sudokuBoard.updateCells(cells)
     }
-
 
     private fun shakeAnimator(
         shake: View,
@@ -176,6 +181,15 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             duration = dur
             interpolator = linearInterpolator
         }
+
+    override fun onCellTouched(row: Int, col: Int) {
+        viewModel.updateSelection(row, col)
+    }
+
+    override fun onCellLongTouched(row: Int, col: Int) {
+        viewModel.updateSelection(row, col)
+        viewModel.markSelectedAsDoubtful()
+    }
 
     private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
         parentFragmentManager.beginTransaction()
@@ -192,5 +206,4 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             .addToBackStack(null)
             .commit()
     }
-
 }

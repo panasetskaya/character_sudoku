@@ -1,11 +1,14 @@
 package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.AddOrEditCharacterUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.DeleteCharacterFromDictUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.GetWholeDictionaryUseCase
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,13 +18,14 @@ class ChineseCharacterViewModel @Inject constructor(
     private val deleteCharacter: DeleteCharacterFromDictUseCase,
     private val getWholeDict: GetWholeDictionaryUseCase
 ) : AndroidViewModel(application) {
-    val dictionaryLiveData = getWholeDict()
 
-    private var _isDialogHiddenLiveData = MutableLiveData<Boolean>()
-    val isDialogHiddenLiveData: LiveData<Boolean>
-        get() = _isDialogHiddenLiveData
+    val dictionarySharedFlow = getWholeDict().shareIn(viewModelScope, WhileSubscribed(5000),replay = 1)
 
-    val selectedCharactersLiveData = Transformations.map(dictionaryLiveData) { wholeDictionary ->
+    private var _isDialogHiddenStateFlow = MutableStateFlow(true)
+    val isDialogHiddenStateFlow: StateFlow<Boolean>
+        get() = _isDialogHiddenStateFlow
+
+    val selectedCharactersSharedFlow = dictionarySharedFlow.map { wholeDictionary ->
         val selectedCharacters = mutableListOf<ChineseCharacter>()
         for (i in wholeDictionary) {
             if (i.isChosen) {
@@ -29,7 +33,7 @@ class ChineseCharacterViewModel @Inject constructor(
             }
         }
         selectedCharacters.toList()
-    }
+    }.shareIn(viewModelScope, WhileSubscribed(5000),replay = 1)
 
     fun deleteCharacterFromDict(chineseCharacterId: Int) {
         viewModelScope.launch {
@@ -52,14 +56,13 @@ class ChineseCharacterViewModel @Inject constructor(
     }
 
     fun finishDeleting(isDialogHidden: Boolean) {
-        _isDialogHiddenLiveData.postValue(isDialogHidden)
+        _isDialogHiddenStateFlow.value = isDialogHidden
     }
 
     fun markAllUnselected() {
-        val dictionary = dictionaryLiveData.value
-        dictionary?.let { dictList ->
-            viewModelScope.launch {
-                for (i in dictList) {
+        viewModelScope.launch {
+            dictionarySharedFlow.collect {
+                for (i in it) {
                     if (i.isChosen) {
                         val newChineseCharacter = i.copy(isChosen = false)
                         addCharacterToDict(newChineseCharacter)

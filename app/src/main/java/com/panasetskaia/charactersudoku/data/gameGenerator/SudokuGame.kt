@@ -1,6 +1,5 @@
 package com.panasetskaia.charactersudoku.data.gameGenerator
 
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -129,7 +128,6 @@ class SudokuGame {
 
     private suspend fun removeDigits() {
         var digitsToRemove = GRID_SIZE * GRID_SIZE - PROVIDED_DIGITS
-
         while (digitsToRemove > 0) {
             val randomRow = generateRandomInt(MIN_DIGIT_INDEX, MAX_DIGIT_INDEX)
             val randomColumn = generateRandomInt(MIN_DIGIT_INDEX, MAX_DIGIT_INDEX)

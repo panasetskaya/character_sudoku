@@ -1,8 +1,8 @@
 package com.panasetskaia.charactersudoku.domain
 
-import androidx.lifecycle.LiveData
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import kotlinx.coroutines.flow.Flow
 
 interface CharacterSudokuRepository {
 
@@ -12,7 +12,7 @@ interface CharacterSudokuRepository {
 
     suspend fun deleteCharFromDict(characterId: Int)
 
-    fun getWholeDictionary(): LiveData<List<ChineseCharacter>>
+    fun getWholeDictionary(): Flow<List<ChineseCharacter>>
 
     suspend fun getNewGame(nineCharacters: List<ChineseCharacter>): Board
 
@@ -23,5 +23,3 @@ interface CharacterSudokuRepository {
     suspend fun getGameResult(board: Board): GameResult
 
 }
-
-//todo: LiveData Переписать на Flow

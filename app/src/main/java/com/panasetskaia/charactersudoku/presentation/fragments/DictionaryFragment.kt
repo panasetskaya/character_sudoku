@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
@@ -20,6 +23,8 @@ import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdap
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class DictionaryFragment : Fragment() {
 
@@ -28,7 +33,6 @@ class DictionaryFragment : Fragment() {
     private lateinit var listAdapter: DictionaryListAdapter
     private lateinit var itemTouchCallback: MyItemTouchCallback
     private lateinit var selectedCharacters: List<ChineseCharacter>
-
     private val linearInterpolator = LinearInterpolator()
 
     private var _binding: FragmentDictionaryBinding? = null
@@ -51,6 +55,54 @@ class DictionaryFragment : Fragment() {
         setupMenu()
         setupFab()
         setupRecyclerView()
+        collectFlows()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setupMenu() {
+        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.dict_toolbar_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.sudoku_icon -> {
+                        parentFragmentManager.popBackStack()
+                        replaceWithThisFragment(GameFragment::class.java, null)
+                        true
+                    }
+                    R.id.dict_help_icon -> {
+                        replaceWithThisFragment(HelpFragment::class.java, null)
+                        true
+                    }
+                    else -> true
+                }
+            }
+        }, viewLifecycleOwner)
+    }
+
+    private fun setupFab() {
+        shakeAdd()
+        binding.fabAdd.setOnClickListener {
+            val arguments = Bundle().apply {
+                putString(
+                    SingleCharacterFragment.EXTRA_SCREEN_MODE,
+                    SingleCharacterFragment.MODE_ADD
+                )
+            }
+            replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
+        }
+        binding.fabPlay.setOnClickListener {
+            gameViewModel.getGameWithSelected(selectedCharacters)
+            characterViewModel.markAllUnselected()
+            parentFragmentManager.popBackStack()
+            replaceWithThisFragment(GameFragment::class.java, null)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -86,71 +138,34 @@ class DictionaryFragment : Fragment() {
             }
             setupSwipeListener(binding.recyclerViewList)
         }
-        characterViewModel.dictionaryLiveData.observe(viewLifecycleOwner) {
-            listAdapter.submitList(it)
+    }
+
+    private fun collectFlows() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    characterViewModel.dictionarySharedFlow.collectLatest {
+                        listAdapter.submitList(it)
+                    }
+                }
+                launch {
+                    characterViewModel.selectedCharactersSharedFlow.collectLatest { selected ->
+                        if (selected.size == 9) {
+                            binding.fabPlay.isEnabled = true
+                            selectedCharacters = selected
+                            shakePlay()
+                        } else {
+                            binding.fabPlay.isEnabled = false
+                        }
+                    }
+                }
+            }
         }
     }
 
     private fun setupSwipeListener(rv: RecyclerView) {
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchHelper.attachToRecyclerView(rv)
-    }
-
-    private fun setupFab() {
-        shakeAdd()
-        characterViewModel.selectedCharactersLiveData.observe(viewLifecycleOwner) { selected ->
-            if (selected.size == 9) {
-                binding.fabPlay.isEnabled = true
-                selectedCharacters = selected
-                shakePlay()
-            } else {
-                binding.fabPlay.isEnabled = false
-            }
-        }
-        binding.fabAdd.setOnClickListener {
-            val arguments = Bundle().apply {
-                putString(
-                    SingleCharacterFragment.EXTRA_SCREEN_MODE,
-                    SingleCharacterFragment.MODE_ADD
-                )
-            }
-            replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
-        }
-        binding.fabPlay.setOnClickListener {
-            gameViewModel.getGameWithSelected(selectedCharacters)
-            characterViewModel.markAllUnselected()
-            parentFragmentManager.popBackStack()
-            replaceWithThisFragment(GameFragment::class.java, null)
-        }
-    }
-
-    private fun setupMenu() {
-        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.dict_toolbar_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.sudoku_icon -> {
-                        parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(GameFragment::class.java, null)
-                        true
-                    }
-                    R.id.dict_help_icon -> {
-                        replaceWithThisFragment(HelpFragment::class.java, null)
-                        true
-                    }
-                    else -> true
-                }
-            }
-        }, viewLifecycleOwner)
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun shakeAdd() {

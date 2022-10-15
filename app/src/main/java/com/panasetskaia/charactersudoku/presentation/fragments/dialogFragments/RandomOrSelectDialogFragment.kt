@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentRandomOrSelectDialogBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
@@ -19,11 +21,10 @@ class RandomOrSelectDialogFragment : Fragment() {
     private val binding: FragmentRandomOrSelectDialogBinding
         get() = _binding ?: throw RuntimeException("FragmentRandomOrSelectDialogBinding is null")
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentRandomOrSelectDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -31,7 +32,6 @@ class RandomOrSelectDialogFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).gameViewModel
-
         binding.randomButton.setOnClickListener {
             parentFragmentManager.popBackStack()
             viewModel.getNewRandomGame()
@@ -39,11 +39,11 @@ class RandomOrSelectDialogFragment : Fragment() {
         binding.selectCharactersButton.setOnClickListener {
             viewModel.setSettingsState(true)
             parentFragmentManager.popBackStack()
-            parentFragmentManager.beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.fcvMain, DictionaryFragment::class.java, null)
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.commit {
+                setReorderingAllowed(true)
+                replace<DictionaryFragment>(R.id.fcvMain)
+                addToBackStack(null)
+            }
         }
     }
 
