@@ -23,5 +23,3 @@ interface CharacterSudokuRepository {
     suspend fun getGameResult(board: Board): GameResult
 
 }
-
-//todo: LiveData Переписать на Flow

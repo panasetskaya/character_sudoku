@@ -1,7 +1,5 @@
 package com.panasetskaia.charactersudoku.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import com.panasetskaia.charactersudoku.data.database.BoardDao
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
@@ -15,7 +13,6 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -41,7 +38,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
             val grid = generateNumberGrid().values.toList()[0]
             val board = mapStringGridToBoard(grid)
             translateNumbersToCharacters(board)
-
         }
     }
 

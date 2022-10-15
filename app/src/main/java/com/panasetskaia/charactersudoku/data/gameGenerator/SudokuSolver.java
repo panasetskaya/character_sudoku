@@ -1,4 +1,4 @@
-// This class was developed on base of Sudoku class copyrighted in 2018 by Colin Smith, MIT License: https://github.com/littleredcomputer.
+// This class was developed with little changes on base of Sudoku class copyrighted in 2018 by Colin Smith, MIT License: https://github.com/littleredcomputer
 
 package com.panasetskaia.charactersudoku.data.gameGenerator;
 import com.google.common.collect.ImmutableList;
@@ -9,15 +9,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SudokuSolver {
-    private final int[][] constraints = new int[9][9];  // What choices remain valid for cell i,j?
-    private final int[] rows = new int[9];              // What numbers are free in row i?
-    private final int[] columns = new int[9];           // What numbers are free in column j?
-    private final int[] boxes = new int[9];             // What numbers are free in box k?
+    private final int[][] constraints = new int[9][9];
+    private final int[] rows = new int[9];
+    private final int[] columns = new int[9];
+    private final int[] boxes = new int[9];
     private final int[][] board = new int[9][9];
     private final List<List<Integer>> optionToMove = new ArrayList<>();
 
     private SudokuSolver() {
-        // Initially all moves are possible; record possibilities as bit vectors
         int mask = (1<<9) - 1;
         for (int i = 0; i < board.length; ++i) {
             rows[i] = columns[i] = boxes[i] = mask;
@@ -39,19 +38,15 @@ public class SudokuSolver {
         rows[r] &= ~mask;
         columns[c] &= ~mask;
         board[r][c] = n;
-        // Make sure this placement is valid...
         if ((constraints[r][c] & mask) == 0) {
             throw new IllegalArgumentException(
                     String.format("uniqueness violation for entry %d @ %d,%d %x", n, r, c, constraints[r][c]));
         }
-        // ...and then assert that there are no remaining options for this cell
         constraints[r][c] = 0;
-        // The consequences of this value: it is unique on its row/column...
         for (int k = 0; k < 9; k++) {
             constraints[r][k] &= ~mask;
             constraints[k][c] &= ~mask;
         }
-        // And unique within its box.
         int br = r / 3;
         int bc = c / 3;
         boxes[br * 3 + bc] &= ~mask;
@@ -72,9 +67,6 @@ public class SudokuSolver {
      * @return Sudoku object. Call solutions() on it when you're ready.
      */
     public static SudokuSolver fromBoardString(String boardString) {
-        // A board might look like:
-        // "..3 .1. ... 415 ... .9. 2.6" etc.
-        // Digits fill boxes, left to right, top to bottom; whitespace is ignored, '.' represents an empty box.
         SudokuSolver sudokuSolver = new SudokuSolver();
 
         int p = 0;
@@ -83,7 +75,7 @@ public class SudokuSolver {
             if (ch > '0' && ch <= '9') {
                 int r = p / 9;
                 int c = p % 9;
-                int number = ch - '0';   // 1..9
+                int number = ch - '0';
                 sudokuSolver.addEntry(r, c, number);
                 ++p;
             } else if (ch == '0') {
@@ -95,7 +87,6 @@ public class SudokuSolver {
 
     private ExactCoverProblem toProblem() {
         StringBuilder sb = new StringBuilder();
-        // Attach the items pij, rij, cij, bij for i = 1..9, j = 1..9
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 if (board[i][j] == 0) sb.append("p").append(i).append(j).append(' ');

@@ -6,22 +6,6 @@ import com.panasetskaia.charactersudoku.domain.entities.Cell
 class SudokuConverters {
 
     @TypeConverter
-    fun fromCell(cell: Cell): String {
-        return "${cell.row},${cell.col},${cell.value},${cell.isFixed},${cell.isDoubtful}"
-    }
-
-    @TypeConverter
-    fun toCell(s: String): Cell {
-        val list = s.split(",")
-        val row = list[0].trim().toInt()
-        val col = list[1].trim().toInt()
-        val value = list[2].trim()
-        val isFixed = list[3].trim().toBoolean()
-        val isDoubtful = list[4].trim().toBoolean()
-        return Cell(row, col, value, isFixed, isDoubtful)
-    }
-
-    @TypeConverter
     fun toListOfCells(s: String): List<Cell> {
         val mutableCells = mutableListOf<Cell>()
         val listOfStringCells = s.split(";")
@@ -61,6 +45,4 @@ class SudokuConverters {
     fun toListOfStrings(s: String): List<String> {
         return s.split(",")
     }
-
-
 }
