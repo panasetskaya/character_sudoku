@@ -74,9 +74,8 @@ class GameViewModel @Inject constructor(
 
     private fun updateBoard(newBoard: Board) {
         currentBoard = newBoard
-        viewModelScope.launch {
-            _boardSharedFlow.tryEmit(newBoard)
-        }
+        _boardSharedFlow.tryEmit(newBoard)
+
     }
 
     private fun updateNineChars(newNineChars: List<String>) {
