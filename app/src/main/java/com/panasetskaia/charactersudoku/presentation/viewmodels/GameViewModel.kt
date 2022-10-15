@@ -86,9 +86,8 @@ class GameViewModel @Inject constructor(
     fun updateSelection(row: Int, col: Int) {
         selectedRow = row
         selectedCol = col
-        viewModelScope.launch {
-            _selectedCellFlow.emit(Pair(row, col))
-        }
+        _selectedCellFlow.value = Pair(row, col)
+
     }
 
     fun markSelectedAsDoubtful() {
@@ -105,7 +104,6 @@ class GameViewModel @Inject constructor(
             board.getCell(selectedRow, selectedCol).value = EMPTY_CELL
         }
         updateBoard(board)
-
     }
 
     private fun checkForSolution() {
@@ -118,7 +116,6 @@ class GameViewModel @Inject constructor(
         }
         if (count < EMPTY_CELLS_MINIMUM) {
             viewModelScope.launch {
-
                 val gameResult = getGameResult.invoke(currentBoard)
                 if (gameResult is SUCCESS) {
                     Toast.makeText(
@@ -171,11 +168,9 @@ class GameViewModel @Inject constructor(
 
 
     fun saveBoard() {
-
         viewModelScope.launch {
             saveGameUseCase(currentBoard)
         }
-
     }
 
     private fun getSavedBoard() {
