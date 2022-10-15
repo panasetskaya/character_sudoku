@@ -33,7 +33,6 @@ class DictionaryFragment : Fragment() {
     private lateinit var listAdapter: DictionaryListAdapter
     private lateinit var itemTouchCallback: MyItemTouchCallback
     private lateinit var selectedCharacters: List<ChineseCharacter>
-
     private val linearInterpolator = LinearInterpolator()
 
     private var _binding: FragmentDictionaryBinding? = null
@@ -56,6 +55,54 @@ class DictionaryFragment : Fragment() {
         setupMenu()
         setupFab()
         setupRecyclerView()
+        collectFlows()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setupMenu() {
+        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.dict_toolbar_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.sudoku_icon -> {
+                        parentFragmentManager.popBackStack()
+                        replaceWithThisFragment(GameFragment::class.java, null)
+                        true
+                    }
+                    R.id.dict_help_icon -> {
+                        replaceWithThisFragment(HelpFragment::class.java, null)
+                        true
+                    }
+                    else -> true
+                }
+            }
+        }, viewLifecycleOwner)
+    }
+
+    private fun setupFab() {
+        shakeAdd()
+        binding.fabAdd.setOnClickListener {
+            val arguments = Bundle().apply {
+                putString(
+                    SingleCharacterFragment.EXTRA_SCREEN_MODE,
+                    SingleCharacterFragment.MODE_ADD
+                )
+            }
+            replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
+        }
+        binding.fabPlay.setOnClickListener {
+            gameViewModel.getGameWithSelected(selectedCharacters)
+            characterViewModel.markAllUnselected()
+            parentFragmentManager.popBackStack()
+            replaceWithThisFragment(GameFragment::class.java, null)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -91,6 +138,9 @@ class DictionaryFragment : Fragment() {
             }
             setupSwipeListener(binding.recyclerViewList)
         }
+    }
+
+    private fun collectFlows() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -116,54 +166,6 @@ class DictionaryFragment : Fragment() {
     private fun setupSwipeListener(rv: RecyclerView) {
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchHelper.attachToRecyclerView(rv)
-    }
-
-    private fun setupFab() {
-        shakeAdd()
-        binding.fabAdd.setOnClickListener {
-            val arguments = Bundle().apply {
-                putString(
-                    SingleCharacterFragment.EXTRA_SCREEN_MODE,
-                    SingleCharacterFragment.MODE_ADD
-                )
-            }
-            replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
-        }
-        binding.fabPlay.setOnClickListener {
-            gameViewModel.getGameWithSelected(selectedCharacters)
-            characterViewModel.markAllUnselected()
-            parentFragmentManager.popBackStack()
-            replaceWithThisFragment(GameFragment::class.java, null)
-        }
-    }
-
-    private fun setupMenu() {
-        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.dict_toolbar_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.sudoku_icon -> {
-                        parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(GameFragment::class.java, null)
-                        true
-                    }
-                    R.id.dict_help_icon -> {
-                        replaceWithThisFragment(HelpFragment::class.java, null)
-                        true
-                    }
-                    else -> true
-                }
-            }
-        }, viewLifecycleOwner)
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun shakeAdd() {
