@@ -58,6 +58,7 @@ class DictionaryFragment : Fragment() {
         collectFlows()
     }
 
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -144,7 +145,7 @@ class DictionaryFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    characterViewModel.dictionarySharedFlow.collectLatest {
+                    characterViewModel.dictionaryFlow.collectLatest {
                         listAdapter.submitList(it)
                     }
                 }
