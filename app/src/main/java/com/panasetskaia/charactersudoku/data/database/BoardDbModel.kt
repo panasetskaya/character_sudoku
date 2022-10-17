@@ -13,5 +13,6 @@ data class BoardDbModel (
     val size: Int = SudokuGame.GRID_SIZE,
     @TypeConverters(SudokuConverters::class)
     val cells: List<Cell>,
-    val nineChars: List<String>
+    val nineChars: List<String>,
+    var timeSpent: Long = 0
         )

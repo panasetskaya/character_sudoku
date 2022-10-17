@@ -3,9 +3,11 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.app.Application
 import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -99,10 +101,19 @@ class DictionaryFragment : Fragment() {
             replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
         }
         binding.fabPlay.setOnClickListener {
-            gameViewModel.getGameWithSelected(selectedCharacters)
-            characterViewModel.markAllUnselected()
-            parentFragmentManager.popBackStack()
-            replaceWithThisFragment(GameFragment::class.java, null)
+            if (it.isEnabled) {
+                gameViewModel.getGameWithSelected(selectedCharacters)
+                characterViewModel.markAllUnselected()
+                parentFragmentManager.popBackStack()
+                replaceWithThisFragment(GameFragment::class.java, null)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.not_enough),
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            }
         }
     }
 

@@ -34,5 +34,6 @@
     <string name="added">Добавлено</string>
     <string name="no_char">Отсутствует иероглиф</string>
     <string name="too_many">Оставьте только один символ</string>
+    <string name="not_enough">Для игры нужно 9 иероглифов</string>
 
 </resources>

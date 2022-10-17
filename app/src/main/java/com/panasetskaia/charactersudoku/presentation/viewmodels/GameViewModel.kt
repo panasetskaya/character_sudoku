@@ -3,6 +3,8 @@ package com.panasetskaia.charactersudoku.presentation.viewmodels
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.SUCCESS
@@ -30,6 +32,10 @@ class GameViewModel @Inject constructor(
     private var selectedCol = NO_SELECTION
     private lateinit var currentBoard: Board
     private lateinit var nineChars: List<String>
+
+    private val _timeSpentFlow = MutableStateFlow(0L)
+    val timeSpentFlow: StateFlow<Long>
+        get() = _timeSpentFlow
 
     private val _selectedCellFlow = MutableStateFlow(Pair(NO_SELECTION, NO_SELECTION))
     val selectedCellFlow: StateFlow<Pair<Int, Int>>
@@ -86,6 +92,7 @@ class GameViewModel @Inject constructor(
             val randomBoard = getRandomBoard.invoke()
             updateNineChars(randomBoard.nineChars)
             updateBoard(randomBoard)
+            _timeSpentFlow.value = randomBoard.timeSpent
             setSettingsState(true)
         }
     }
@@ -100,6 +107,7 @@ class GameViewModel @Inject constructor(
             updateNineChars(listString)
             val board = getNewGameWithSel(selected)
             updateBoard(board)
+            _timeSpentFlow.value = board.timeSpent
         }
     }
 
@@ -107,9 +115,10 @@ class GameViewModel @Inject constructor(
         _settingsFinishedStateFlow.value = areSettingsDone
     }
 
-    fun saveBoard() {
+    fun saveBoard(timeSpent: Long) {
         viewModelScope.launch {
-            saveGameUseCase(currentBoard)
+            val boardToSave = currentBoard.copy(timeSpent = timeSpent)
+            saveGameUseCase(boardToSave)
         }
     }
 
@@ -120,6 +129,7 @@ class GameViewModel @Inject constructor(
                 updateNineChars(it.nineChars)
                 updateBoard(it)
                 updateSelection(0, 0)
+                _timeSpentFlow.value = it.timeSpent
             } ?: getNewRandomGame()
         }
     }
@@ -158,6 +168,7 @@ class GameViewModel @Inject constructor(
     private fun updateBoard(newBoard: Board) {
         currentBoard = newBoard
         _boardSharedFlow.tryEmit(newBoard)
+
     }
 
     private fun updateNineChars(newNineChars: List<String>) {
@@ -169,6 +180,10 @@ class GameViewModel @Inject constructor(
         selectedRow = row
         selectedCol = col
         _selectedCellFlow.value = Pair(row, col)
+    }
+
+    fun updateTimer(timeWhenStopped: Long) {
+        _timeSpentFlow.value = timeWhenStopped
     }
 
     companion object {

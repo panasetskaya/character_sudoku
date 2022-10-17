@@ -105,11 +105,11 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     override suspend fun getGameResult(board: Board): GameResult {
         val stringGrid = translateCharactersToNumbers(board)
         val solution = SudokuGame().getSolution(stringGrid)
-        if (solution != null) {
+        return if (solution != null) {
             val numberBoard = mapStringGridToBoard(solution)
             val solutionBoard = translateNumbersToCharacters(numberBoard)
-            return SUCCESS(solutionBoard)
-        } else return FAILED
+            SUCCESS(solutionBoard)
+        } else FAILED
     }
 
     private suspend fun generateNumberGrid(): Map<String, String> {
