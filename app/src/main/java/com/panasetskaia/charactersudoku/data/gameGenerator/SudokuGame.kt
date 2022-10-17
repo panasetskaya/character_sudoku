@@ -164,6 +164,6 @@ class SudokuGame {
         internal const val MAX_DIGIT_VALUE = 9
         internal const val MIN_DIGIT_INDEX = 0
         internal const val MAX_DIGIT_INDEX = 8
-        internal const val PROVIDED_DIGITS = 25
+        internal const val PROVIDED_DIGITS = 32
     }
 }

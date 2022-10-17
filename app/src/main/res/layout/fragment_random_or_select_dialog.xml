@@ -40,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="32dp"
                 android:text="@string/randomOrSelect"
+                android:textColor="@color/boardLineColor"
                 android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>

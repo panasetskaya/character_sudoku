@@ -42,6 +42,7 @@
                 android:layout_margin="32dp"
                 android:gravity="center"
                 android:text="@string/confirmRefresh"
+                android:textColor="@color/boardLineColor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

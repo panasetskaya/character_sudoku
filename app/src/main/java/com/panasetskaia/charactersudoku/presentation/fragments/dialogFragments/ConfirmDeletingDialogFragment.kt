@@ -30,7 +30,7 @@ class ConfirmDeletingDialogFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentConfirmDeletingDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -56,10 +56,10 @@ class ConfirmDeletingDialogFragment : Fragment() {
         characterId = args.getInt(ITEM_ID_EXTRA, DEFAULT_ID)
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        viewModel.finishDeleting(true)
     }
 
     companion object {

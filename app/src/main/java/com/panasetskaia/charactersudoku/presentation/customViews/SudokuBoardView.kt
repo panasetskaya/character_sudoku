@@ -24,14 +24,14 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     private val thinLinePaint = Paint().apply {
         style = Paint.Style.STROKE
-        color = Color.BLACK
+        color = resources.getColor(R.color.boardLineColor)
         strokeWidth = 2F
     }
 
     private val thickLinePaint = Paint().apply {
         style = Paint.Style.STROKE
-        color = Color.BLACK
-        strokeWidth = 4F
+        color = resources.getColor(R.color.boardLineColor)
+        strokeWidth = 6F
     }
 
     private val notSelectedCellPaint = Paint().apply {
@@ -92,10 +92,18 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     private fun fillCells(canvas: Canvas) {
         if (selectedRow == -1 || selectedCol == -1) return
+        var currentValue = ""
+        cells?.forEach {
+            if (it.row == selectedRow && it.col == selectedCol) {
+                currentValue = it.value
+            }
+        }
         cells?.forEach {
             val r = it.row
             val c = it.col
             if (r == selectedRow && c == selectedCol) {
+                fillCell(canvas, r, c, selectedCellPaint)
+            } else if(it.value == currentValue && currentValue!="0") {
                 fillCell(canvas, r, c, selectedCellPaint)
             } else if (isCellInConflictingSelection(it)) {
                 fillCell(canvas, r, c, cellToWatchForPaint)
