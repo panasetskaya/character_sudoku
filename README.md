@@ -11,5 +11,5 @@ Plans: add audio recording for the characters.
 
 
 
-![Screenshot_game_final3](https://user-images.githubusercontent.com/90948269/195262732-3fb0ddd5-dd33-4623-b568-39c4ca32817f.png)
-![Screenshot_dict_final](https://user-images.githubusercontent.com/90948269/194834976-9f25bf5a-ef90-4106-a19e-e1c5faa80960.png)
+![Screenshot_game_final4](https://user-images.githubusercontent.com/90948269/196189180-01bf6f7a-7152-48d3-b207-e509eac4cc12.png)
+![Screenshot_dict_final2](https://user-images.githubusercontent.com/90948269/196189194-25b719ca-c3f3-49ff-8c5c-2adf0cc8fa5b.png)
