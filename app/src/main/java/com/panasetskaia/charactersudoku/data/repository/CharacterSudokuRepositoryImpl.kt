@@ -106,7 +106,8 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         val stringGrid = translateCharactersToNumbers(board)
         val solution = SudokuGame().getSolution(stringGrid)
         if (solution != null) {
-            val solutionBoard = mapStringGridToBoard(solution)
+            val numberBoard = mapStringGridToBoard(solution)
+            val solutionBoard = translateNumbersToCharacters(numberBoard)
             return SUCCESS(solutionBoard)
         } else return FAILED
     }
