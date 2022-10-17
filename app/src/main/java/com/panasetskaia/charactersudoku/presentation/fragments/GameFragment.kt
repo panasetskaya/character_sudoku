@@ -57,10 +57,9 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     override fun onPause() {
         super.onPause()
-        binding.chTimer?.let {
-            val timeWhenStopped = it.base - SystemClock.elapsedRealtime()
-            viewModel.saveBoard(timeWhenStopped)
-        }
+        val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
+        viewModel.saveBoard(timeWhenStopped)
+
     }
 
     override fun onDestroyView() {
@@ -219,18 +218,15 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
     private fun continueTimer(time: Long) {
-        binding.chTimer?.let {
-            it.base = SystemClock.elapsedRealtime() + time
-            it.start()
-        }
+        binding.chTimer.base = SystemClock.elapsedRealtime() + time
+        binding.chTimer.start()
+
     }
 
     private fun updateViewModelTimer() {
-        binding.chTimer?.let {
-            it.setOnChronometerTickListener {
-                val timeWhenStopped = it.base - SystemClock.elapsedRealtime()
-                viewModel.updateTimer(timeWhenStopped)
-            }
+        binding.chTimer.setOnChronometerTickListener {
+            val timeWhenStopped = it.base - SystemClock.elapsedRealtime()
+            viewModel.updateTimer(timeWhenStopped)
         }
     }
 }
