@@ -2,11 +2,12 @@ package com.panasetskaia.charactersudoku.domain.entities
 
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 
-class Board(
+data class Board(
     var id: Int = UNDEFINED_ID,
     val size: Int = SudokuGame.GRID_SIZE,
     val cells: List<Cell>,
-    val nineChars: List<String>
+    val nineChars: List<String>,
+    var timeSpent: Long = 0
 ) {
 
     fun getCell(row: Int, col: Int) = cells[row * size + col]

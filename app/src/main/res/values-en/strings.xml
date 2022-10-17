@@ -35,4 +35,6 @@
     <string name="too_many">There should be only 1 character</string>
     <string name="help_game">You can mark the selected cell as doubtful with a long click on the cell.\n\nThe button on the right erases the selected cell value.\n\nYour game board is saved every time you leave.</string>
     <string name="help_dict">Swipe left to delete the character from the dictionary.\n\nSelect characters for the game with a long click.\n\nThe play button will become active once you have selected 9 characters.</string>
-  </resources>
+    <string name="not_enough">There has to be 9 characters for the game</string>
+
+</resources>

@@ -30,6 +30,15 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <Chronometer
+        android:id="@+id/chTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        android:layout_margin="24dp"
+        />
+
     <ImageView
         android:id="@+id/refreshGame"
         android:layout_width="60dp"

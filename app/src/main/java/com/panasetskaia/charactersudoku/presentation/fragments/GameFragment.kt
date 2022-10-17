@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.*
 import android.view.animation.LinearInterpolator
 import android.widget.Button
@@ -56,7 +57,10 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     override fun onPause() {
         super.onPause()
-        viewModel.saveBoard()
+        binding.chTimer?.let {
+            val timeWhenStopped = it.base - SystemClock.elapsedRealtime()
+            viewModel.saveBoard(timeWhenStopped)
+        }
     }
 
     override fun onDestroyView() {
@@ -102,6 +106,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         )
         setListeners(buttons)
         collectFlows(buttons)
+        updateViewModelTimer()
     }
 
     private fun setListeners(buttons: List<Button>) {
@@ -127,6 +132,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 play(shakeAnimator(it, -10f, 0f, 40, 2))
                 start()
             }
+
             viewModel.clearSelected()
         }
     }
@@ -154,6 +160,11 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 launch {
                     viewModel.settingsFinishedStateFlow.collectLatest { areSettingsDone ->
                         binding.refreshGame.isClickable = areSettingsDone
+                    }
+                }
+                launch {
+                    viewModel.timeSpentFlow.collectLatest { time ->
+                        continueTimer(time)
                     }
                 }
             }
@@ -205,5 +216,21 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             .add(R.id.gameContainerView, fragment, args)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun continueTimer(time: Long) {
+        binding.chTimer?.let {
+            it.base = SystemClock.elapsedRealtime() + time
+            it.start()
+        }
+    }
+
+    private fun updateViewModelTimer() {
+        binding.chTimer?.let {
+            it.setOnChronometerTickListener {
+                val timeWhenStopped = it.base - SystemClock.elapsedRealtime()
+                viewModel.updateTimer(timeWhenStopped)
+            }
+        }
     }
 }
