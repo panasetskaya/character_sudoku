@@ -7,7 +7,7 @@ Consists of sudoku game and vocabulary.
 The Java classes: ExactCoverProblem and SudokuSolver, are developed by Colin Smith using Dancing Links algorithm, copyrighted in 2018, MIT License: https://github.com/littleredcomputer, and are used here with a few changes.
 
 
-Plans: add audio recording for the characters.
+Plans: add filtering by category in the dict.
 
 
 ![Screenshot_game_final9](https://user-images.githubusercontent.com/90948269/196337528-6f9ecf63-f666-416a-9a32-fb7e040e491a.png)
