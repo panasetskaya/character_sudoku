@@ -35,7 +35,7 @@
     <string name="added">Добавлено</string>
     <string name="no_char">Отсутствует иероглиф</string>
     <string name="too_many">Оставьте только один символ</string>
-    <string name="not_enough">Для игры нужно 9 иероглифов</string>
+    <string name="not_enough">Для игры нужно выбрать 9 иероглифов</string>
     <string name="go_to_details">Посмотреть подробнее</string>
     <string name="play_button">Кнопка запуска игры</string>
     <string name="add_new_button">Кнопка добавления иероглифа</string>
