@@ -12,6 +12,8 @@
     <color name="LightYellowColor">#ffd95a</color>
     <color name="transparent">#00ffffff</color>
     <color name="transparentGr">#50A7D2CB</color>
+    <color name="veryTransparentGr">#30A7D2CB</color>
+    <color name="defaultBoardTextColor">#74a39b</color>
     <color name="boardLineColor">#1b0000</color>
 
 </resources>

@@ -46,12 +46,12 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     private val cellToWatchForPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = resources.getColor(R.color.secondaryColor)
+        color = resources.getColor(R.color.veryTransparentGr)
     }
 
     private val notSelectedTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = resources.getColor(R.color.secondaryColor)
+        color = resources.getColor(R.color.defaultBoardTextColor)
         textSize = textSizeForCell
         typeface =  ResourcesCompat.getFont(context, MY_FONT)
     }
@@ -160,7 +160,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             val paintToUse =  when {
                 it.isFixed -> fixedTextPaint
                 it.isDoubtful -> doubtfulTextPaint
-                isCellInConflictingSelection(it) -> selectedTextPaint
+                (it.col == selectedCol && it.row == selectedRow) -> selectedTextPaint
                 else -> notSelectedTextPaint
             }
             val textBounds = Rect()
