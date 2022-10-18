@@ -10,6 +10,5 @@ The Java classes: ExactCoverProblem and SudokuSolver, are developed by Colin Smi
 Plans: add audio recording for the characters.
 
 
-
-![Screenshot_game_final4](https://user-images.githubusercontent.com/90948269/196189180-01bf6f7a-7152-48d3-b207-e509eac4cc12.png)
+![Screenshot_game_final9](https://user-images.githubusercontent.com/90948269/196337528-6f9ecf63-f666-416a-9a32-fb7e040e491a.png)
 ![Screenshot_dict_final2](https://user-images.githubusercontent.com/90948269/196189194-25b719ca-c3f3-49ff-8c5c-2adf0cc8fa5b.png)
