@@ -3,5 +3,6 @@
     <array name="preloaded_fonts" translatable="false">
         <item>@font/long_cang</item>
         <item>@font/ma_shan_zheng</item>
+        <item>@font/rubik</item>
     </array>
 </resources>
