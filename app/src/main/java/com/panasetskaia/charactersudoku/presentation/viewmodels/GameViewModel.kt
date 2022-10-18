@@ -151,7 +151,7 @@ class GameViewModel @Inject constructor(
                     )
                         .show()
                     updateBoard(gameResult.solution)
-                    updateTimer(0L)
+                    updateTimer(-1L)
                 } else {
                     Toast.makeText(
                         getApplication(),

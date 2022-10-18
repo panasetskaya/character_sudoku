@@ -36,6 +36,7 @@ class DictionaryFragment : Fragment() {
     private lateinit var itemTouchCallback: MyItemTouchCallback
     private lateinit var selectedCharacters: List<ChineseCharacter>
     private val linearInterpolator = LinearInterpolator()
+    private var isFabPlayEnabled = false
 
     private var _binding: FragmentDictionaryBinding? = null
     private val binding: FragmentDictionaryBinding
@@ -101,7 +102,7 @@ class DictionaryFragment : Fragment() {
             replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
         }
         binding.fabPlay.setOnClickListener {
-            if (it.isEnabled) {
+            if (isFabPlayEnabled) {
                 gameViewModel.getGameWithSelected(selectedCharacters)
                 characterViewModel.markAllUnselected()
                 parentFragmentManager.popBackStack()
@@ -163,11 +164,11 @@ class DictionaryFragment : Fragment() {
                 launch {
                     characterViewModel.selectedCharactersSharedFlow.collectLatest { selected ->
                         if (selected.size == 9) {
-                            binding.fabPlay.isEnabled = true
+                            isFabPlayEnabled = true
                             selectedCharacters = selected
                             shakePlay()
                         } else {
-                            binding.fabPlay.isEnabled = false
+                            isFabPlayEnabled = false
                         }
                     }
                 }

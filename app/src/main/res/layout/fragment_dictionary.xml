@@ -64,7 +64,6 @@
         android:visibility="visible"
         android:layout_margin="20dp"
         android:clickable="true"
-        android:enabled="false"
         android:contentDescription="@string/play_button"
         app:layout_constraintBottom_toTopOf="@+id/fabAdd"
         app:layout_constraintEnd_toEndOf="parent"

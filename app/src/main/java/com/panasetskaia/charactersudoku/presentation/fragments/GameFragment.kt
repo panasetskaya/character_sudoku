@@ -77,11 +77,11 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 return when (menuItem.itemId) {
                     R.id.dictionary_icon -> {
                         parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(DictionaryFragment::class.java, null)
+                        replaceWithThisFragment(DictionaryFragment::class.java)
                         true
                     }
                     R.id.game_help_icon -> {
-                        replaceWithThisFragment(HelpFragment::class.java, null)
+                        replaceWithThisFragment(HelpFragment::class.java)
                         true
                     }
                     else -> true
@@ -123,7 +123,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 play(shakeAnimator(it, -360f, 0f, 250, 0))
                 start()
             }
-            addThisFragment(ConfirmRefreshFragment::class.java, null)
+            addThisFragment(ConfirmRefreshFragment::class.java)
             viewModel.setSettingsState(false)
         }
         binding.clearCell.setOnClickListener {
@@ -163,7 +163,11 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 }
                 launch {
                     viewModel.timeSpentFlow.collectLatest { time ->
-                        continueTimer(time)
+                        if (time!=-1L) {
+                            continueTimer(time)
+                        } else {
+                            binding.chTimer.stop()
+                        }
                     }
                 }
             }
@@ -201,18 +205,18 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewModel.markSelectedAsDoubtful()
     }
 
-    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
+    private fun replaceWithThisFragment(fragment: Class<out Fragment>) {
         parentFragmentManager.beginTransaction()
             .setReorderingAllowed(true)
-            .replace(R.id.fcvMain, fragment, args)
+            .replace(R.id.fcvMain, fragment, null)
             .addToBackStack(null)
             .commit()
     }
 
-    private fun addThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
+    private fun addThisFragment(fragment: Class<out Fragment>) {
         parentFragmentManager.beginTransaction()
             .setReorderingAllowed(true)
-            .add(R.id.gameContainerView, fragment, args)
+            .add(R.id.gameContainerView, fragment, null)
             .addToBackStack(null)
             .commit()
     }
