@@ -160,7 +160,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             val paintToUse =  when {
                 it.isFixed -> fixedTextPaint
                 it.isDoubtful -> doubtfulTextPaint
-                (it.col == selectedCol && it.row == selectedRow) -> selectedTextPaint
                 else -> notSelectedTextPaint
             }
             val textBounds = Rect()
