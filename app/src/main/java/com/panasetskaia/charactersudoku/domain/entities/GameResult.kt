@@ -1,6 +1,4 @@
-package com.panasetskaia.charactersudoku.domain
-
-import com.panasetskaia.charactersudoku.domain.entities.Board
+package com.panasetskaia.charactersudoku.domain.entities
 
 sealed class GameResult
 

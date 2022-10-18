@@ -48,13 +48,15 @@
         app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
         app:layout_constraintEnd_toStartOf="@+id/buttonsLayout"
         app:layout_constraintTop_toTopOf="@+id/buttonsLayout"
-        android:src="@drawable/ic_refresh_stroke_and_fill" />
+        android:src="@drawable/ic_refresh_stroke_and_fill"
+        android:contentDescription="@string/refresh_button" />
 
     <ImageView
         android:id="@+id/clearCell"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:visibility="visible"
+        android:contentDescription="@string/clear_cell_button"
         app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
         app:layout_constraintStart_toEndOf="@+id/buttonsLayout"
         app:layout_constraintTop_toTopOf="@+id/buttonsLayout"
@@ -105,7 +107,7 @@
             android:layout_row="0"
             android:layout_column="0"
             style="@style/sudokuButtonStyle"
-            android:text="1" />
+            tools:text="1" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/twoButton"
@@ -113,7 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_row="0"
             android:padding="0dp"
-            android:text="2"
+            tools:text="2"
             android:layout_column="1"
             style="@style/sudokuButtonStyle"
             />
@@ -125,7 +127,7 @@
             android:layout_row="0"
             android:layout_column="2"
             style="@style/sudokuButtonStyle"
-            android:text="3" />
+            tools:text="3" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/fourButton"
@@ -134,7 +136,7 @@
             android:layout_row="1"
             android:layout_column="0"
             style="@style/sudokuButtonStyle"
-            android:text="4" />
+            tools:text="4" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/fiveButton"
@@ -143,7 +145,7 @@
             android:layout_row="1"
             android:layout_column="1"
             style="@style/sudokuButtonStyle"
-            android:text="5" />
+            tools:text="5" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sixButton"
@@ -152,7 +154,7 @@
             android:layout_row="1"
             android:layout_column="2"
             style="@style/sudokuButtonStyle"
-            android:text="6" />
+            tools:text="6" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sevenButton"
@@ -161,7 +163,7 @@
             android:layout_row="2"
             android:layout_column="0"
             style="@style/sudokuButtonStyle"
-            android:text="7" />
+            tools:text="7" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/eightButton"
@@ -169,9 +171,8 @@
             android:layout_height="wrap_content"
             android:layout_row="2"
             android:layout_column="1"
-
             style="@style/sudokuButtonStyle"
-            android:text="8" />
+            tools:text="8" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/nineButton"
@@ -180,7 +181,7 @@
             android:layout_row="2"
             android:layout_column="2"
             style="@style/sudokuButtonStyle"
-            android:text="9" />
+            tools:text="9" />
     </GridLayout>
 
     <androidx.fragment.app.FragmentContainerView

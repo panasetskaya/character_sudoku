@@ -49,6 +49,7 @@
         android:visibility="visible"
         android:layout_margin="20dp"
         android:clickable="true"
+        android:contentDescription="@string/add_new_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_add_button_stroke_and_fill" />
@@ -64,6 +65,7 @@
         android:layout_margin="20dp"
         android:clickable="true"
         android:enabled="false"
+        android:contentDescription="@string/play_button"
         app:layout_constraintBottom_toTopOf="@+id/fabAdd"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_play_button_stroke_and_fill" />

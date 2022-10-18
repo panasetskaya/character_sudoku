@@ -4,12 +4,7 @@ import com.panasetskaia.charactersudoku.data.database.BoardDao
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
-import com.panasetskaia.charactersudoku.domain.FAILED
-import com.panasetskaia.charactersudoku.domain.GameResult
-import com.panasetskaia.charactersudoku.domain.SUCCESS
-import com.panasetskaia.charactersudoku.domain.entities.Board
-import com.panasetskaia.charactersudoku.domain.entities.Cell
-import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import com.panasetskaia.charactersudoku.domain.entities.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
