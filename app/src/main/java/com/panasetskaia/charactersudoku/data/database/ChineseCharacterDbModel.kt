@@ -11,5 +11,6 @@ data class ChineseCharacterDbModel (
     var transcription: String,
     var translation: String,
     var usages: String,
-    var isChosen: Boolean = false
+    var isChosen: Boolean = false,
+    var category: String? = null
 )

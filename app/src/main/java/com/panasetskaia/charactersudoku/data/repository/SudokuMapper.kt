@@ -1,8 +1,10 @@
 package com.panasetskaia.charactersudoku.data.repository
 
 import com.panasetskaia.charactersudoku.data.database.BoardDbModel
+import com.panasetskaia.charactersudoku.data.database.CategoryDbModel
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
 import com.panasetskaia.charactersudoku.domain.entities.Board
+import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import javax.inject.Inject
 
@@ -15,7 +17,8 @@ class SudokuMapper @Inject constructor() {
             model.transcription,
             model.translation,
             model.usages,
-            model.isChosen
+            model.isChosen,
+            model.category
         )
     }
 
@@ -26,7 +29,8 @@ class SudokuMapper @Inject constructor() {
             entity.pinyin,
             entity.translation,
             entity.usages,
-            entity.isChosen
+            entity.isChosen,
+            entity.category
         )
     }
 
@@ -47,6 +51,19 @@ class SudokuMapper @Inject constructor() {
             boardDbModel.cells,
             boardDbModel.nineChars,
             boardDbModel.timeSpent
+        )
+    }
+
+    fun mapDomainCategoryToDbModel(category: Category): CategoryDbModel {
+        return CategoryDbModel(
+            category.id,
+            category.categoryName)
+    }
+
+    fun mapDbModelToDomainCategory(category: CategoryDbModel): Category {
+        return Category(
+            category.id,
+            category.categoryName
         )
     }
 

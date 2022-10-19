@@ -110,6 +110,25 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         } else FAILED
     }
 
+    override fun getAllCategories(): Flow<List<Category>> {
+        return charactersDao.getAllCategories().map {
+            val entityList = mutableListOf<Category>()
+            for (i in it) {
+                val entity = mapper.mapDbModelToDomainCategory(i)
+                entityList.add(entity)
+            }
+            entityList
+        }
+    }
+
+    override suspend fun deleteCategory(catId: Int) {
+        charactersDao.deleteCategory(catId)
+    }
+
+    override suspend fun addCategory(category: Category) {
+        charactersDao.addOrEditCategory(mapper.mapDomainCategoryToDbModel(category))
+    }
+
     private suspend fun generateNumberGrid(): Map<String, String> {
         return SudokuGame().fillGrid()
     }

@@ -152,10 +152,77 @@
                     android:inputType="none"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <Spinner
+                android:id="@+id/spinner_cat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                tools:listitem="@layout/category_spinner_item"
+                app:layout_constraintEnd_toStartOf="@+id/add_cat"
+                app:layout_constraintTop_toBottomOf="@+id/ti_usages" />
+
+            <ImageView
+                android:id="@+id/add_cat"
+                android:elevation="16dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:visibility="visible"
+                android:layout_marginEnd="20dp"
+                android:clickable="true"
+                android:contentDescription="@string/add_cat_button"
+                app:layout_constraintStart_toEndOf="@+id/spinner_cat"
+                app:layout_constraintTop_toTopOf="@+id/spinner_cat"
+                app:layout_constraintBottom_toBottomOf="@+id/spinner_cat"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/ic_baseline_add_24" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_new_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                app:hintTextColor="@color/primaryLightColor"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toStartOf="@+id/confirm_cat"
+                app:boxStrokeColor="@color/secondaryColor"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_cat"
+                app:shapeAppearance="@style/Rounded">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/new_cat"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/confirm_cat"
+                android:elevation="16dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:visibility="visible"
+                android:layout_marginEnd="20dp"
+                android:clickable="true"
+                android:contentDescription="@string/add_cat_button"
+                app:layout_constraintStart_toEndOf="@+id/ti_new_category"
+                app:layout_constraintTop_toTopOf="@+id/ti_new_category"
+                app:layout_constraintBottom_toBottomOf="@+id/ti_new_category"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/ic_baseline_check_24" />
+            
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/new_cat_group"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:constraint_referenced_ids="confirm_cat, ti_new_category"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </ScrollView>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,9 +9,7 @@ import com.panasetskaia.charactersudoku.databinding.FragmentConfirmDeletingDialo
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 
-
 class ConfirmDeletingDialogFragment : Fragment() {
-
 
     private lateinit var viewModel: ChineseCharacterViewModel
 

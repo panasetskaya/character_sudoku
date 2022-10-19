@@ -1,6 +1,7 @@
 package com.panasetskaia.charactersudoku.domain
 
 import com.panasetskaia.charactersudoku.domain.entities.Board
+import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import kotlinx.coroutines.flow.Flow
 
@@ -21,5 +22,11 @@ interface CharacterSudokuRepository {
     suspend fun getSavedGame(): Board?
 
     suspend fun getGameResult(board: Board): GameResult
+
+    fun getAllCategories(): Flow<List<Category>>
+
+    suspend fun deleteCategory(catId: Int)
+
+    suspend fun addCategory(category: Category)
 
 }

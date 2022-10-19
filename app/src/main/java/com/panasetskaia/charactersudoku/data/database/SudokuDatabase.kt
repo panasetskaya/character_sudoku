@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [ChineseCharacterDbModel::class, BoardDbModel::class], version = 7, exportSchema = false)
+@Database(entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class], version = 8, exportSchema = false)
 @TypeConverters(SudokuConverters::class)
 abstract class SudokuDatabase: RoomDatabase() {
 

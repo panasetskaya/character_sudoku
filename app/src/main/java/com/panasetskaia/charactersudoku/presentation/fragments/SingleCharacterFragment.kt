@@ -2,18 +2,28 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentSingleCharacterBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.presentation.adapters.SpinnerAdapter
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-class SingleCharacterFragment : Fragment() {
+class SingleCharacterFragment : Fragment(){
 
     private lateinit var viewModel: ChineseCharacterViewModel
     private var screenMode = SCREEN_MODE_DEFAULT
@@ -41,8 +51,20 @@ class SingleCharacterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).characterViewModel
         setupMenu()
+        collectFlows()
         when (screenMode) {
             MODE_EDIT -> launchEditMode()
+        }
+        binding.addCat.setOnClickListener {
+            binding.newCatGroup.isVisible = true
+            binding.confirmCat.setOnClickListener {
+                binding.etCategory.text?.let {
+                    if (it.toString()!="") {
+                        viewModel.addNewCategory(it.toString())
+                    }
+                }
+                binding.newCatGroup.isVisible = false
+            }
         }
     }
 
@@ -84,8 +106,14 @@ class SingleCharacterFragment : Fragment() {
                             val translation = binding.etTranslation.text.toString()
                             val usages = binding.etUsages.text.toString()
                             val id = if (screenMode == MODE_ADD) 0 else chineseCharacter.id
+                            val category = if (binding.tiNewCategory.isVisible && binding.etCategory.text != null
+                                && binding.etCategory.text.toString()!="") {
+                                binding.etCategory.text.toString()
+                            } else {
+                                binding.spinnerCat.selectedItem.toString()
+                            }
                             val newChar =
-                                ChineseCharacter(id, chineseChar, pinyin, translation, usages)
+                                ChineseCharacter(id, chineseChar, pinyin, translation, usages, category = category)
                             viewModel.addOrEditCharacter(newChar)
                             Toast.makeText(context, R.string.added, Toast.LENGTH_SHORT).show()
                             parentFragmentManager.popBackStack()
@@ -102,6 +130,29 @@ class SingleCharacterFragment : Fragment() {
             }
         }, viewLifecycleOwner)
     }
+
+    private fun collectFlows() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.categoriesFlow.collectLatest { categories ->
+                        val listOfCategories = mutableListOf<String>()
+                        for (i in categories) {
+                            listOfCategories.add(i.categoryName)
+                        }
+                        val adapter = SpinnerAdapter(
+                            this@SingleCharacterFragment,
+                            R.layout.category_spinner_item,
+                            listOfCategories
+                        )
+                        adapter.setDropDownViewResource(R.layout.category_spinner_item)
+                        binding.spinnerCat.adapter = adapter
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun launchEditMode() {
         with(binding) {

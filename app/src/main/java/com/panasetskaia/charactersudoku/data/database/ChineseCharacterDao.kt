@@ -21,4 +21,12 @@ interface ChineseCharacterDao {
     @Query("SELECT * FROM chinesecharacterdbmodel WHERE character=:characterStr")
     suspend fun getCharacterByChinese(characterStr: String): ChineseCharacterDbModel?
 
+    @Query("SELECT * FROM categorydbmodel")
+    fun getAllCategories(): Flow<List<CategoryDbModel>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addOrEditCategory(categoryDbModel: CategoryDbModel)
+
+    @Query("DELETE FROM categorydbmodel WHERE id=:catId")
+    suspend fun deleteCategory(catId: Int)
 }
