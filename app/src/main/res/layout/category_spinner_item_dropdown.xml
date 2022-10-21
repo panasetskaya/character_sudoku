@@ -15,4 +15,13 @@
         app:shapeAppearance="@style/Rounded"
         android:layout_weight="5"/>
 
+    <ImageView
+        android:id="@+id/deleteCategoryButton"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_close_24"
+        />
+
 </LinearLayout>

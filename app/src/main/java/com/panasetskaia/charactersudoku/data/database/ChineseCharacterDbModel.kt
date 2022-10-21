@@ -12,5 +12,9 @@ data class ChineseCharacterDbModel (
     var translation: String,
     var usages: String,
     var isChosen: Boolean = false,
-    var category: String? = null
-)
+    var category: String? = NO_CAT
+) {
+    companion object {
+        const val NO_CAT = "no category"
+    }
+}

@@ -135,11 +135,15 @@ class ChineseCharacterViewModel @Inject constructor(
             characterWeNeed
         }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
     }
+
+    fun deleteThisCategory(category: String) {
+        viewModelScope.launch {
+            deleteCategory(category)
+        }
+    }
 }
 
-//todo: слушатели выбора добавить (и переменную var selectedCat, куда будем это все записывать. ее же выставлять в спиннере
-// (не придется ли делать флоу на весь charater?? - !!! ты ж можешь тупо фильтрацию всего словаря зафигачить, и все!! через модель?? да))
+//todo: первую строку рэндомно
 //todo: кнопку выбора фильтра с переходом на фрагмент (и кнопку сброса фильтра, видмую, если выбрана категория)
-//todo: кнопку удаления категории
 //todo: запуск рэндома с категории (если слов не хватает??? тост-уведомление или добавить цифры?)
 

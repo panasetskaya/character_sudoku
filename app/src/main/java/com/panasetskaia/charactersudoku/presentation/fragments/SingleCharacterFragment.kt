@@ -32,7 +32,6 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private val binding: FragmentSingleCharacterBinding
         get() = _binding ?: throw RuntimeException("FragmentSingleCharacterBinding is null")
 
-    private lateinit var selectedCategory: String
     private lateinit var adapterForSpinner: SpinnerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,7 +121,8 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         adapterForSpinner = SpinnerAdapter(
                             this@SingleCharacterFragment,
                             R.layout.category_spinner_item,
-                            listOfCategories
+                            listOfCategories,
+                            viewModel
                         )
                         binding.spinnerCat.adapter = adapterForSpinner
                     }
@@ -170,8 +170,10 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
             && binding.etCategory.text.toString() != ""
         ) {
             binding.etCategory.text.toString()
-        } else {
+        } else if (binding.spinnerCat.selectedItem!=null){
             binding.spinnerCat.selectedItem.toString()
+        } else {
+            null
         }
         val newChar =
             ChineseCharacter(id, chinese, pinyin, translation, usages, category = category)
