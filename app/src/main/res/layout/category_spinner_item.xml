@@ -1,19 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
-
-    <com.google.android.material.textfield.MaterialAutoCompleteTextView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <TextView
         android:id="@+id/tv_cat"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:hintTextColor="@color/primaryLightColor"
-        app:endIconMode="clear_text"
-        android:visibility="visible"
+        android:padding="16dp"
+        android:text="@string/default_category"
         android:textSize="16sp"
-        android:text="category"
-        android:paddingStart="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:boxStrokeColor="@color/secondaryColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_cat"
-        app:shapeAppearance="@style/Rounded"/>
+        app:shapeAppearance="@style/Rounded"
+        android:layout_weight="5"/>
+
+    <ImageView
+        android:id="@+id/deleteCategoryButton"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:src="@drawable/ic_delete_stroke_and_fill"
+
+        />
+
+</LinearLayout>
+
+
+    <!--    <TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--        xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--        android:id="@+id/tv_cat"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        app:hintTextColor="@color/primaryLightColor"-->
+    <!--        app:endIconMode="clear_text"-->
+    <!--        android:visibility="visible"-->
+    <!--        android:textSize="16sp"-->
+    <!--        android:text="category"-->
+    <!--        android:padding="16dp"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:boxStrokeColor="@color/secondaryColor"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/spinner_cat"-->
+    <!--        app:shapeAppearance="@style/Rounded"/>-->

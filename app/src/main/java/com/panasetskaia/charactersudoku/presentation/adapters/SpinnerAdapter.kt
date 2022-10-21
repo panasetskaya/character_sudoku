@@ -35,4 +35,20 @@ class SpinnerAdapter(
         }
         return convertView!!
     }
+
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+        var convertView = convertView
+        if (convertView == null) {
+            val inflater = (mContext as Fragment).layoutInflater
+            convertView = inflater.inflate(mLayoutResourceId, parent, false)
+        }
+        try {
+            val category: String = getItem(position)
+            val cityAutoCompleteView = convertView!!.findViewById<View>(R.id.tv_cat) as TextView
+            cityAutoCompleteView.text = category
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return convertView!!
+    }
 }

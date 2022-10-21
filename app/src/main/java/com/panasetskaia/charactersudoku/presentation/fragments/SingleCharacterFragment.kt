@@ -23,7 +23,7 @@ import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class SingleCharacterFragment : Fragment(),AdapterView.OnItemSelectedListener{
+class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private lateinit var viewModel: ChineseCharacterViewModel
     private var chineseCharacterId = NEW_CHAR_ID
@@ -33,6 +33,7 @@ class SingleCharacterFragment : Fragment(),AdapterView.OnItemSelectedListener{
         get() = _binding ?: throw RuntimeException("FragmentSingleCharacterBinding is null")
 
     private lateinit var selectedCategory: String
+    private lateinit var adapterForSpinner: SpinnerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,13 +54,14 @@ class SingleCharacterFragment : Fragment(),AdapterView.OnItemSelectedListener{
         viewModel = (activity as MainActivity).characterViewModel
         setupMenu()
         collectFlows()
+        binding.spinnerCat.onItemSelectedListener = this
         binding.addCat.setOnClickListener {
             binding.newCatGroup.isVisible = true
             binding.confirmCat.setOnClickListener {
                 binding.etCategory.text?.let {
-                    if (it.toString()!="") {
+                    if (it.toString() != "") {
                         viewModel.addNewCategory(it.toString())
-                        selectedCategory = it.toString()
+                        addCharacter()
                     }
                 }
                 binding.newCatGroup.isVisible = false
@@ -91,19 +93,7 @@ class SingleCharacterFragment : Fragment(),AdapterView.OnItemSelectedListener{
                     R.id.add_icon -> {
                         val chineseChar = binding.etCharacter.text.toString()
                         if (chineseChar.length == 1) {
-                            val pinyin = binding.etPinyin.text.toString()
-                            val translation = binding.etTranslation.text.toString()
-                            val usages = binding.etUsages.text.toString()
-                            val id = if (chineseCharacterId == NEW_CHAR_ID) 0 else chineseCharacterId
-                            val category = if (binding.tiNewCategory.isVisible && binding.etCategory.text != null
-                                && binding.etCategory.text.toString()!="") {
-                                binding.etCategory.text.toString()
-                            } else {
-                                binding.spinnerCat.selectedItem.toString()
-                            }
-                            val newChar =
-                                ChineseCharacter(id, chineseChar, pinyin, translation, usages, category = category)
-                            viewModel.addOrEditCharacter(newChar)
+                            addCharacter()
                             Toast.makeText(context, R.string.added, Toast.LENGTH_SHORT).show()
                             parentFragmentManager.popBackStack()
                             replaceWithThisFragment(DictionaryFragment::class.java)
@@ -129,13 +119,12 @@ class SingleCharacterFragment : Fragment(),AdapterView.OnItemSelectedListener{
                         for (i in categories) {
                             listOfCategories.add(i.categoryName)
                         }
-                        val adapter = SpinnerAdapter(
+                        adapterForSpinner = SpinnerAdapter(
                             this@SingleCharacterFragment,
                             R.layout.category_spinner_item,
                             listOfCategories
                         )
-                        adapter.setDropDownViewResource(R.layout.category_spinner_item)
-                        binding.spinnerCat.adapter = adapter
+                        binding.spinnerCat.adapter = adapterForSpinner
                     }
                 }
                 launch {
@@ -145,6 +134,8 @@ class SingleCharacterFragment : Fragment(),AdapterView.OnItemSelectedListener{
                             etPinyin.setText(it.pinyin)
                             etTranslation.setText(it.translation)
                             etUsages.setText(it.usages)
+                            val position = adapterForSpinner.getPosition(it.category)
+                            spinnerCat.setSelection(position)
                         }
                     }
                 }
@@ -162,11 +153,29 @@ class SingleCharacterFragment : Fragment(),AdapterView.OnItemSelectedListener{
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        TODO("Not yet implemented")
+        p0?.setSelection(p2)
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
         TODO("Not yet implemented")
+    }
+
+    private fun addCharacter() {
+        val chinese = binding.etCharacter.text.toString()
+        val pinyin = binding.etPinyin.text.toString()
+        val translation = binding.etTranslation.text.toString()
+        val usages = binding.etUsages.text.toString()
+        val id = if (chineseCharacterId == NEW_CHAR_ID) 0 else chineseCharacterId
+        val category = if (binding.tiNewCategory.isVisible && binding.etCategory.text != null
+            && binding.etCategory.text.toString() != ""
+        ) {
+            binding.etCategory.text.toString()
+        } else {
+            binding.spinnerCat.selectedItem.toString()
+        }
+        val newChar =
+            ChineseCharacter(id, chinese, pinyin, translation, usages, category = category)
+        viewModel.addOrEditCharacter(newChar)
     }
 
     companion object {
