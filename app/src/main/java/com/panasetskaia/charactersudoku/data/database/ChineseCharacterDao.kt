@@ -29,4 +29,7 @@ interface ChineseCharacterDao {
 
     @Query("DELETE FROM categorydbmodel WHERE categoryName=:catName")
     suspend fun deleteCategory(catName: String)
+
+    @Query("SELECT EXISTS (SELECT 1 FROM categorydbmodel WHERE categoryName=:category)")
+    suspend fun categoryExists(category: String): Boolean
 }

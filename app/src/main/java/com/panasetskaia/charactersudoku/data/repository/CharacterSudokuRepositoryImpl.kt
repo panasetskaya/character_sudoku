@@ -2,6 +2,7 @@ package com.panasetskaia.charactersudoku.data.repository
 
 import com.panasetskaia.charactersudoku.data.database.BoardDao
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
@@ -123,10 +124,20 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
     override suspend fun deleteCategory(catName:String) {
         charactersDao.deleteCategory(catName)
+        charactersDao.getWholeDictionary().map {
+            for (i in it) {
+                if (i.category==catName) {
+                    val replaceChar = i.copy(category = ChineseCharacterDbModel.NO_CAT)
+                    charactersDao.addOrEditCharacter(replaceChar)
+                }
+            }
+        }
     }
 
     override suspend fun addCategory(category: Category) {
-        charactersDao.addOrEditCategory(mapper.mapDomainCategoryToDbModel(category))
+        if (!charactersDao.categoryExists(category.categoryName)) {
+            charactersDao.addOrEditCategory(mapper.mapDomainCategoryToDbModel(category))
+        }
     }
 
     private suspend fun generateNumberGrid(): Map<String, String> {

@@ -90,6 +90,9 @@ class ChineseCharacterViewModel @Inject constructor(
             _categoriesFlow.emitAll(
                 getAllCategories()
             )
+            _dictionaryFlow.emitAll(
+                getWholeDict()
+            )
         }
     }
 
@@ -145,6 +148,7 @@ class ChineseCharacterViewModel @Inject constructor(
 
 //todo: первую строку рэндомно - предустановка в датабазу
 //todo: удаление категории по уму - очистка категории на дефолтную у всех иерогов
+//todo: и добавление категории с проверкой дублирования!
 //todo: кнопку выбора фильтра с переходом на фрагмент (и кнопку сброса фильтра, видмую, если выбрана категория)
 //todo: запуск рэндома с категории (если слов не хватает??? тост-уведомление или добавить цифры?)
 
