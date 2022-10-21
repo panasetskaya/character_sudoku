@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class DeleteCategoryUseCase @Inject constructor(private val repository: CharacterSudokuRepository) {
 
-    suspend operator fun invoke(catId: Int) {
-        repository.deleteCategory(catId)
+    suspend operator fun invoke(catName:String) {
+        repository.deleteCategory(catName)
     }
 }

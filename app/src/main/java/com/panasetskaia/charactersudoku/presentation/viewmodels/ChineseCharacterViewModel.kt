@@ -119,11 +119,27 @@ class ChineseCharacterViewModel @Inject constructor(
             }
         }
     }
+
+    fun getOneCharacterById(id: Int): SharedFlow<ChineseCharacter> {
+        return dictionaryFlow.map { wholeDictionary ->
+            var characterWeNeed = ChineseCharacter(
+                character = "",
+                pinyin = "",
+                translation = "",
+                usages = "")
+            for (i in wholeDictionary) {
+                if (i.id==id) {
+                    characterWeNeed = i
+                }
+            }
+            characterWeNeed
+        }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
+    }
 }
 
 //todo: слушатели выбора добавить (и переменную var selectedCat, куда будем это все записывать. ее же выставлять в спиннере
 // (не придется ли делать флоу на весь charater?? - !!! ты ж можешь тупо фильтрацию всего словаря зафигачить, и все!! через модель?? да))
 //todo: кнопку выбора фильтра с переходом на фрагмент (и кнопку сброса фильтра, видмую, если выбрана категория)
-//todo: кнопку удаления категории (в дао сделать удаление категории по categoryName, а не id)
+//todo: кнопку удаления категории
 //todo: запуск рэндома с категории (если слов не хватает??? тост-уведомление или добавить цифры?)
 

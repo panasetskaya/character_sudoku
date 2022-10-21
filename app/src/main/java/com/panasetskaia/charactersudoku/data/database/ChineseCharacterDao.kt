@@ -27,6 +27,6 @@ interface ChineseCharacterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addOrEditCategory(categoryDbModel: CategoryDbModel)
 
-    @Query("DELETE FROM categorydbmodel WHERE id=:catId")
-    suspend fun deleteCategory(catId: Int)
+    @Query("DELETE FROM categorydbmodel WHERE categoryName=:catName")
+    suspend fun deleteCategory(catName: String)
 }

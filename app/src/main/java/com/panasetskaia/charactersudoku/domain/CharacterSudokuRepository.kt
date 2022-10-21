@@ -25,7 +25,7 @@ interface CharacterSudokuRepository {
 
     fun getAllCategories(): Flow<List<Category>>
 
-    suspend fun deleteCategory(catId: Int)
+    suspend fun deleteCategory(catName:String)
 
     suspend fun addCategory(category: Category)
 

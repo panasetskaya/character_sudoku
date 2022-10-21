@@ -3,7 +3,6 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
-import android.app.Application
 import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
@@ -94,9 +93,9 @@ class DictionaryFragment : Fragment() {
         shakeAdd()
         binding.fabAdd.setOnClickListener {
             val arguments = Bundle().apply {
-                putString(
-                    SingleCharacterFragment.EXTRA_SCREEN_MODE,
-                    SingleCharacterFragment.MODE_ADD
+                putInt(
+                    SingleCharacterFragment.EXTRA_CHINESE_ID,
+                    SingleCharacterFragment.NEW_CHAR_ID
                 )
             }
             replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
@@ -138,13 +137,9 @@ class DictionaryFragment : Fragment() {
             }
             listAdapter.onCharacterItemClickListener = {
                 val arguments = Bundle().apply {
-                    putString(
-                        SingleCharacterFragment.EXTRA_SCREEN_MODE,
-                        SingleCharacterFragment.MODE_EDIT
-                    )
-                    putParcelable(
-                        SingleCharacterFragment.EXTRA_CHINESE,
-                        it
+                    putInt(
+                        SingleCharacterFragment.EXTRA_CHINESE_ID,
+                        it.id
                     )
                 }
                 replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)

@@ -23,15 +23,16 @@ import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class SingleCharacterFragment : Fragment(){
+class SingleCharacterFragment : Fragment(),AdapterView.OnItemSelectedListener{
 
     private lateinit var viewModel: ChineseCharacterViewModel
-    private var screenMode = SCREEN_MODE_DEFAULT
-    private lateinit var chineseCharacter: ChineseCharacter
+    private var chineseCharacterId = NEW_CHAR_ID
 
     private var _binding: FragmentSingleCharacterBinding? = null
     private val binding: FragmentSingleCharacterBinding
         get() = _binding ?: throw RuntimeException("FragmentSingleCharacterBinding is null")
+
+    private lateinit var selectedCategory: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,15 +53,13 @@ class SingleCharacterFragment : Fragment(){
         viewModel = (activity as MainActivity).characterViewModel
         setupMenu()
         collectFlows()
-        when (screenMode) {
-            MODE_EDIT -> launchEditMode()
-        }
         binding.addCat.setOnClickListener {
             binding.newCatGroup.isVisible = true
             binding.confirmCat.setOnClickListener {
                 binding.etCategory.text?.let {
                     if (it.toString()!="") {
                         viewModel.addNewCategory(it.toString())
+                        selectedCategory = it.toString()
                     }
                 }
                 binding.newCatGroup.isVisible = false
@@ -75,20 +74,10 @@ class SingleCharacterFragment : Fragment(){
 
     private fun parseParams() {
         val args = requireArguments()
-        if (!args.containsKey(EXTRA_SCREEN_MODE)) {
-            throw RuntimeException("No screen mode param")
+        if (!args.containsKey(EXTRA_CHINESE_ID)) {
+            throw RuntimeException("No param: ChineseCharacterId")
         }
-        val mode = args.getString(EXTRA_SCREEN_MODE)
-        if (mode != MODE_EDIT && mode != MODE_ADD) {
-            throw RuntimeException("Unknown param: screen mode $mode")
-        }
-        screenMode = mode
-        if (screenMode == MODE_EDIT) {
-            if (!args.containsKey(EXTRA_CHINESE)) {
-                throw RuntimeException("No param: ChineseCharacter")
-            }
-            chineseCharacter = args.getParcelable(EXTRA_CHINESE)!!
-        }
+        chineseCharacterId = args.getInt(EXTRA_CHINESE_ID)
     }
 
     private fun setupMenu() {
@@ -105,7 +94,7 @@ class SingleCharacterFragment : Fragment(){
                             val pinyin = binding.etPinyin.text.toString()
                             val translation = binding.etTranslation.text.toString()
                             val usages = binding.etUsages.text.toString()
-                            val id = if (screenMode == MODE_ADD) 0 else chineseCharacter.id
+                            val id = if (chineseCharacterId == NEW_CHAR_ID) 0 else chineseCharacterId
                             val category = if (binding.tiNewCategory.isVisible && binding.etCategory.text != null
                                 && binding.etCategory.text.toString()!="") {
                                 binding.etCategory.text.toString()
@@ -149,19 +138,20 @@ class SingleCharacterFragment : Fragment(){
                         binding.spinnerCat.adapter = adapter
                     }
                 }
+                launch {
+                    viewModel.getOneCharacterById(chineseCharacterId).collectLatest {
+                        with(binding) {
+                            etCharacter.setText(it.character)
+                            etPinyin.setText(it.pinyin)
+                            etTranslation.setText(it.translation)
+                            etUsages.setText(it.usages)
+                        }
+                    }
+                }
             }
         }
     }
 
-
-    private fun launchEditMode() {
-        with(binding) {
-            etCharacter.setText(chineseCharacter.character)
-            etPinyin.setText(chineseCharacter.pinyin)
-            etTranslation.setText(chineseCharacter.translation)
-            etUsages.setText(chineseCharacter.usages)
-        }
-    }
 
     private fun replaceWithThisFragment(fragment: Class<out Fragment>) {
         parentFragmentManager.beginTransaction()
@@ -171,12 +161,18 @@ class SingleCharacterFragment : Fragment(){
             .commit()
     }
 
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+        TODO("Not yet implemented")
+    }
+
     companion object {
-        const val EXTRA_SCREEN_MODE = "extra_mode"
-        const val EXTRA_CHINESE = "extra_chinese"
-        const val MODE_EDIT = "mode_edit"
-        const val MODE_ADD = "mode_add"
-        private const val SCREEN_MODE_DEFAULT = ""
+        const val EXTRA_CHINESE_ID = "extra_chinese_id"
+        const val NEW_CHAR_ID = -1
         private const val MIN_LENGTH = 1
     }
 }
+

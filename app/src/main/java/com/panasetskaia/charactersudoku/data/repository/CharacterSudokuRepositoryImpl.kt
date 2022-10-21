@@ -121,8 +121,8 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteCategory(catId: Int) {
-        charactersDao.deleteCategory(catId)
+    override suspend fun deleteCategory(catName:String) {
+        charactersDao.deleteCategory(catName)
     }
 
     override suspend fun addCategory(category: Category) {
