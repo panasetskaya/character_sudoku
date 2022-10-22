@@ -3,13 +3,11 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +25,8 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private lateinit var viewModel: ChineseCharacterViewModel
     private var chineseCharacterId = NEW_CHAR_ID
+    private var mode = MODE_DEFAULT
+    private lateinit var selectedCategory: String
 
     private var _binding: FragmentSingleCharacterBinding? = null
     private val binding: FragmentSingleCharacterBinding
@@ -51,20 +51,14 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).characterViewModel
-        setupMenu()
-        collectFlows()
         binding.spinnerCat.onItemSelectedListener = this
-        binding.addCat.setOnClickListener {
-            binding.newCatGroup.isVisible = true
-            binding.confirmCat.setOnClickListener {
-                binding.etCategory.text?.let {
-                    if (it.toString() != "") {
-                        viewModel.addNewCategory(it.toString())
-                        addCharacter()
-                    }
-                }
-                binding.newCatGroup.isVisible = false
-            }
+        setupMenu()
+        collectCategories()
+        if (mode== MODE_ADD) {
+            launchModeAdd()
+        }
+        if (mode== MODE_EDIT) {
+            launchModeEdit()
         }
     }
 
@@ -75,10 +69,64 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun parseParams() {
         val args = requireArguments()
+        if (!args.containsKey(EXTRA_MODE)) {
+            throw RuntimeException("No param: Mode")
+        }
         if (!args.containsKey(EXTRA_CHINESE_ID)) {
             throw RuntimeException("No param: ChineseCharacterId")
         }
+        mode = args.getString(EXTRA_MODE) ?: MODE_DEFAULT
+        if (mode == MODE_DEFAULT) {
+            throw RuntimeException("Mode unknown")
+        }
         chineseCharacterId = args.getInt(EXTRA_CHINESE_ID)
+    }
+
+    private fun launchModeEdit() {
+        binding.addCat.setOnClickListener {
+            binding.newCatGroup.isVisible = true
+            binding.confirmCat.setOnClickListener {
+                binding.etCategory.text?.let {
+                    val newCat = it.toString().trim()
+                    if (newCat != "") {
+                        viewModel.addNewCategory(newCat)
+                        addCharacter(newCat)
+                    }
+                }
+                binding.newCatGroup.isVisible = false
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.getOneCharacterById(chineseCharacterId).collectLatest {
+                        with(binding) {
+                            etCharacter.setText(it.character)
+                            etPinyin.setText(it.pinyin)
+                            etTranslation.setText(it.translation)
+                            etUsages.setText(it.usages)
+                            setSpinnerSelection(it.category)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun launchModeAdd() {
+        binding.addCat.setOnClickListener {
+            binding.newCatGroup.isVisible = true
+            binding.confirmCat.setOnClickListener {
+                binding.etCategory.text?.let {
+                    val newCat = it.toString().trim()
+                    if (newCat != "") {
+                        viewModel.addNewCategory(newCat)
+                        setSpinnerSelection(newCat)
+                    }
+                }
+                binding.newCatGroup.isVisible = false
+            }
+        }
     }
 
     private fun setupMenu() {
@@ -92,7 +140,8 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     R.id.add_icon -> {
                         val chineseChar = binding.etCharacter.text.toString()
                         if (chineseChar.length == 1) {
-                            addCharacter()
+                            val category = binding.spinnerCat.selectedItem.toString()
+                            addCharacter(category)
                             Toast.makeText(context, R.string.added, Toast.LENGTH_SHORT).show()
                             parentFragmentManager.popBackStack()
                             replaceWithThisFragment(DictionaryFragment::class.java)
@@ -109,7 +158,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }, viewLifecycleOwner)
     }
 
-    private fun collectFlows() {
+    private fun collectCategories() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -127,18 +176,6 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         binding.spinnerCat.adapter = adapterForSpinner
                     }
                 }
-                launch {
-                    viewModel.getOneCharacterById(chineseCharacterId).collectLatest {
-                        with(binding) {
-                            etCharacter.setText(it.character)
-                            etPinyin.setText(it.pinyin)
-                            etTranslation.setText(it.translation)
-                            etUsages.setText(it.usages)
-                            val position = adapterForSpinner.getPosition(it.category)
-                            spinnerCat.setSelection(position)
-                        }
-                    }
-                }
             }
         }
     }
@@ -153,37 +190,34 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        p0?.setSelection(p2)
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-        TODO("Not yet implemented")
     }
 
-    private fun addCharacter() {
+    private fun addCharacter(cat: String) {
         val chinese = binding.etCharacter.text.toString()
         val pinyin = binding.etPinyin.text.toString()
         val translation = binding.etTranslation.text.toString()
         val usages = binding.etUsages.text.toString()
-        val id = if (chineseCharacterId == NEW_CHAR_ID) 0 else chineseCharacterId
-        chineseCharacterId = id
-        val category = if (binding.tiNewCategory.isVisible && binding.etCategory.text != null
-            && binding.etCategory.text.toString() != ""
-        ) {
-            binding.etCategory.text.toString()
-        } else if (binding.spinnerCat.selectedItem!=null){
-            binding.spinnerCat.selectedItem.toString()
-        } else {
-            null
-        }
+        val id = chineseCharacterId
         val newChar =
-            ChineseCharacter(id, chinese, pinyin, translation, usages, category = category)
+            ChineseCharacter(id, chinese, pinyin, translation, usages, category = cat)
         viewModel.addOrEditCharacter(newChar)
+    }
+
+    private fun setSpinnerSelection(cat: String) {
+        val position = adapterForSpinner.getPosition(cat)
+        binding.spinnerCat.setSelection(position)
     }
 
     companion object {
         const val EXTRA_CHINESE_ID = "extra_chinese_id"
-        const val NEW_CHAR_ID = -1
+        const val EXTRA_MODE = "extra_mode"
+        const val MODE_EDIT = "edit"
+        const val MODE_ADD = "add"
+        const val MODE_DEFAULT = ""
+        const val NEW_CHAR_ID = 0
         private const val MIN_LENGTH = 1
     }
 }

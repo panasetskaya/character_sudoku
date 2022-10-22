@@ -97,6 +97,10 @@ class DictionaryFragment : Fragment() {
                     SingleCharacterFragment.EXTRA_CHINESE_ID,
                     SingleCharacterFragment.NEW_CHAR_ID
                 )
+                putString(
+                    SingleCharacterFragment.EXTRA_MODE,
+                    SingleCharacterFragment.MODE_ADD
+                )
             }
             replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
         }
@@ -140,6 +144,10 @@ class DictionaryFragment : Fragment() {
                     putInt(
                         SingleCharacterFragment.EXTRA_CHINESE_ID,
                         it.id
+                    )
+                    putString(
+                        SingleCharacterFragment.EXTRA_MODE,
+                        SingleCharacterFragment.MODE_EDIT
                     )
                 }
                 replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)

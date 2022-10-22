@@ -9,7 +9,7 @@ data class Category(
     val categoryName: String = NO_CAT
 ): Parcelable {
     companion object {
-        const val NO_CAT = "no category"
+        const val NO_CAT = "-"
     }
 }
 

@@ -127,7 +127,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         charactersDao.getWholeDictionary().map {
             for (i in it) {
                 if (i.category==catName) {
-                    val replaceChar = i.copy(category = ChineseCharacterDbModel.NO_CAT)
+                    val replaceChar = i.copy(category = NO_CAT)
                     charactersDao.addOrEditCharacter(replaceChar)
                 }
             }
@@ -182,5 +182,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     companion object {
         private val INITIAL_9_CHAR = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
         private const val EMPTY_CELL = "0"
+        private const val NO_CAT = "no category"
     }
 }

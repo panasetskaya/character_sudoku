@@ -11,7 +11,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
-@Database(entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class], version = 11, exportSchema = false)
+@Database(entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class], version = 12, exportSchema = false)
 @TypeConverters(SudokuConverters::class)
 abstract class SudokuDatabase: RoomDatabase() {
 
@@ -23,7 +23,7 @@ abstract class SudokuDatabase: RoomDatabase() {
         private var INSTANCE: SudokuDatabase? = null
         private val LOCK = Any()
         private const val DB_NAME = "mandarin_sudoku.db"
-        private const val NO_CAT = "no category"
+        private const val NO_CAT = "-"
         private val initialCategory = CategoryDbModel(0,NO_CAT)
 
         fun getInstance(application: Application): SudokuDatabase {

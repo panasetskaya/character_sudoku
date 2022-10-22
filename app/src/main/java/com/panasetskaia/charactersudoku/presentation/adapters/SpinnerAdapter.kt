@@ -66,6 +66,6 @@ class SpinnerAdapter(
     }
 
     companion object {
-        const val NO_CAT = "no category"
+        const val NO_CAT = "-"
     }
 }
