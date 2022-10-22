@@ -166,6 +166,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val translation = binding.etTranslation.text.toString()
         val usages = binding.etUsages.text.toString()
         val id = if (chineseCharacterId == NEW_CHAR_ID) 0 else chineseCharacterId
+        chineseCharacterId = id
         val category = if (binding.tiNewCategory.isVisible && binding.etCategory.text != null
             && binding.etCategory.text.toString() != ""
         ) {
