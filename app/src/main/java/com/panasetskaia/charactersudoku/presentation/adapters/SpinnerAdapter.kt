@@ -27,7 +27,7 @@ class SpinnerAdapter(
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
         if (convertView == null) {
-            val inflater = (mContext).layoutInflater
+            val inflater = (mContext as Fragment).layoutInflater
             convertView = inflater.inflate(mLayoutResourceId, parent, false)
         }
         try {
@@ -43,7 +43,7 @@ class SpinnerAdapter(
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
         if (convertView == null) {
-            val inflater = (mContext).layoutInflater
+            val inflater = (mContext as Fragment).layoutInflater
             convertView = inflater.inflate(R.layout.category_spinner_item_dropdown, parent, false)
         }
         try {

@@ -9,17 +9,20 @@
         android:id="@+id/tv_cat"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:text="@string/default_category"
+        android:gravity="start | center"
+        android:padding="16dp"
         android:textSize="16sp"
         app:shapeAppearance="@style/Rounded"
-        android:layout_weight="5"/>
+        android:layout_weight="3"/>
 
     <ImageView
         android:id="@+id/deleteCategoryButton"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_height="match_parent"
+        android:padding="8dp"
         android:layout_weight="1"
+        android:gravity="center"
         android:clickable="true"
         android:src="@drawable/ic_baseline_close_24"
         />
