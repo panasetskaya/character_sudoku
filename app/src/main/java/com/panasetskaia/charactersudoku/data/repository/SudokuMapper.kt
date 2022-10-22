@@ -18,7 +18,7 @@ class SudokuMapper @Inject constructor() {
             model.translation,
             model.usages,
             model.isChosen,
-            model.category ?: ChineseCharacter.NO_CAT
+            model.category
         )
     }
 

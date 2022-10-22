@@ -32,7 +32,11 @@ class SpinnerAdapter(
         try {
             val category: String = getItem(position)
             val categoryTextView = convertView!!.findViewById<View>(R.id.tv_cat) as TextView
-            categoryTextView.text = category
+            if (category!= NO_CAT) {
+                categoryTextView.text = category
+            } else {
+                categoryTextView.text = mContext.getString(R.string.default_category)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

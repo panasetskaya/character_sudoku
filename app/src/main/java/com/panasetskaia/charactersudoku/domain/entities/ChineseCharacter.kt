@@ -11,11 +11,10 @@ data class ChineseCharacter(
     var translation: String,
     var usages: String,
     var isChosen: Boolean = false,
-    var category: String = NO_CAT
+    var category: String
 ): Parcelable {
 
     companion object {
         const val UNDEFINED_ID = 0
-        const val NO_CAT = "-"
     }
 }

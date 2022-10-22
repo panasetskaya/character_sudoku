@@ -27,7 +27,7 @@ class ChineseCharacterViewModel @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val dictionaryFlow: SharedFlow<List<ChineseCharacter>>
-    get() = _dictionaryFlow
+        get() = _dictionaryFlow
 
     private val _categoriesFlow = MutableSharedFlow<List<Category>>(
         replay = 1,
@@ -129,9 +129,11 @@ class ChineseCharacterViewModel @Inject constructor(
                 character = "",
                 pinyin = "",
                 translation = "",
-                usages = "")
+                usages = "",
+                category = "-"
+            )
             for (i in wholeDictionary) {
-                if (i.id==id) {
+                if (i.id == id) {
                     characterWeNeed = i
                 }
             }
