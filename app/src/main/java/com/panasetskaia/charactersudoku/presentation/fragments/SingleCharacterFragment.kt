@@ -26,7 +26,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var viewModel: ChineseCharacterViewModel
     private var chineseCharacterId = NEW_CHAR_ID
     private var mode = MODE_DEFAULT
-    private lateinit var selectedCategory: String
+    private var selectedCategory = ""
 
     private var _binding: FragmentSingleCharacterBinding? = null
     private val binding: FragmentSingleCharacterBinding
@@ -53,13 +53,13 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
         viewModel = (activity as MainActivity).characterViewModel
         binding.spinnerCat.onItemSelectedListener = this
         setupMenu()
-        collectCategories()
         if (mode== MODE_ADD) {
             launchModeAdd()
         }
         if (mode== MODE_EDIT) {
             launchModeEdit()
         }
+        collectCategories()
     }
 
     override fun onDestroyView() {
@@ -90,7 +90,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     val newCat = it.toString().trim()
                     if (newCat != "") {
                         viewModel.addNewCategory(newCat)
-                        addCharacter(newCat)
+                        selectedCategory = newCat
                     }
                 }
                 binding.newCatGroup.isVisible = false
@@ -105,7 +105,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             etPinyin.setText(it.pinyin)
                             etTranslation.setText(it.translation)
                             etUsages.setText(it.usages)
-                            setSpinnerSelection(it.category)
+                            selectedCategory = it.category
                         }
                     }
                 }
@@ -121,7 +121,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     val newCat = it.toString().trim()
                     if (newCat != "") {
                         viewModel.addNewCategory(newCat)
-                        setSpinnerSelection(newCat)
+                        selectedCategory = newCat
                     }
                 }
                 binding.newCatGroup.isVisible = false
@@ -174,6 +174,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             viewModel
                         )
                         binding.spinnerCat.adapter = adapterForSpinner
+                        setSpinnerSelection(selectedCategory)
                     }
                 }
             }
@@ -208,7 +209,9 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun setSpinnerSelection(cat: String) {
         val position = adapterForSpinner.getPosition(cat)
-        binding.spinnerCat.setSelection(position)
+        if (position!=-1) {
+            binding.spinnerCat.setSelection(position)
+        }
     }
 
     companion object {
