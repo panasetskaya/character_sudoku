@@ -22,6 +22,8 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
+import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ChooseCategoryFragment
+import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmDeletingDialogFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -81,6 +83,14 @@ class DictionaryFragment : Fragment() {
                     }
                     R.id.dict_help_icon -> {
                         replaceWithThisFragment(HelpFragment::class.java, null)
+                        true
+                    }
+                    R.id.dict_filter_icon -> {
+                        parentFragmentManager.beginTransaction()
+                            .setReorderingAllowed(true)
+                            .add(R.id.fcvMain, ChooseCategoryFragment::class.java, arguments)
+                            .addToBackStack(null)
+                            .commit()
                         true
                     }
                     else -> true

@@ -45,4 +45,5 @@
     <string name="add_cat_button">Добавить категорию</string>
     <string name="new_cat">новая категория</string>
     <string name="default_category">без категории</string>
+    <string name="okButton">ОК</string>
 </resources>

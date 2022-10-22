@@ -46,5 +46,6 @@
     <string name="add_cat_button">Add a category</string>
     <string name="new_cat">new category</string>
     <string name="default_category">no category</string>
+    <string name="okButton">OK</string>
 
 </resources>

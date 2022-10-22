@@ -39,6 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="32dp"
+                android:textSize="16sp"
                 android:text="@string/randomOrSelect"
                 android:textColor="@color/boardLineColor"
                 android:gravity="center"
