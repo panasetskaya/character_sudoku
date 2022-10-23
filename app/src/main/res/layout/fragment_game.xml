@@ -48,7 +48,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
         app:layout_constraintEnd_toStartOf="@+id/buttonsLayout"
         app:layout_constraintTop_toTopOf="@+id/buttonsLayout"
-        android:src="@drawable/ic_refresh_stroke_and_fill"
+        android:src="@drawable/ic_baseline_refresh_24"
         android:contentDescription="@string/refresh_button" />
 
     <ImageView
@@ -60,7 +60,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
         app:layout_constraintStart_toEndOf="@+id/buttonsLayout"
         app:layout_constraintTop_toTopOf="@+id/buttonsLayout"
-        android:src="@drawable/ic_delete_stroke_and_fill" />
+        android:src="@drawable/ic_baseline_clear_24" />
 
     <View
         android:id="@+id/chosen_background"

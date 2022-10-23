@@ -1,8 +1,6 @@
 package com.panasetskaia.charactersudoku.data.repository
 
-import com.panasetskaia.charactersudoku.data.database.BoardDao
-import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
-import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
+import com.panasetskaia.charactersudoku.data.database.*
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
@@ -71,6 +69,9 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
     override fun getWholeDictionary(): Flow<List<ChineseCharacter>> {
         return charactersDao.getWholeDictionary().map { dbModelList ->
+            if (!charactersDao.categoryExists(NO_CAT)) {
+                charactersDao.addOrEditCategory(CategoryDbModel(0, NO_CAT))
+            }
             val entityList = mutableListOf<ChineseCharacter>()
             for (i in dbModelList) {
                 val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
@@ -201,6 +202,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     companion object {
         private val INITIAL_9_CHAR = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
         private const val EMPTY_CELL = "0"
-        private const val NO_CAT = "no category"
+        private const val NO_CAT = "-"
     }
 }
