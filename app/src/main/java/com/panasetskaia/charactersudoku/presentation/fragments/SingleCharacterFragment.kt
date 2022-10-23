@@ -144,10 +144,10 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             addCharacter(category)
                             Toast.makeText(context, R.string.added, Toast.LENGTH_SHORT).show()
                             parentFragmentManager.popBackStack()
-//                            val arguments = Bundle().apply {
-//                                putString(DictionaryFragment.FILTER_EXTRA,DictionaryFragment.NO_FILTER)
-//                            }
-//                            replaceWithThisFragment(DictionaryFragment::class.java,arguments)
+                            val arguments = Bundle().apply {
+                                putString(DictionaryFragment.FILTER_EXTRA,DictionaryFragment.NO_FILTER)
+                            }
+                            replaceWithThisFragment(DictionaryFragment::class.java,arguments)
                         } else if (chineseChar.length < MIN_LENGTH) {
                             Toast.makeText(context, R.string.no_char, Toast.LENGTH_SHORT).show()
                         } else {
