@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.panasetskaia.charactersudoku.R
+import com.panasetskaia.charactersudoku.presentation.fragments.SingleCharacterFragment
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.RandomOrSelectDialogFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 
@@ -37,6 +38,9 @@ class SpinnerAdapter(
                 categoryTextView.text = category
             } else {
                 categoryTextView.text = mContext.getString(R.string.default_category)
+            }
+            if (mContext !is SingleCharacterFragment) {
+                categoryTextView.setTextColor(mContext.resources.getColor(R.color.boardLineColor))
             }
         } catch (e: Exception) {
             e.printStackTrace()

@@ -17,7 +17,6 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline8"
         android:padding="16dp"
         android:textSize="16sp"
-        android:textColor="@color/boardLineColor"
         app:shapeAppearance="@style/Rounded" />
 
     <ImageView
