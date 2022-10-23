@@ -24,6 +24,7 @@ class GameViewModel @Inject constructor(
     private val getSavedGameUseCase: GetSavedGameUseCase,
     private val saveGameUseCase: SaveGameUseCase,
     private val getNewGameWithSel: GetNewGameUseCase,
+    private val getRandomByCategory: GetRandomWithCategoryUseCase
 ) : AndroidViewModel(application) {
 
     private var selectedRow = NO_SELECTION
@@ -88,6 +89,17 @@ class GameViewModel @Inject constructor(
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val randomBoard = getRandomBoard.invoke()
+            updateNineChars(randomBoard.nineChars)
+            updateBoard(randomBoard)
+            _timeSpentFlow.value = randomBoard.timeSpent
+            setSettingsState(true)
+        }
+    }
+
+    fun getRandomGameWithCategory(category: String) {
+        updateSelection(NO_SELECTION, NO_SELECTION)
+        viewModelScope.launch {
+            val randomBoard = getRandomByCategory(category)
             updateNineChars(randomBoard.nineChars)
             updateBoard(randomBoard)
             _timeSpentFlow.value = randomBoard.timeSpent

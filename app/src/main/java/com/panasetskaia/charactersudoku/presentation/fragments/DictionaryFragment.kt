@@ -3,7 +3,6 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
-import android.app.Application
 import android.os.Bundle
 import android.view.*
 import android.view.animation.LinearInterpolator
@@ -23,6 +22,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
+import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ChooseCategoryFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -37,10 +37,16 @@ class DictionaryFragment : Fragment() {
     private lateinit var selectedCharacters: List<ChineseCharacter>
     private val linearInterpolator = LinearInterpolator()
     private var isFabPlayEnabled = false
+    private var filter = NO_FILTER
 
     private var _binding: FragmentDictionaryBinding? = null
     private val binding: FragmentDictionaryBinding
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseParams()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,6 +73,14 @@ class DictionaryFragment : Fragment() {
         _binding = null
     }
 
+    private fun parseParams() {
+        val args = requireArguments()
+        if (!args.containsKey(FILTER_EXTRA)) {
+            throw RuntimeException("No param: filter")
+        }
+        filter = args.getString(FILTER_EXTRA) ?: NO_FILTER
+    }
+
     private fun setupMenu() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -84,6 +98,14 @@ class DictionaryFragment : Fragment() {
                         replaceWithThisFragment(HelpFragment::class.java, null)
                         true
                     }
+                    R.id.dict_filter_icon -> {
+                        parentFragmentManager.beginTransaction()
+                            .setReorderingAllowed(true)
+                            .add(R.id.fcvMain, ChooseCategoryFragment::class.java, arguments)
+                            .addToBackStack(null)
+                            .commit()
+                        true
+                    }
                     else -> true
                 }
             }
@@ -94,8 +116,12 @@ class DictionaryFragment : Fragment() {
         shakeAdd()
         binding.fabAdd.setOnClickListener {
             val arguments = Bundle().apply {
+                putInt(
+                    SingleCharacterFragment.EXTRA_CHINESE_ID,
+                    SingleCharacterFragment.NEW_CHAR_ID
+                )
                 putString(
-                    SingleCharacterFragment.EXTRA_SCREEN_MODE,
+                    SingleCharacterFragment.EXTRA_MODE,
                     SingleCharacterFragment.MODE_ADD
                 )
             }
@@ -138,13 +164,13 @@ class DictionaryFragment : Fragment() {
             }
             listAdapter.onCharacterItemClickListener = {
                 val arguments = Bundle().apply {
-                    putString(
-                        SingleCharacterFragment.EXTRA_SCREEN_MODE,
-                        SingleCharacterFragment.MODE_EDIT
+                    putInt(
+                        SingleCharacterFragment.EXTRA_CHINESE_ID,
+                        it.id
                     )
-                    putParcelable(
-                        SingleCharacterFragment.EXTRA_CHINESE,
-                        it
+                    putString(
+                        SingleCharacterFragment.EXTRA_MODE,
+                        SingleCharacterFragment.MODE_EDIT
                     )
                 }
                 replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
@@ -156,9 +182,17 @@ class DictionaryFragment : Fragment() {
     private fun collectFlows() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    characterViewModel.dictionaryFlow.collectLatest {
-                        listAdapter.submitList(it)
+                if (filter== NO_FILTER) {
+                    launch {
+                        characterViewModel.dictionaryFlow.collectLatest {
+                            listAdapter.submitList(it)
+                        }
+                    }
+                } else {
+                    launch {
+                        characterViewModel.getDictionaryByCategory(filter).collectLatest {
+                            listAdapter.submitList(it)
+                        }
                     }
                 }
                 launch {
@@ -209,5 +243,10 @@ class DictionaryFragment : Fragment() {
             .replace(R.id.fcvMain, fragment, args)
             .addToBackStack(null)
             .commit()
+    }
+
+    companion object {
+        const val FILTER_EXTRA = "filter_extra"
+        const val NO_FILTER = "no_filter"
     }
 }

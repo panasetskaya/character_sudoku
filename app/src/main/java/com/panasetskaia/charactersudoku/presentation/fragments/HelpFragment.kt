@@ -43,8 +43,14 @@ class HelpFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.help_dict_icon -> {
+                        val arguments = Bundle().apply {
+                            putString(
+                                DictionaryFragment.FILTER_EXTRA,
+                                DictionaryFragment.NO_FILTER
+                            )
+                        }
                         parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(DictionaryFragment::class.java,null)
+                        replaceWithThisFragment(DictionaryFragment::class.java,arguments)
                         true
                     }
                     R.id.help_sudoku_icon -> {

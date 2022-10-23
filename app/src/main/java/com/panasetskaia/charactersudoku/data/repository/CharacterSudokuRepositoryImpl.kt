@@ -2,6 +2,7 @@ package com.panasetskaia.charactersudoku.data.repository
 
 import com.panasetskaia.charactersudoku.data.database.BoardDao
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
@@ -25,17 +26,36 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     override suspend fun getRandomBoard(): Board {
         temporaryDict = INITIAL_9_CHAR
         val wholeList = charactersDao.getAllChineseAsList().shuffled()
-        return if (wholeList.size >= 9) {
+        if (wholeList.size >= 9) {
             val randomCharacters = mutableListOf<String>()
             for (i in 0 until 9) {
                 val randomChinese = wholeList[i]
                 randomCharacters.add(randomChinese)
             }
-            getNewGameWithStrings(randomCharacters)
+            return getNewGameWithStrings(randomCharacters)
         } else {
-            val grid = generateNumberGrid().values.toList()[0]
-            val board = mapStringGridToBoard(grid)
-            translateNumbersToCharacters(board)
+            val missingSize = 9 - wholeList.size
+            val adding = INITIAL_9_CHAR.subList(0,missingSize)
+            val randomCharacters = wholeList + adding
+            return getNewGameWithStrings(randomCharacters)
+        }
+    }
+
+    override suspend fun getRandomWithCategory(category: String): Board {
+        temporaryDict = INITIAL_9_CHAR
+        val listForCategory = charactersDao.getChineseByCategory(category).shuffled()
+        if (listForCategory.size >= 9) {
+            val randomCharacters = mutableListOf<String>()
+            for (i in 0 until 9) {
+                val randomChinese = listForCategory[i]
+                randomCharacters.add(randomChinese)
+            }
+            return getNewGameWithStrings(randomCharacters)
+        } else {
+            val missingSize = 9 - listForCategory.size
+            val adding = INITIAL_9_CHAR.subList(0,missingSize)
+            val randomCharacters = listForCategory + adding
+            return getNewGameWithStrings(randomCharacters)
         }
     }
 
@@ -110,6 +130,35 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         } else FAILED
     }
 
+    override fun getAllCategories(): Flow<List<Category>> {
+        return charactersDao.getAllCategories().map {
+            val entityList = mutableListOf<Category>()
+            for (i in it) {
+                val entity = mapper.mapDbModelToDomainCategory(i)
+                entityList.add(entity)
+            }
+            entityList
+        }
+    }
+
+    override suspend fun deleteCategory(catName:String) {
+        charactersDao.deleteCategory(catName)
+        charactersDao.getWholeDictionary().map {
+            for (i in it) {
+                if (i.category==catName) {
+                    val replaceChar = i.copy(category = NO_CAT)
+                    charactersDao.addOrEditCharacter(replaceChar)
+                }
+            }
+        }
+    }
+
+    override suspend fun addCategory(category: Category) {
+        if (!charactersDao.categoryExists(category.categoryName)) {
+            charactersDao.addOrEditCategory(mapper.mapDomainCategoryToDbModel(category))
+        }
+    }
+
     private suspend fun generateNumberGrid(): Map<String, String> {
         return SudokuGame().fillGrid()
     }
@@ -152,5 +201,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     companion object {
         private val INITIAL_9_CHAR = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
         private const val EMPTY_CELL = "0"
+        private const val NO_CAT = "no category"
     }
 }

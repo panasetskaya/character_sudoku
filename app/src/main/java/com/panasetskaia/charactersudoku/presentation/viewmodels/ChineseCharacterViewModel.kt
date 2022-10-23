@@ -3,10 +3,9 @@ package com.panasetskaia.charactersudoku.presentation.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
-import com.panasetskaia.charactersudoku.domain.usecases.AddOrEditCharacterUseCase
-import com.panasetskaia.charactersudoku.domain.usecases.DeleteCharacterFromDictUseCase
-import com.panasetskaia.charactersudoku.domain.usecases.GetWholeDictionaryUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -17,7 +16,10 @@ class ChineseCharacterViewModel @Inject constructor(
     application: Application,
     private val addCharacterToDict: AddOrEditCharacterUseCase,
     private val deleteCharacter: DeleteCharacterFromDictUseCase,
-    private val getWholeDict: GetWholeDictionaryUseCase
+    private val getWholeDict: GetWholeDictionaryUseCase,
+    private val getAllCategories: GetAllCategoriesUseCase,
+    private val addCategory: AddCategoryUseCase,
+    private val deleteCategory: DeleteCategoryUseCase
 ) : AndroidViewModel(application) {
 
     private val _dictionaryFlow = MutableSharedFlow<List<ChineseCharacter>>(
@@ -25,7 +27,14 @@ class ChineseCharacterViewModel @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val dictionaryFlow: SharedFlow<List<ChineseCharacter>>
-    get() = _dictionaryFlow
+        get() = _dictionaryFlow
+
+    private val _categoriesFlow = MutableSharedFlow<List<Category>>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val categoriesFlow: SharedFlow<List<Category>>
+        get() = _categoriesFlow
 
     private var _isDialogHiddenStateFlow = MutableStateFlow(true)
     val isDialogHiddenStateFlow: StateFlow<Boolean>
@@ -49,8 +58,17 @@ class ChineseCharacterViewModel @Inject constructor(
         }
     }
 
+    private fun updateCategories() {
+        viewModelScope.launch {
+            _categoriesFlow.emitAll(
+                getAllCategories()
+            )
+        }
+    }
+
     init {
         updateDictionary()
+        updateCategories()
     }
 
     fun deleteCharacterFromDict(chineseCharacterId: Int) {
@@ -63,6 +81,18 @@ class ChineseCharacterViewModel @Inject constructor(
     fun addOrEditCharacter(chineseCharacter: ChineseCharacter) {
         viewModelScope.launch {
             addCharacterToDict(chineseCharacter)
+        }
+    }
+
+    fun addNewCategory(categoryName: String) {
+        viewModelScope.launch {
+            addCategory(Category(categoryName = categoryName))
+            _categoriesFlow.emitAll(
+                getAllCategories()
+            )
+            _dictionaryFlow.emitAll(
+                getWholeDict()
+            )
         }
     }
 
@@ -92,4 +122,45 @@ class ChineseCharacterViewModel @Inject constructor(
             }
         }
     }
+
+    fun getDictionaryByCategory(filter: String): SharedFlow<List<ChineseCharacter>> {
+        return dictionaryFlow.map { wholeDictionary ->
+            val selectedCharacters = mutableListOf<ChineseCharacter>()
+            for (i in wholeDictionary) {
+                if (i.category==filter) {
+                    selectedCharacters.add(i)
+                }
+            }
+            selectedCharacters.toList()
+        }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
+    }
+
+    fun getOneCharacterById(id: Int): SharedFlow<ChineseCharacter> {
+        return dictionaryFlow.map { wholeDictionary ->
+            var characterWeNeed = ChineseCharacter(
+                character = "",
+                pinyin = "",
+                translation = "",
+                usages = "",
+                category = "-"
+            )
+            for (i in wholeDictionary) {
+                if (i.id == id) {
+                    characterWeNeed = i
+                }
+            }
+            characterWeNeed
+        }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
+    }
+
+    fun deleteThisCategory(category: String) {
+        viewModelScope.launch {
+            deleteCategory(category)
+        }
+    }
 }
+
+
+//todo: кнопку выбора фильтра с переходом на фрагмент (и кнопку сброса фильтра, видмую, если выбрана категория)
+//todo: запуск рэндома с категории (если слов не хватает??? тост-уведомление или добавить цифры?)
+

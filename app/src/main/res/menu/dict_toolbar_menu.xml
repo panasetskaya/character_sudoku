@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+        android:id="@+id/dict_filter_icon"
+        android:icon="@drawable/ic_filter_stroke_and_fill"
+        android:title="@string/help_icon_title"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/dict_help_icon"

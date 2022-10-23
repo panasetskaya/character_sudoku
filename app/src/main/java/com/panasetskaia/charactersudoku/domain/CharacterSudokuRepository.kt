@@ -1,12 +1,15 @@
 package com.panasetskaia.charactersudoku.domain
 
 import com.panasetskaia.charactersudoku.domain.entities.Board
+import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import kotlinx.coroutines.flow.Flow
 
 interface CharacterSudokuRepository {
 
     suspend fun getRandomBoard(): Board
+
+    suspend fun getRandomWithCategory(category: String): Board
 
     suspend fun addOrEditCharToDict(character: ChineseCharacter)
 
@@ -21,5 +24,11 @@ interface CharacterSudokuRepository {
     suspend fun getSavedGame(): Board?
 
     suspend fun getGameResult(board: Board): GameResult
+
+    fun getAllCategories(): Flow<List<Category>>
+
+    suspend fun deleteCategory(catName:String)
+
+    suspend fun addCategory(category: Category)
 
 }

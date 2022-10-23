@@ -10,7 +10,8 @@ data class ChineseCharacter(
     var pinyin: String,
     var translation: String,
     var usages: String,
-    var isChosen: Boolean = false
+    var isChosen: Boolean = false,
+    var category: String
 ): Parcelable {
 
     companion object {
