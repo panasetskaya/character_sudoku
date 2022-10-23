@@ -9,6 +9,8 @@ interface CharacterSudokuRepository {
 
     suspend fun getRandomBoard(): Board
 
+    suspend fun getRandomWithCategory(category: String): Board
+
     suspend fun addOrEditCharToDict(character: ChineseCharacter)
 
     suspend fun deleteCharFromDict(characterId: Int)

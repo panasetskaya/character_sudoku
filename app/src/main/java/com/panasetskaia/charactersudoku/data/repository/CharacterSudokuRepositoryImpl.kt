@@ -26,17 +26,36 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     override suspend fun getRandomBoard(): Board {
         temporaryDict = INITIAL_9_CHAR
         val wholeList = charactersDao.getAllChineseAsList().shuffled()
-        return if (wholeList.size >= 9) {
+        if (wholeList.size >= 9) {
             val randomCharacters = mutableListOf<String>()
             for (i in 0 until 9) {
                 val randomChinese = wholeList[i]
                 randomCharacters.add(randomChinese)
             }
-            getNewGameWithStrings(randomCharacters)
+            return getNewGameWithStrings(randomCharacters)
         } else {
-            val grid = generateNumberGrid().values.toList()[0]
-            val board = mapStringGridToBoard(grid)
-            translateNumbersToCharacters(board)
+            val missingSize = 9 - wholeList.size
+            val adding = INITIAL_9_CHAR.subList(0,missingSize)
+            val randomCharacters = wholeList + adding
+            return getNewGameWithStrings(randomCharacters)
+        }
+    }
+
+    override suspend fun getRandomWithCategory(category: String): Board {
+        temporaryDict = INITIAL_9_CHAR
+        val listForCategory = charactersDao.getChineseByCategory(category).shuffled()
+        if (listForCategory.size >= 9) {
+            val randomCharacters = mutableListOf<String>()
+            for (i in 0 until 9) {
+                val randomChinese = listForCategory[i]
+                randomCharacters.add(randomChinese)
+            }
+            return getNewGameWithStrings(randomCharacters)
+        } else {
+            val missingSize = 9 - listForCategory.size
+            val adding = INITIAL_9_CHAR.subList(0,missingSize)
+            val randomCharacters = listForCategory + adding
+            return getNewGameWithStrings(randomCharacters)
         }
     }
 

@@ -123,6 +123,18 @@ class ChineseCharacterViewModel @Inject constructor(
         }
     }
 
+    fun getDictionaryByCategory(filter: String): SharedFlow<List<ChineseCharacter>> {
+        return dictionaryFlow.map { wholeDictionary ->
+            val selectedCharacters = mutableListOf<ChineseCharacter>()
+            for (i in wholeDictionary) {
+                if (i.category==filter) {
+                    selectedCharacters.add(i)
+                }
+            }
+            selectedCharacters.toList()
+        }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
+    }
+
     fun getOneCharacterById(id: Int): SharedFlow<ChineseCharacter> {
         return dictionaryFlow.map { wholeDictionary ->
             var characterWeNeed = ChineseCharacter(

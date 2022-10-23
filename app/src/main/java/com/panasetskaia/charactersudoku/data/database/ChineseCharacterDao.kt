@@ -32,4 +32,7 @@ interface ChineseCharacterDao {
 
     @Query("SELECT EXISTS (SELECT 1 FROM categorydbmodel WHERE categoryName=:category)")
     suspend fun categoryExists(category: String): Boolean
+
+    @Query("SELECT character FROM chinesecharacterdbmodel WHERE category=:category")
+    suspend fun getChineseByCategory(category: String): List<String>
 }

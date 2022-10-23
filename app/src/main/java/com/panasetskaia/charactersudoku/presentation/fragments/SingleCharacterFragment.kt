@@ -144,7 +144,10 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             addCharacter(category)
                             Toast.makeText(context, R.string.added, Toast.LENGTH_SHORT).show()
                             parentFragmentManager.popBackStack()
-                            replaceWithThisFragment(DictionaryFragment::class.java)
+//                            val arguments = Bundle().apply {
+//                                putString(DictionaryFragment.FILTER_EXTRA,DictionaryFragment.NO_FILTER)
+//                            }
+//                            replaceWithThisFragment(DictionaryFragment::class.java,arguments)
                         } else if (chineseChar.length < MIN_LENGTH) {
                             Toast.makeText(context, R.string.no_char, Toast.LENGTH_SHORT).show()
                         } else {
@@ -182,10 +185,10 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
-    private fun replaceWithThisFragment(fragment: Class<out Fragment>) {
+    private fun replaceWithThisFragment(fragment: Class<out Fragment>, arguments: Bundle) {
         parentFragmentManager.beginTransaction()
             .setReorderingAllowed(true)
-            .replace(R.id.fcvMain, fragment, null)
+            .replace(R.id.fcvMain, fragment, arguments)
             .addToBackStack(null)
             .commit()
     }

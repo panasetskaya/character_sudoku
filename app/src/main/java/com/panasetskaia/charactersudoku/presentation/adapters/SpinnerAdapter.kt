@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.panasetskaia.charactersudoku.R
+import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.RandomOrSelectDialogFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 
 class SpinnerAdapter(
@@ -44,24 +45,28 @@ class SpinnerAdapter(
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val layout = if (mContext is RandomOrSelectDialogFragment) {
+            mLayoutResourceId
+        } else R.layout.category_spinner_item_dropdown
         var convertView = convertView
         if (convertView == null) {
             val inflater = (mContext as Fragment).layoutInflater
-            convertView = inflater.inflate(R.layout.category_spinner_item_dropdown, parent, false)
+            convertView = inflater.inflate(layout, parent, false)
         }
         try {
             val category: String = getItem(position)
             val categoryTextView = convertView!!.findViewById<View>(R.id.tv_cat) as TextView
-            val deleteButton = convertView.findViewById<View>(R.id.deleteCategoryButton) as ImageView
             categoryTextView.text = category
-            if (category!= NO_CAT) {
-                deleteButton.setOnClickListener {
-                    viewModel.deleteThisCategory(category)
+            if (mContext !is RandomOrSelectDialogFragment) {
+                val deleteButton = convertView.findViewById<View>(R.id.deleteCategoryButton) as ImageView
+                if (category!= NO_CAT) {
+                    deleteButton.setOnClickListener {
+                        viewModel.deleteThisCategory(category)
+                    }
+                } else {
+                    deleteButton.visibility = View.GONE
                 }
-            } else {
-                deleteButton.visibility = View.GONE
             }
-
         } catch (e: Exception) {
             e.printStackTrace()
         }

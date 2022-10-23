@@ -23,7 +23,6 @@ import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ChooseCategoryFragment
-import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmDeletingDialogFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -38,10 +37,16 @@ class DictionaryFragment : Fragment() {
     private lateinit var selectedCharacters: List<ChineseCharacter>
     private val linearInterpolator = LinearInterpolator()
     private var isFabPlayEnabled = false
+    private var filter = NO_FILTER
 
     private var _binding: FragmentDictionaryBinding? = null
     private val binding: FragmentDictionaryBinding
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseParams()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,6 +71,14 @@ class DictionaryFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun parseParams() {
+        val args = requireArguments()
+        if (!args.containsKey(FILTER_EXTRA)) {
+            throw RuntimeException("No param: filter")
+        }
+        filter = args.getString(FILTER_EXTRA) ?: NO_FILTER
     }
 
     private fun setupMenu() {
@@ -169,9 +182,17 @@ class DictionaryFragment : Fragment() {
     private fun collectFlows() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    characterViewModel.dictionaryFlow.collectLatest {
-                        listAdapter.submitList(it)
+                if (filter== NO_FILTER) {
+                    launch {
+                        characterViewModel.dictionaryFlow.collectLatest {
+                            listAdapter.submitList(it)
+                        }
+                    }
+                } else {
+                    launch {
+                        characterViewModel.getDictionaryByCategory(filter).collectLatest {
+                            listAdapter.submitList(it)
+                        }
                     }
                 }
                 launch {
@@ -222,5 +243,10 @@ class DictionaryFragment : Fragment() {
             .replace(R.id.fcvMain, fragment, args)
             .addToBackStack(null)
             .commit()
+    }
+
+    companion object {
+        const val FILTER_EXTRA = "filter_extra"
+        const val NO_FILTER = "no_filter"
     }
 }

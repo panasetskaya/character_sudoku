@@ -76,12 +76,18 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.dictionary_icon -> {
+                        val arguments = Bundle().apply {
+                            putString(
+                                DictionaryFragment.FILTER_EXTRA,
+                                DictionaryFragment.NO_FILTER
+                            )
+                        }
                         parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(DictionaryFragment::class.java)
+                        replaceWithThisFragment(DictionaryFragment::class.java, arguments)
                         true
                     }
                     R.id.game_help_icon -> {
-                        replaceWithThisFragment(HelpFragment::class.java)
+                        replaceWithThisFragment(HelpFragment::class.java,null)
                         true
                     }
                     else -> true
@@ -205,10 +211,10 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewModel.markSelectedAsDoubtful()
     }
 
-    private fun replaceWithThisFragment(fragment: Class<out Fragment>) {
+    private fun replaceWithThisFragment(fragment: Class<out Fragment>,args: Bundle?) {
         parentFragmentManager.beginTransaction()
             .setReorderingAllowed(true)
-            .replace(R.id.fcvMain, fragment, null)
+            .replace(R.id.fcvMain, fragment, args)
             .addToBackStack(null)
             .commit()
     }
