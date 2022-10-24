@@ -131,7 +131,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                         characterViewModel.getOneCharacterByChinese(button.text.toString()).collectLatest {
-                            Toast.makeText(activity, "${it.character}: ${it.pinyin} ${it.translation}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, "${it.character}: ${it.pinyin} ${it.translation} ${it.usages}", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
