@@ -118,6 +118,7 @@ class GameViewModel @Inject constructor(
             val board = getNewGameWithSel(selected)
             updateBoard(board)
             _timeSpentFlow.value = board.timeSpent
+            setSettingsState(true)
         }
     }
 
