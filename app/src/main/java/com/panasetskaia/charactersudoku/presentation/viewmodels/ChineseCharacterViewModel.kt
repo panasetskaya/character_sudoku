@@ -153,14 +153,27 @@ class ChineseCharacterViewModel @Inject constructor(
         }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
     }
 
+    fun getOneCharacterByChinese(chinese: String): SharedFlow<ChineseCharacter> {
+        return dictionaryFlow.map { wholeDictionary ->
+            var characterWeNeed = ChineseCharacter(
+                character = "",
+                pinyin = "",
+                translation = "",
+                usages = "",
+                category = "-"
+            )
+            for (i in wholeDictionary) {
+                if (i.character == chinese) {
+                    characterWeNeed = i
+                }
+            }
+            characterWeNeed
+        }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
+    }
+
     fun deleteThisCategory(category: String) {
         viewModelScope.launch {
             deleteCategory(category)
         }
     }
 }
-
-
-//todo: кнопку выбора фильтра с переходом на фрагмент (и кнопку сброса фильтра, видмую, если выбрана категория)
-//todo: запуск рэндома с категории (если слов не хватает??? тост-уведомление или добавить цифры?)
-

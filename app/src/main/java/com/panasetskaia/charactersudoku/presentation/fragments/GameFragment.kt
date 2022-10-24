@@ -8,6 +8,7 @@ import android.os.SystemClock
 import android.view.*
 import android.view.animation.LinearInterpolator
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -21,6 +22,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmRefreshFragment
+import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -28,7 +30,8 @@ import kotlinx.coroutines.launch
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     private val linearInterpolator = LinearInterpolator()
-    private lateinit var viewModel: GameViewModel
+    private lateinit var gameViewModel: GameViewModel
+    private lateinit var characterViewModel: ChineseCharacterViewModel
     private var _binding: FragmentGameBinding? = null
     private val binding: FragmentGameBinding
         get() = _binding ?: throw RuntimeException("FragmentGameBinding is null")
@@ -58,7 +61,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     override fun onPause() {
         super.onPause()
         val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
-        viewModel.saveBoard(timeWhenStopped)
+        gameViewModel.saveBoard(timeWhenStopped)
 
     }
 
@@ -87,7 +90,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         true
                     }
                     R.id.game_help_icon -> {
-                        replaceWithThisFragment(HelpFragment::class.java,null)
+                        replaceWithThisFragment(HelpFragment::class.java, null)
                         true
                     }
                     else -> true
@@ -97,7 +100,8 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
     private fun interactWithViewModel() {
-        viewModel = (activity as MainActivity).gameViewModel
+        gameViewModel = (activity as MainActivity).gameViewModel
+        characterViewModel = (activity as MainActivity).characterViewModel
         val buttons = listOf(
             binding.oneButton,
             binding.twoButton,
@@ -117,11 +121,22 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private fun setListeners(buttons: List<Button>) {
         buttons.forEachIndexed { index, button ->
             button.setOnClickListener {
-                viewModel.handleInput(index)
+                gameViewModel.handleInput(index)
                 AnimatorSet().apply {
                     play(shakeAnimator(it, -10f, 0f, 40, 2))
                     start()
                 }
+            }
+            button.setOnLongClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        characterViewModel.getOneCharacterByChinese(button.text.toString()).collectLatest {
+                            Toast.makeText(activity, "${it.character}: [${it.pinyin}] ${it.translation}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
+                true
             }
         }
         binding.refreshGame.setOnClickListener {
@@ -130,7 +145,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 start()
             }
             addThisFragment(ConfirmRefreshFragment::class.java)
-            viewModel.setSettingsState(false)
+            gameViewModel.setSettingsState(false)
         }
         binding.clearCell.setOnClickListener {
             AnimatorSet().apply {
@@ -138,7 +153,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 start()
             }
 
-            viewModel.clearSelected()
+            gameViewModel.clearSelected()
         }
     }
 
@@ -146,30 +161,30 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.boardSharedFlow.collectLatest {
+                    gameViewModel.boardSharedFlow.collectLatest {
                         updateCells(it.cells)
                     }
                 }
                 launch {
-                    viewModel.selectedCellFlow.collectLatest {
+                    gameViewModel.selectedCellFlow.collectLatest {
                         updateSelectedCellUI(it)
                     }
                 }
                 launch {
-                    viewModel.nineCharSharedFlow.collectLatest {
+                    gameViewModel.nineCharSharedFlow.collectLatest {
                         buttons.forEachIndexed { index, button ->
                             button.text = it[index]
                         }
                     }
                 }
                 launch {
-                    viewModel.settingsFinishedStateFlow.collectLatest { areSettingsDone ->
+                    gameViewModel.settingsFinishedStateFlow.collectLatest { areSettingsDone ->
                         binding.refreshGame.isClickable = areSettingsDone
                     }
                 }
                 launch {
-                    viewModel.timeSpentFlow.collectLatest { time ->
-                        if (time!=-1L) {
+                    gameViewModel.timeSpentFlow.collectLatest { time ->
+                        if (time != -1L) {
                             continueTimer(time)
                         } else {
                             binding.chTimer.stop()
@@ -203,15 +218,15 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
 
     override fun onCellTouched(row: Int, col: Int) {
-        viewModel.updateSelection(row, col)
+        gameViewModel.updateSelection(row, col)
     }
 
     override fun onCellLongTouched(row: Int, col: Int) {
-        viewModel.updateSelection(row, col)
-        viewModel.markSelectedAsDoubtful()
+        gameViewModel.updateSelection(row, col)
+        gameViewModel.markSelectedAsDoubtful()
     }
 
-    private fun replaceWithThisFragment(fragment: Class<out Fragment>,args: Bundle?) {
+    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
         parentFragmentManager.beginTransaction()
             .setReorderingAllowed(true)
             .replace(R.id.fcvMain, fragment, args)
@@ -236,7 +251,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private fun updateViewModelTimer() {
         binding.chTimer.setOnChronometerTickListener {
             val timeWhenStopped = it.base - SystemClock.elapsedRealtime()
-            viewModel.updateTimer(timeWhenStopped)
+            gameViewModel.updateTimer(timeWhenStopped)
         }
     }
 }
