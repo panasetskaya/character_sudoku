@@ -25,6 +25,7 @@ class RandomOrSelectDialogFragment : Fragment() {
 
     private lateinit var gameViewModel: GameViewModel
     private lateinit var charViewModel: ChineseCharacterViewModel
+    private var categoriesAmount = 0
 
     private var _binding: FragmentRandomOrSelectDialogBinding? = null
     private val binding: FragmentRandomOrSelectDialogBinding
@@ -44,16 +45,21 @@ class RandomOrSelectDialogFragment : Fragment() {
         charViewModel = (activity as MainActivity).characterViewModel
         binding.selectCatGroup.visibility = View.GONE
         binding.randomButton.setOnClickListener {
-            binding.selectCatGroup.visibility = View.VISIBLE
             collectCategories()
-            binding.okButton.setOnClickListener {
-                val category = binding.spinnerChooseCat.selectedItem.toString()
-                if (category == SpinnerAdapter.NO_CAT) {
-                    parentFragmentManager.popBackStack()
-                    gameViewModel.getNewRandomGame()
-                } else {
-                    parentFragmentManager.popBackStack()
-                    gameViewModel.getRandomGameWithCategory(category)
+            if (categoriesAmount <= 1) {
+                parentFragmentManager.popBackStack()
+                gameViewModel.getNewRandomGame()
+            } else {
+                binding.selectCatGroup.visibility = View.VISIBLE
+                binding.okButton.setOnClickListener {
+                    val category = binding.spinnerChooseCat.selectedItem.toString()
+                    if (category == SpinnerAdapter.NO_CAT) {
+                        parentFragmentManager.popBackStack()
+                        gameViewModel.getNewRandomGame()
+                    } else {
+                        parentFragmentManager.popBackStack()
+                        gameViewModel.getRandomGameWithCategory(category)
+                    }
                 }
             }
         }
@@ -75,25 +81,26 @@ class RandomOrSelectDialogFragment : Fragment() {
     }
 
     private fun collectCategories() {
-        if (binding.selectCatGroup.isVisible) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    charViewModel.categoriesFlow.collectLatest { categories ->
-                        val listOfCategories = mutableListOf<String>()
-                        for (i in categories) {
-                            listOfCategories.add(i.categoryName)
-                        }
-                        val adapterForSpinner = SpinnerAdapter(
-                            this@RandomOrSelectDialogFragment,
-                            R.layout.category_spinner_item,
-                            listOfCategories,
-                            charViewModel
-                        )
-                        binding.spinnerChooseCat.adapter = adapterForSpinner
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                charViewModel.categoriesFlow.collectLatest { categories ->
+                    val listOfCategories = mutableListOf<String>()
+                    for (i in categories) {
+                        listOfCategories.add(i.categoryName)
                     }
+                    categoriesAmount = listOfCategories.size
+                    val adapterForSpinner = SpinnerAdapter(
+                        this@RandomOrSelectDialogFragment,
+                        R.layout.category_spinner_item,
+                        listOfCategories,
+                        charViewModel
+                    )
+                    binding.spinnerChooseCat.adapter = adapterForSpinner
                 }
             }
         }
+
     }
 
     override fun onDestroyView() {
