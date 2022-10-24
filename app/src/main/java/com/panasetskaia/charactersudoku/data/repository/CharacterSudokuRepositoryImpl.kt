@@ -23,7 +23,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
     override suspend fun getRandomBoard(): Board {
         temporaryDict = INITIAL_9_CHAR
-        val wholeList = charactersDao.getAllChineseAsList().shuffled()
+        val wholeList = charactersDao.getAllChineseAsList().toSet().shuffled()
         if (wholeList.size >= 9) {
             val randomCharacters = mutableListOf<String>()
             for (i in 0 until 9) {
@@ -41,7 +41,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
     override suspend fun getRandomWithCategory(category: String): Board {
         temporaryDict = INITIAL_9_CHAR
-        val listForCategory = charactersDao.getChineseByCategory(category).shuffled()
+        val listForCategory = charactersDao.getChineseByCategory(category).toSet().shuffled()
         if (listForCategory.size >= 9) {
             val randomCharacters = mutableListOf<String>()
             for (i in 0 until 9) {
