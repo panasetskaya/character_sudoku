@@ -33,8 +33,8 @@
     <string name="added">Added successfully</string>
     <string name="no_char">Character is missing</string>
     <string name="too_many">There should be only 1 character</string>
-    <string name="help_game">You can mark the selected cell as doubtful with a long click on the cell.\n\nThe button on the right erases the selected cell value.\n\nYour game board is saved every time you leave.\n\nLong click on a character button below will show you its information from dictionary.\n\nClick on refresh arrow to get a new game.</string>
-    <string name="help_dict">Swipe left to delete the character from the dictionary.\n\nSelect characters for the game with a long click.\n\nThe play button will become active once you have selected 9 characters.\n\nYou can add new category or delete an old one when adding or editing characters.</string>
+    <string name="help_game">You can mark the selected cell as doubtful with a long click on the cell.\n\nThe button on the right erases the selected cell value.\n\nYour game board is saved every time you leave.\n\nLong click on a character button below will show you its information from the dictionary.\n\nClick on refresh arrow to get a new game.</string>
+    <string name="help_dict">Swipe left to delete the character from the dictionary.\n\nSelect characters for the game with a long click.\n\nThe play button will become active once you have selected 9 characters.\n\nYou can add a new category or delete an old one when adding or editing characters.</string>
     <string name="not_enough">There has to be 9 characters selected to start the game</string>
     <string name="checked">Checked</string>
     <string name="go_to_details">Go to details</string>
