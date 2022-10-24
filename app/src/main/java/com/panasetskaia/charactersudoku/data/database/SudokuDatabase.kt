@@ -1,17 +1,16 @@
 package com.panasetskaia.charactersudoku.data.database
 
 import android.app.Application
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
 
-@Database(entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class], version = 12, exportSchema = false)
+@Database(
+entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class],
+version = 13,
+//autoMigrations = [AutoMigration (from = 13, to = 14)],
+exportSchema = true)
 @TypeConverters(SudokuConverters::class)
 abstract class SudokuDatabase: RoomDatabase() {
 
