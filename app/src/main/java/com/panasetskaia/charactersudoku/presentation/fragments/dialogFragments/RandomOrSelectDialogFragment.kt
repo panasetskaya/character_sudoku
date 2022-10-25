@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentRandomOrSelectDialogBinding
+import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.SpinnerAdapter
 import com.panasetskaia.charactersudoku.presentation.fragments.DictionaryFragment
@@ -46,25 +47,28 @@ class RandomOrSelectDialogFragment : Fragment() {
         binding.selectCatGroup.visibility = View.GONE
         binding.randomButton.setOnClickListener {
             collectCategories()
+            val lvl = getLevel()
             if (categoriesAmount <= 1) {
                 parentFragmentManager.popBackStack()
-                gameViewModel.getNewRandomGame()
+                gameViewModel.getNewRandomGame(lvl)
             } else {
                 binding.selectCatGroup.visibility = View.VISIBLE
                 binding.okButton.setOnClickListener {
                     val category = binding.spinnerChooseCat.selectedItem.toString()
                     if (category == SpinnerAdapter.NO_CAT) {
                         parentFragmentManager.popBackStack()
-                        gameViewModel.getNewRandomGame()
+                        gameViewModel.getNewRandomGame(lvl)
                     } else {
                         parentFragmentManager.popBackStack()
-                        gameViewModel.getRandomGameWithCategory(category)
+                        gameViewModel.getRandomGameWithCategory(category,lvl)
                     }
                 }
             }
         }
         binding.selectCharactersButton.setOnClickListener {
+            val lvl = getLevel()
             gameViewModel.setSettingsState(true)
+            gameViewModel.setLevel(lvl)
             parentFragmentManager.popBackStack()
             val args = Bundle().apply {
                 putString(
@@ -100,7 +104,20 @@ class RandomOrSelectDialogFragment : Fragment() {
                 }
             }
         }
+    }
 
+    private fun getLevel(): Level {
+        return when (binding.radiogroup.checkedRadioButtonId) {
+            binding.radioEasy.id -> {
+                Level.EASY
+            }
+            binding.radioMedium.id -> {
+                Level.MEDIUM
+            }
+            binding.radioHard.id -> {
+                Level.HARD
+            } else -> Level.MEDIUM
+        }
     }
 
     override fun onDestroyView() {

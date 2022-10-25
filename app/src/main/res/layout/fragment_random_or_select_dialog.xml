@@ -34,10 +34,74 @@
                 android:background="@drawable/chosen_background"/>
 
             <TextView
-                android:id="@+id/tv_randomOrSelect"
+                android:id="@+id/tv_chooseLvl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:textSize="16sp"
+                android:text="@string/choose_level"
+                android:textColor="@color/boardLineColor"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <RadioGroup
+                android:id="@+id/radiogroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_chooseLvl"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <RadioButton
+                    android:id="@+id/radio_easy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textSize="16sp"
+                    android:textColor="@color/primaryLightColor"
+                    android:gravity="center"
+                    android:buttonTint="@color/primaryLightColor"
+                    android:layout_weight="1"
+                    android:checked="true"/>
+
+                <RadioButton
+                    android:id="@+id/radio_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textSize="16sp"
+                    android:layout_weight="1"
+                    android:textColor="@color/primaryLightColor"
+                    android:gravity="center"
+                    android:buttonTint="@color/primaryLightColor" />
+
+                <RadioButton
+                    android:id="@+id/radio_hard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="3"
+                    android:textSize="16sp"
+                    android:textColor="@color/primaryLightColor"
+                    android:gravity="center"
+                    android:buttonTint="@color/primaryLightColor"
+                    android:layout_weight="1" />
+
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/tv_randomOrSelect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="32dp"
                 android:layout_marginStart="32dp"
                 android:textSize="16sp"
@@ -46,7 +110,7 @@
                 android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/radiogroup"
                 />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -106,6 +170,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:constraint_referenced_ids="spinner_choose_cat, ok_button"/>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

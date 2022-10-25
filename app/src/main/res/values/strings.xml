@@ -47,5 +47,6 @@
     <string name="new_cat">new category</string>
     <string name="default_category">All</string>
     <string name="okButton">OK</string>
+    <string name="choose_level">Level:</string>
 
 </resources>

@@ -46,4 +46,5 @@
     <string name="new_cat">новая категория</string>
     <string name="default_category">Всё</string>
     <string name="okButton">ОК</string>
+    <string name="choose_level">Сложность:</string>
 </resources>

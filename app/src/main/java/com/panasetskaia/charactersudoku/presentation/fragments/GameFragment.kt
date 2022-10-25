@@ -131,7 +131,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                         characterViewModel.getOneCharacterByChinese(button.text.toString()).collectLatest {
-                            Toast.makeText(activity, "${it.character}: ${it.pinyin} ${it.translation} ${it.usages}", Toast.LENGTH_SHORT).show()
+                            if (it.pinyin.length>0 || it.translation.length>0) {
+                                Toast.makeText(activity, "${it.character} [ ${it.pinyin.trim()} ] ${it.translation}", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(activity, it.character, Toast.LENGTH_SHORT).show()
+                            }
+
                         }
                     }
                 }

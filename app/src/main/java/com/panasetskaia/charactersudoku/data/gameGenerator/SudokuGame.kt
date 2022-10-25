@@ -1,5 +1,6 @@
 package com.panasetskaia.charactersudoku.data.gameGenerator
 
+import com.panasetskaia.charactersudoku.domain.entities.Level
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -8,9 +9,11 @@ class SudokuGame {
     private var grid = Array(GRID_SIZE) { IntArray(GRID_SIZE) {0} }
     private var printableGridRemoved: String = ""
     private var printableGridFull: String = ""
+    private var level: Level = Level.MEDIUM
 
-    suspend fun fillGrid(): Map<String,String> {
+    suspend fun fillGrid(diffLevel: Level): Map<String,String> {
         return withContext(Dispatchers.Default){
+            level = diffLevel
             fillDiagonalBoxes()
             fillRemaining(0, GRID_SIZE_SQUARE_ROOT)
             printableGridFull = makePrintableGrid()
@@ -127,7 +130,7 @@ class SudokuGame {
     }
 
     private suspend fun removeDigits() {
-        var digitsToRemove = GRID_SIZE * GRID_SIZE - PROVIDED_DIGITS
+        var digitsToRemove = GRID_SIZE * GRID_SIZE - level.numbersLeft
         while (digitsToRemove > 0) {
             val randomRow = generateRandomInt(MIN_DIGIT_INDEX, MAX_DIGIT_INDEX)
             val randomColumn = generateRandomInt(MIN_DIGIT_INDEX, MAX_DIGIT_INDEX)
@@ -164,6 +167,5 @@ class SudokuGame {
         internal const val MAX_DIGIT_VALUE = 9
         internal const val MIN_DIGIT_INDEX = 0
         internal const val MAX_DIGIT_INDEX = 8
-        internal const val PROVIDED_DIGITS = 32
     }
 }

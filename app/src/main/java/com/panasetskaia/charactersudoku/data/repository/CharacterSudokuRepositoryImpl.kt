@@ -21,7 +21,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
     private var temporaryDict = INITIAL_9_CHAR
 
-    override suspend fun getRandomBoard(): Board {
+    override suspend fun getRandomBoard(diffLevel: Level): Board {
         temporaryDict = INITIAL_9_CHAR
         val wholeList = charactersDao.getAllChineseAsList().toSet().shuffled()
         if (wholeList.size >= 9) {
@@ -30,16 +30,16 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 val randomChinese = wholeList[i]
                 randomCharacters.add(randomChinese)
             }
-            return getNewGameWithStrings(randomCharacters)
+            return getNewGameWithStrings(randomCharacters, diffLevel)
         } else {
             val missingSize = 9 - wholeList.size
             val adding = INITIAL_9_CHAR.subList(0,missingSize)
             val randomCharacters = wholeList + adding
-            return getNewGameWithStrings(randomCharacters)
+            return getNewGameWithStrings(randomCharacters, diffLevel)
         }
     }
 
-    override suspend fun getRandomWithCategory(category: String): Board {
+    override suspend fun getRandomWithCategory(category: String, diffLevel: Level): Board {
         temporaryDict = INITIAL_9_CHAR
         val listForCategory = charactersDao.getChineseByCategory(category).toSet().shuffled()
         if (listForCategory.size >= 9) {
@@ -48,12 +48,12 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 val randomChinese = listForCategory[i]
                 randomCharacters.add(randomChinese)
             }
-            return getNewGameWithStrings(randomCharacters)
+            return getNewGameWithStrings(randomCharacters, diffLevel)
         } else {
             val missingSize = 9 - listForCategory.size
             val adding = INITIAL_9_CHAR.subList(0,missingSize)
             val randomCharacters = listForCategory + adding
-            return getNewGameWithStrings(randomCharacters)
+            return getNewGameWithStrings(randomCharacters, diffLevel)
         }
     }
 
@@ -81,23 +81,23 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getNewGame(nineCharacters: List<ChineseCharacter>): Board {
+    override suspend fun getNewGame(nineCharacters: List<ChineseCharacter>, diffLevel: Level): Board {
         val listString = mutableListOf<String>()
         for (i in nineCharacters) {
             listString.add(i.character)
         }
         temporaryDict = listString
         return withContext(Dispatchers.Default) {
-            val grid = generateNumberGrid().values.toList()[0]
+            val grid = generateNumberGrid(diffLevel).values.toList()[0]
             val board = mapStringGridToBoard(grid)
             translateNumbersToCharacters(board)
         }
     }
 
-    private suspend fun getNewGameWithStrings(nineCharacters: List<String>): Board {
+    private suspend fun getNewGameWithStrings(nineCharacters: List<String>, diffLevel: Level): Board {
         temporaryDict = nineCharacters
         return withContext(Dispatchers.Default) {
-            val grid = generateNumberGrid().values.toList()[0]
+            val grid = generateNumberGrid(diffLevel).values.toList()[0]
             val board = mapStringGridToBoard(grid)
             translateNumbersToCharacters(board)
         }
@@ -160,8 +160,8 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun generateNumberGrid(): Map<String, String> {
-        return SudokuGame().fillGrid()
+    private suspend fun generateNumberGrid(diffLevel: Level): Map<String, String> {
+        return SudokuGame().fillGrid(diffLevel)
     }
 
     private fun mapStringGridToBoard(stringGrid: String): Board {

@@ -8,6 +8,7 @@ import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,6 +32,7 @@ class GameViewModel @Inject constructor(
     private var selectedCol = NO_SELECTION
     private lateinit var currentBoard: Board
     private lateinit var nineChars: List<String>
+    private var level = Level.MEDIUM
 
     private val _timeSpentFlow = MutableStateFlow(0L)
     val timeSpentFlow: StateFlow<Long>
@@ -85,10 +87,10 @@ class GameViewModel @Inject constructor(
         updateBoard(board)
     }
 
-    fun getNewRandomGame() {
+    fun getNewRandomGame(diffLevel: Level) {
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val randomBoard = getRandomBoard.invoke()
+            val randomBoard = getRandomBoard.invoke(diffLevel)
             updateNineChars(randomBoard.nineChars)
             updateBoard(randomBoard)
             _timeSpentFlow.value = randomBoard.timeSpent
@@ -96,10 +98,10 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun getRandomGameWithCategory(category: String) {
+    fun getRandomGameWithCategory(category: String, diffLevel: Level) {
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val randomBoard = getRandomByCategory(category)
+            val randomBoard = getRandomByCategory(category, diffLevel)
             updateNineChars(randomBoard.nineChars)
             updateBoard(randomBoard)
             _timeSpentFlow.value = randomBoard.timeSpent
@@ -115,7 +117,7 @@ class GameViewModel @Inject constructor(
                 listString.add(i.character)
             }
             updateNineChars(listString)
-            val board = getNewGameWithSel(selected)
+            val board = getNewGameWithSel(selected, level)
             updateBoard(board)
             _timeSpentFlow.value = board.timeSpent
             setSettingsState(true)
@@ -141,7 +143,7 @@ class GameViewModel @Inject constructor(
                 updateBoard(it)
                 updateSelection(0, 0)
                 _timeSpentFlow.value = it.timeSpent
-            } ?: getNewRandomGame()
+            } ?: getNewRandomGame(Level.MEDIUM)
         }
     }
 
@@ -196,6 +198,10 @@ class GameViewModel @Inject constructor(
 
     fun updateTimer(timeWhenStopped: Long) {
         _timeSpentFlow.value = timeWhenStopped
+    }
+
+    fun setLevel(chosenLevel: Level) {
+        level = chosenLevel
     }
 
     companion object {
