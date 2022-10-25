@@ -34,6 +34,51 @@
                 android:background="@drawable/chosen_background"/>
 
             <TextView
+                android:id="@+id/tv_randomOrSelect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:textSize="16sp"
+                android:text="@string/randomOrSelect"
+                android:textColor="@color/boardLineColor"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/randomButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/smallButtonStyle"
+                android:text="@string/randomButton"
+                android:layout_margin="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_randomOrSelect"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/selectCharactersButton" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/selectCharactersButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/smallButtonStyle"
+                android:text="@string/selectCharactersButton"
+                android:layout_margin="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_randomOrSelect"
+                app:layout_constraintStart_toEndOf="@+id/randomButton"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/selectCharactersButton"/>
+
+            <TextView
                 android:id="@+id/tv_chooseLvl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,7 +91,7 @@
                 android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/selectCharactersButton"
                 />
 
             <RadioGroup
@@ -55,6 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
                 android:layout_marginStart="32dp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_chooseLvl"
@@ -97,51 +143,6 @@
 
             </RadioGroup>
 
-            <TextView
-                android:id="@+id/tv_randomOrSelect"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginStart="32dp"
-                android:textSize="16sp"
-                android:text="@string/randomOrSelect"
-                android:textColor="@color/boardLineColor"
-                android:gravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/radiogroup"
-                />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/randomButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/smallButtonStyle"
-                android:text="@string/randomButton"
-                android:layout_margin="16dp"
-                app:layout_constraintTop_toBottomOf="@+id/tv_randomOrSelect"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/selectCharactersButton" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/selectCharactersButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/smallButtonStyle"
-                android:text="@string/selectCharactersButton"
-                android:layout_margin="16dp"
-                app:layout_constraintTop_toBottomOf="@+id/tv_randomOrSelect"
-                app:layout_constraintStart_toEndOf="@+id/randomButton"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/selectCharactersButton"/>
-
             <Spinner
                 android:id="@+id/spinner_choose_cat"
                 android:layout_width="0dp"
@@ -151,7 +152,7 @@
                 android:layout_marginEnd="16dp"
                 tools:listitem="@layout/category_spinner_item"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/selectCharactersButton" />
+                app:layout_constraintTop_toBottomOf="@+id/radiogroup" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/ok_button"
@@ -169,7 +170,19 @@
                 android:id="@+id/select_cat_group"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:constraint_referenced_ids="spinner_choose_cat, ok_button"/>
+                app:constraint_referenced_ids="spinner_choose_cat, ok_button, tv_chooseLvl, radiogroup"/>
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/select_lvl_group"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:constraint_referenced_ids="ok_button, tv_chooseLvl, radiogroup"/>
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/random_select_group"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:constraint_referenced_ids="tv_randomOrSelect, randomButton, selectCharactersButton"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,9 +37,13 @@ class ConfirmRefreshFragment : Fragment() {
         }
         binding.yesButton.setOnClickListener {
             parentFragmentManager.popBackStack()
+            val args = Bundle().apply {
+                putString(RandomOrSelectDialogFragment.EXTRA_MODE,
+                RandomOrSelectDialogFragment.MODE_FROM_GAME)
+            }
             parentFragmentManager.commit {
                 setReorderingAllowed(true)
-                add<RandomOrSelectDialogFragment>(R.id.gameContainerView)
+                add(R.id.gameContainerView, RandomOrSelectDialogFragment::class.java, args)
                 addToBackStack(null)
             }
         }

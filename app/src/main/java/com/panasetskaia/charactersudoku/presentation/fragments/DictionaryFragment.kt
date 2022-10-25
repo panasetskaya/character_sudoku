@@ -23,6 +23,7 @@ import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ChooseCategoryFragment
+import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.RandomOrSelectDialogFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -129,10 +130,13 @@ class DictionaryFragment : Fragment() {
         }
         binding.fabPlay.setOnClickListener {
             if (isFabPlayEnabled) {
-                gameViewModel.getGameWithSelected(selectedCharacters)
-                characterViewModel.markAllUnselected()
+                gameViewModel.setSelected(selectedCharacters)
                 parentFragmentManager.popBackStack()
-                replaceWithThisFragment(GameFragment::class.java, null)
+                val arguments = Bundle().apply {
+                    putString(RandomOrSelectDialogFragment.EXTRA_MODE,
+                    RandomOrSelectDialogFragment.MODE_FROM_DICT)
+                }
+                addThisFragment(RandomOrSelectDialogFragment::class.java, arguments)
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -241,6 +245,14 @@ class DictionaryFragment : Fragment() {
         parentFragmentManager.beginTransaction()
             .setReorderingAllowed(true)
             .replace(R.id.fcvMain, fragment, args)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun addThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
+        parentFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
+            .add(R.id.fcvMain, fragment, args)
             .addToBackStack(null)
             .commit()
     }

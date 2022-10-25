@@ -32,6 +32,7 @@ class GameViewModel @Inject constructor(
     private var selectedCol = NO_SELECTION
     private lateinit var currentBoard: Board
     private lateinit var nineChars: List<String>
+    private lateinit var selected: List<ChineseCharacter>
     private var level = Level.MEDIUM
 
     private val _timeSpentFlow = MutableStateFlow(0L)
@@ -109,7 +110,7 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun getGameWithSelected(selected: List<ChineseCharacter>) {
+    fun getGameWithSelected() {
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val listString = mutableListOf<String>()
@@ -202,6 +203,10 @@ class GameViewModel @Inject constructor(
 
     fun setLevel(chosenLevel: Level) {
         level = chosenLevel
+    }
+
+    fun setSelected(newSelected: List<ChineseCharacter>) {
+        selected = newSelected
     }
 
     companion object {

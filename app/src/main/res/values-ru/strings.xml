@@ -41,7 +41,7 @@
     <string name="add_new_button">Кнопка добавления иероглифа</string>
     <string name="clear_cell_button">Кнопка удаления иероглифа из клетки</string>
     <string name="refresh_button">Кнопка загрузки новой игры</string>
-    <string name="choose_cat">Выберите категорию:</string>
+    <string name="choose_cat">Категория:</string>
     <string name="add_cat_button">Добавить категорию</string>
     <string name="new_cat">новая категория</string>
     <string name="default_category">Всё</string>

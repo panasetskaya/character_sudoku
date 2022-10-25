@@ -42,7 +42,7 @@
     <string name="add_new_button">Add new character button</string>
     <string name="clear_cell_button">Clear cell button</string>
     <string name="refresh_button">Refresh game button</string>
-    <string name="choose_cat">Choose a category:</string>
+    <string name="choose_cat">Category:</string>
     <string name="add_cat_button">Add a category</string>
     <string name="new_cat">new category</string>
     <string name="default_category">All</string>
