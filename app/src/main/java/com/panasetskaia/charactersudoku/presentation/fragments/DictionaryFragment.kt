@@ -23,6 +23,7 @@ import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
 import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ChooseCategoryFragment
+import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmDeletingDialogFragment
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.RandomOrSelectDialogFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
@@ -134,8 +135,9 @@ class DictionaryFragment : Fragment() {
                 parentFragmentManager.popBackStack()
                 val arguments = Bundle().apply {
                     putString(RandomOrSelectDialogFragment.EXTRA_MODE,
-                    RandomOrSelectDialogFragment.MODE_FROM_DICT)
+                        RandomOrSelectDialogFragment.MODE_FROM_DICT)
                 }
+                replaceWithThisFragment(GameFragment::class.java,null)
                 addThisFragment(RandomOrSelectDialogFragment::class.java, arguments)
             } else {
                 Toast.makeText(
@@ -145,6 +147,16 @@ class DictionaryFragment : Fragment() {
                 )
                     .show()
             }
+        }
+        binding.fabDeleteSelected.setOnClickListener {
+            val arguments = Bundle().apply {
+                putString(ConfirmDeletingDialogFragment.MODE_EXTRA, ConfirmDeletingDialogFragment.MODE_LIST)
+            }
+            parentFragmentManager.beginTransaction()
+                .setReorderingAllowed(true)
+                .add(R.id.fcvMain, ConfirmDeletingDialogFragment::class.java, arguments)
+                .addToBackStack(null)
+                .commit()
         }
     }
 
@@ -201,11 +213,19 @@ class DictionaryFragment : Fragment() {
                 }
                 launch {
                     characterViewModel.selectedCharactersSharedFlow.collectLatest { selected ->
+                        if (selected.size > 0) {
+                            binding.fabDeleteSelected.visibility = View.VISIBLE
+                            characterViewModel.setSelectedForDeleting(selected)
+                        } else {
+                            binding.fabDeleteSelected.visibility = View.GONE
+                        }
+                        selectedCharacters = selected
                         if (selected.size == 9) {
                             isFabPlayEnabled = true
-                            selectedCharacters = selected
+                            binding.fabPlay.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
                             shakePlay()
                         } else {
+                            binding.fabPlay.setImageResource(R.drawable.ic_baseline_play_circle_outline_24_gray)
                             isFabPlayEnabled = false
                         }
                     }

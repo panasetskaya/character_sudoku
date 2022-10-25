@@ -65,9 +65,22 @@
         android:layout_margin="20dp"
         android:clickable="true"
         android:contentDescription="@string/play_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fabAdd"
+        android:src="@drawable/ic_baseline_play_circle_outline_24_gray" />
+
+    <ImageView
+        android:id="@+id/fabDeleteSelected"
+        android:elevation="16dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:visibility="visible"
+        android:layout_margin="20dp"
+        android:clickable="true"
+        android:contentDescription="@string/play_button"
         app:layout_constraintBottom_toTopOf="@+id/fabAdd"
         app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_baseline_play_circle_outline_24" />
+        android:src="@drawable/ic_baseline_delete_forever_24" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/dictionaryContainerView"

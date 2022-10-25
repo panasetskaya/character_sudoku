@@ -22,6 +22,8 @@ class ChineseCharacterViewModel @Inject constructor(
     private val deleteCategory: DeleteCategoryUseCase
 ) : AndroidViewModel(application) {
 
+    private lateinit var selected: List<ChineseCharacter>
+
     private val _dictionaryFlow = MutableSharedFlow<List<ChineseCharacter>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
@@ -175,5 +177,18 @@ class ChineseCharacterViewModel @Inject constructor(
         viewModelScope.launch {
             deleteCategory(category)
         }
+    }
+
+    fun deleteSelected() {
+        viewModelScope.launch {
+            for (i in selected) {
+                deleteCharacter(i.id)
+            }
+        }
+        finishDeleting(true)
+    }
+
+    fun setSelectedForDeleting(newSelected: List<ChineseCharacter>) {
+        selected = newSelected
     }
 }

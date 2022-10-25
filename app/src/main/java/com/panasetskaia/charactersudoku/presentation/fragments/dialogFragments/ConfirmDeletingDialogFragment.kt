@@ -14,6 +14,7 @@ class ConfirmDeletingDialogFragment : Fragment() {
     private lateinit var viewModel: ChineseCharacterViewModel
 
     private var characterId: Int = -1
+    private var mode = MODE_SINGLE
 
     private var _binding: FragmentConfirmDeletingDialogBinding? = null
     private val binding: FragmentConfirmDeletingDialogBinding
@@ -40,18 +41,38 @@ class ConfirmDeletingDialogFragment : Fragment() {
             viewModel.finishDeleting(true)
             parentFragmentManager.popBackStack()
         }
+        if (mode == MODE_SINGLE) {
+            launchSingleMode()
+        } else {
+            launchListMode()
+        }
+
+    }
+
+    private fun launchSingleMode() {
         binding.deleteButton.setOnClickListener {
             viewModel.deleteCharacterFromDict(characterId)
             parentFragmentManager.popBackStack()
         }
     }
 
+    private fun launchListMode() {
+        binding.deleteButton.setOnClickListener {
+            viewModel.deleteSelected()
+            parentFragmentManager.popBackStack()
+        }
+    }
+
     private fun parseParams() {
         val args = requireArguments()
-        if (!args.containsKey(ITEM_ID_EXTRA)) {
-            throw RuntimeException("No ITEM_ID_EXTRA param")
+        if (!args.containsKey(MODE_EXTRA)) {
+            throw RuntimeException("No mode extra!")
+        } else {
+            mode = args.getString(MODE_EXTRA) ?: MODE_SINGLE
         }
-        characterId = args.getInt(ITEM_ID_EXTRA, DEFAULT_ID)
+        if (args.containsKey(ITEM_ID_EXTRA)) {
+            characterId = args.getInt(ITEM_ID_EXTRA, DEFAULT_ID)
+        }
     }
 
     override fun onDestroyView() {
@@ -61,6 +82,9 @@ class ConfirmDeletingDialogFragment : Fragment() {
     }
 
     companion object {
+        const val MODE_EXTRA = "mode"
+        const val MODE_SINGLE = "single"
+        const val MODE_LIST = "list"
         const val ITEM_ID_EXTRA = "item_id"
         private const val DEFAULT_ID = -1
     }

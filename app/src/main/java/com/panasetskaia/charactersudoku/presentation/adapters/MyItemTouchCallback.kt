@@ -71,6 +71,7 @@ open class MyItemTouchCallback(
             val item = adapter.currentList[viewHolder.adapterPosition]
             val arguments = Bundle().apply {
                 putInt(ConfirmDeletingDialogFragment.ITEM_ID_EXTRA, item.id)
+                putString(ConfirmDeletingDialogFragment.MODE_EXTRA, ConfirmDeletingDialogFragment.MODE_SINGLE)
             }
             context.parentFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
