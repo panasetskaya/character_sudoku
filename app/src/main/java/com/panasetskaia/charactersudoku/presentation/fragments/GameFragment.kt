@@ -140,7 +140,6 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         }
                     }
                 }
-
                 true
             }
         }

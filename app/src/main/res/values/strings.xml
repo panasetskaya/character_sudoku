@@ -30,7 +30,7 @@
     <string name="confirmDelete">Delete?</string>
     <string name="confirmStartGame">Nine characters all ready! Let\'s start?</string>
     <string name="confirmStartButton">Start</string>
-    <string name="added">Added successfully</string>
+    <string name="added">Done!</string>
     <string name="no_char">Character is missing</string>
     <string name="too_many">There should be only 1 character</string>
     <string name="help_game">You can mark the selected cell as doubtful with a long click on the cell.\n\nThe button on the right erases the selected cell value.\n\nYour game board is saved every time you leave.\n\nLong click on a character button below will show you its information from the dictionary.\n\nClick on refresh arrow to get a new game.</string>
