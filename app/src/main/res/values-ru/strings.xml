@@ -31,7 +31,7 @@
     <string name="help_dict">Смахните влево, чтобы удалить иероглиф из словаря.\n\nВыберите иероглиф долгим нажатием.\n\nВыберите девять иероглифов, чтобы запустить новую игру.\n\nДобавляйте или удаляйте категории на странице добавления/редактирования иероглифа.</string>
     <string name="confirmStartGame">Есть девять иероглифов! Начнем?</string>
     <string name="confirmStartButton">Играть</string>
-    <string name="added">Добавлено</string>
+    <string name="added">Готово</string>
     <string name="no_char">Отсутствует иероглиф</string>
     <string name="too_many">Оставьте только один символ</string>
     <string name="not_enough">Для игры нужно выбрать 9 иероглифов</string>
