@@ -136,6 +136,7 @@ public class SudokuSolver {
                 });
 
         List<String> resultingList = mapping.collect(Collectors.toList());
-        return resultingList.get(0);
+        if (resultingList.size()>0) return resultingList.get(0);
+        else return null;
     }
 }
