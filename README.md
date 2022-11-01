@@ -4,6 +4,9 @@ intended for helping learners of Chinese language to memorize new characters whi
 Consists of sudoku game and vocabulary with filtering by categories.
 
 
+The app on Google Play: https://play.google.com/store/apps/details?id=com.panasetskaia.charactersudoku
+
+
 The Java classes: ExactCoverProblem and SudokuSolver, were developed by Colin Smith using Dancing Links algorithm, copyrighted in 2018, MIT License: https://github.com/littleredcomputer, and are used here with a few changes.
 
 <img src="https://user-images.githubusercontent.com/90948269/197734626-31dd9ef9-da88-472b-8da4-0bfe93eaa516.png" width="300" height="533">  <img src="https://user-images.githubusercontent.com/90948269/197734616-8140eaeb-bbf5-40ff-a23f-f8437326f365.png" width="300" height="533">
