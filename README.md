@@ -1,10 +1,9 @@
 # 
+On Google Play: https://play.google.com/store/apps/details?id=com.panasetskaia.charactersudoku
+
 Mandarindoku - a game of sudoku with chinese Characters instead of numbers, 
 intended for helping learners of Chinese language to memorize new characters while playing.
 Consists of sudoku game and vocabulary with filtering by categories.
-
-
-The app on Google Play: https://play.google.com/store/apps/details?id=com.panasetskaia.charactersudoku
 
 
 The Java classes: ExactCoverProblem and SudokuSolver, were developed by Colin Smith using Dancing Links algorithm, copyrighted in 2018, MIT License: https://github.com/littleredcomputer, and are used here with a few changes.
