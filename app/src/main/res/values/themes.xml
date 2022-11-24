@@ -9,6 +9,9 @@
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
         <item name="android:buttonStyle">@style/simpleButtonStyle</item>
         <item name="fontFamily">@font/rubik</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowEnterTransition">@transition/deafult_window_fade</item>
+        <item name="android:windowExitTransition">@transition/deafult_window_fade</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
 
     </style>

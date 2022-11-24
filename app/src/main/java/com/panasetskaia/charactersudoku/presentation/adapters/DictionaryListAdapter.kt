@@ -1,16 +1,22 @@
 package com.panasetskaia.charactersudoku.presentation.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.ListAdapter
+import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.CharacterItemChosenBinding
 import com.panasetskaia.charactersudoku.databinding.CharacterItemNotChosenBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import com.panasetskaia.charactersudoku.presentation.fragments.DictionaryFragment
 
-class DictionaryListAdapter :
+class DictionaryListAdapter (val context: DictionaryFragment):
     ListAdapter<ChineseCharacter, ChineseCharViewHolder>(ChineseCharDiffUtilCallback()) {
 
-    var onCharacterItemClickListener: ((ChineseCharacter) -> Unit)? = null
+    var onCharacterItemClickListener: ((ChineseCharacter, TextView) -> Unit)? = null
     var onCharacterItemLongClickListener: ((ChineseCharacter) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChineseCharViewHolder {
@@ -37,14 +43,10 @@ class DictionaryListAdapter :
             onCharacterItemLongClickListener?.invoke(item)
             true
         }
-        binding.root.setOnClickListener {
-            onCharacterItemClickListener?.invoke(item)
-            true
-        }
-
         when (binding) {
             is CharacterItemChosenBinding -> {
                 with(binding) {
+                    ViewCompat.setTransitionName(tvCharacterChinese, context.getString(R.string.big_char))
                     tvCharacterChinese.text = item.character
                     tvPinyin.text = item.pinyin
                     val translationCut =
@@ -52,10 +54,15 @@ class DictionaryListAdapter :
                             0..21
                         ) + "..."
                     tvTranslation.text = translationCut
+                    root.setOnClickListener {
+                        onCharacterItemClickListener?.invoke(item,tvCharacterChinese)
+                        true
+                    }
                 }
             }
             is CharacterItemNotChosenBinding -> {
                 with(binding) {
+                    ViewCompat.setTransitionName(tvCharacterChinese, context.getString(R.string.big_char))
                     tvCharacterChinese.text = item.character
                     tvPinyin.text = item.pinyin
                     val translationCut =
@@ -63,6 +70,10 @@ class DictionaryListAdapter :
                             0..21
                         ) + "..."
                     tvTranslation.text = translationCut
+                    root.setOnClickListener {
+                        onCharacterItemClickListener?.invoke(item,tvCharacterChinese)
+                        true
+                    }
                 }
             }
         }

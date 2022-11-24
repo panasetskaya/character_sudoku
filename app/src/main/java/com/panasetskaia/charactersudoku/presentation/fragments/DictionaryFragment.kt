@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -161,7 +162,7 @@ class DictionaryFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        listAdapter = DictionaryListAdapter()
+        listAdapter = DictionaryListAdapter(this)
         itemTouchCallback = object : MyItemTouchCallback(this, listAdapter, characterViewModel) {}
         listAdapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
@@ -178,18 +179,24 @@ class DictionaryFragment : Fragment() {
             listAdapter.onCharacterItemLongClickListener = {
                 characterViewModel.changeIsChosenState(it)
             }
-            listAdapter.onCharacterItemClickListener = {
+            listAdapter.onCharacterItemClickListener = { character, tv ->
+
                 val arguments = Bundle().apply {
                     putInt(
                         SingleCharacterFragment.EXTRA_CHINESE_ID,
-                        it.id
+                        character.id
                     )
                     putString(
                         SingleCharacterFragment.EXTRA_MODE,
                         SingleCharacterFragment.MODE_EDIT
                     )
                 }
-                replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
+                parentFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .addSharedElement(tv, ViewCompat.getTransitionName(tv)!!)
+                    .replace(R.id.fcvMain, SingleCharacterFragment::class.java, arguments)
+                    .addToBackStack(null)
+                    .commit()
             }
             setupSwipeListener(binding.recyclerViewList)
         }

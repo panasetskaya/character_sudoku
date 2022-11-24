@@ -1,12 +1,14 @@
 package com.panasetskaia.charactersudoku.presentation.fragments
 
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.view.*
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -37,6 +39,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseParams()
+        sharedElementEnterTransition = TransitionInflater.from(requireContext()).inflateTransition(R.transition.shared_image)
     }
 
     override fun onCreateView(
@@ -53,6 +56,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
         viewModel = (activity as MainActivity).characterViewModel
         binding.spinnerCat.onItemSelectedListener = this
         setupMenu()
+        ViewCompat.setTransitionName(binding.tvBigCharacter, getString(R.string.big_char))
         if (mode== MODE_ADD) {
             launchModeAdd()
         }
@@ -106,6 +110,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             etTranslation.setText(it.translation)
                             etUsages.setText(it.usages)
                             selectedCategory = it.category
+                            tvBigCharacter.text = it.character
                         }
                     }
                 }
@@ -114,6 +119,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun launchModeAdd() {
+        binding.tvBigCharacter.visibility = View.GONE
         binding.addCat.setOnClickListener {
             binding.newCatGroup.isVisible = true
             binding.confirmCat.setOnClickListener {
