@@ -2,6 +2,10 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.view.animation.BounceInterpolator
+import android.view.animation.CycleInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -107,6 +111,11 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             etUsages.setText(it.usages)
                             selectedCategory = it.category
                             tvBigCharacter.text = it.character
+                            tvBigCharacter.animate().apply {
+                                translationX(70f)
+                                duration = 500
+                                interpolator = OvershootInterpolator()
+                            }
                         }
                     }
                 }
