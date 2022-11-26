@@ -106,6 +106,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             etTranslation.setText(it.translation)
                             etUsages.setText(it.usages)
                             selectedCategory = it.category
+                            tvBigCharacter.text = it.character
                         }
                     }
                 }
@@ -114,6 +115,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun launchModeAdd() {
+        binding.tvBigCharacter.visibility = View.GONE
         binding.addCat.setOnClickListener {
             binding.newCatGroup.isVisible = true
             binding.confirmCat.setOnClickListener {

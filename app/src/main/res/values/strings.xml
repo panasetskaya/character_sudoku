@@ -48,5 +48,6 @@
     <string name="default_category">All</string>
     <string name="okButton">OK</string>
     <string name="choose_level">Level:</string>
+    <string name="big_char" translatable="false">Big char</string>
 
 </resources>

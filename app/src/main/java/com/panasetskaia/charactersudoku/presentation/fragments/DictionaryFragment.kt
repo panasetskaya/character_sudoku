@@ -2,10 +2,9 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.*
-import android.view.animation.LinearInterpolator
+import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
@@ -37,7 +36,7 @@ class DictionaryFragment : Fragment() {
     private lateinit var listAdapter: DictionaryListAdapter
     private lateinit var itemTouchCallback: MyItemTouchCallback
     private lateinit var selectedCharacters: List<ChineseCharacter>
-    private val linearInterpolator = LinearInterpolator()
+    private val mInterpolator = AccelerateInterpolator()
     private var isFabPlayEnabled = false
     private var filter = NO_FILTER
 
@@ -255,10 +254,10 @@ class DictionaryFragment : Fragment() {
 
     private fun shakeAnimator(shake: View, propertyName: String, finalvalue: Float) =
         ObjectAnimator.ofFloat(shake, propertyName, -270f, finalvalue).apply {
-            repeatMode = ValueAnimator.RESTART
-            repeatCount = 1
+//            repeatMode = ValueAnimator.RESTART
+//            repeatCount = 1
             duration = 400
-            interpolator = linearInterpolator
+            interpolator = mInterpolator
         }
 
     private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {

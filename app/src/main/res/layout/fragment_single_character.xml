@@ -1,46 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragments.SingleCharacterFragment"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:context=".presentation.fragments.SingleCharacterFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="0dp">
+        app:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/app_bar"
+            style="@style/Widget.Sudoku.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            style="@style/Widget.Sudoku.Toolbar"
             android:paddingStart="12dp"
             android:paddingLeft="12dp"
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
-            app:contentInsetStart="0dp"
-            />
+            app:contentInsetStart="0dp" />
     </com.google.android.material.appbar.AppBarLayout>
-
 
 
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:paddingBottom="110dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        android:paddingBottom="110dp"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline2"
@@ -49,27 +45,44 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.3" />
 
+
+            <TextView
+                android:id="@+id/tv_big_character"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center"
+                android:textColor="@color/primaryDarkColor"
+                android:textSize="80sp"
+                android:transitionName="@string/big_char"
+                app:fontFamily="@font/ma_shan_zheng"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_character"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
 
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
-
-                app:hintTextColor="@color/primaryLightColor"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:endIconMode="clear_text"
+                android:layout_marginBottom="20dp"
                 app:boxStrokeColor="@color/secondaryColor"
-                app:shapeAppearance="@style/Rounded"
-
                 app:counterEnabled="true"
-                app:counterMaxLength="1">
+
+                app:counterMaxLength="1"
+                app:endIconMode="clear_text"
+                app:hintTextColor="@color/primaryLightColor"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="parent"
+
+                app:layout_constraintTop_toBottomOf="@+id/tv_big_character"
+                app:shapeAppearance="@style/Rounded">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_character"
@@ -77,25 +90,25 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/character_hint"
 
-                    android:inputType="textCapWords"/>
+                    android:inputType="textCapWords" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_pinyin"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
-                app:hintTextColor="@color/primaryLightColor"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="20dp"
+                app:boxStrokeColor="@color/secondaryColor"
                 app:endIconMode="clear_text"
 
+                app:hintTextColor="@color/primaryLightColor"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:boxStrokeColor="@color/secondaryColor"
                 app:layout_constraintStart_toEndOf="@+id/guideline2"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_big_character"
                 app:shapeAppearance="@style/Rounded">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -103,20 +116,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/pinyin_hint"
-                    android:inputType="none"/>
+                    android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_translation"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                app:hintTextColor="@color/primaryLightColor"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/secondaryColor"
                 app:endIconMode="clear_text"
 
+                app:hintTextColor="@color/primaryLightColor"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:boxStrokeColor="@color/secondaryColor"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ti_pinyin"
                 app:shapeAppearance="@style/Rounded">
@@ -126,20 +139,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/translation_hint"
-                    android:inputType="none"/>
+                    android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_usages"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                app:hintTextColor="@color/primaryLightColor"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/secondaryColor"
                 app:endIconMode="clear_text"
 
+                app:hintTextColor="@color/primaryLightColor"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:boxStrokeColor="@color/secondaryColor"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ti_translation"
                 app:shapeAppearance="@style/Rounded">
@@ -149,45 +162,45 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/usages_hint"
-                    android:inputType="none"/>
+                    android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Spinner
                 android:id="@+id/spinner_cat"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                tools:listitem="@layout/category_spinner_item"
                 app:layout_constraintEnd_toStartOf="@+id/add_cat"
-                app:layout_constraintTop_toBottomOf="@+id/ti_usages" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ti_usages"
+                tools:listitem="@layout/category_spinner_item" />
 
             <ImageView
                 android:id="@+id/add_cat"
-                android:elevation="16dp"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:visibility="visible"
                 android:layout_marginEnd="20dp"
                 android:clickable="true"
                 android:contentDescription="@string/add_cat_button"
-                app:layout_constraintStart_toEndOf="@+id/spinner_cat"
-                app:layout_constraintTop_toTopOf="@+id/spinner_cat"
+                android:elevation="16dp"
+                android:src="@drawable/ic_baseline_add_24"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/spinner_cat"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:src="@drawable/ic_baseline_add_24" />
+                app:layout_constraintStart_toEndOf="@+id/spinner_cat"
+                app:layout_constraintTop_toTopOf="@+id/spinner_cat" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_new_category"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                app:hintTextColor="@color/primaryLightColor"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:endIconMode="clear_text"
-                app:layout_constraintEnd_toStartOf="@+id/confirm_cat"
                 app:boxStrokeColor="@color/secondaryColor"
+                app:endIconMode="clear_text"
+                app:hintTextColor="@color/primaryLightColor"
+                app:layout_constraintEnd_toStartOf="@+id/confirm_cat"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/spinner_cat"
                 app:shapeAppearance="@style/Rounded">
@@ -197,32 +210,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/new_cat"
-                    android:inputType="none"/>
+                    android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageView
                 android:id="@+id/confirm_cat"
-                android:elevation="16dp"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:visibility="visible"
                 android:layout_marginEnd="20dp"
                 android:clickable="true"
                 android:contentDescription="@string/add_cat_button"
-                app:layout_constraintStart_toEndOf="@+id/ti_new_category"
-                app:layout_constraintTop_toTopOf="@+id/ti_new_category"
+                android:elevation="16dp"
+                android:src="@drawable/ic_baseline_check_24"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/ti_new_category"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:src="@drawable/ic_baseline_check_24" />
-            
+                app:layout_constraintStart_toEndOf="@+id/ti_new_category"
+                app:layout_constraintTop_toTopOf="@+id/ti_new_category" />
+
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/new_cat_group"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:visibility="gone"
-                app:constraint_referenced_ids="confirm_cat, ti_new_category"/>
+                app:constraint_referenced_ids="confirm_cat, ti_new_category" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

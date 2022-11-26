@@ -6,6 +6,9 @@ import android.animation.ValueAnimator
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.*
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.BounceInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.Toast
@@ -29,7 +32,7 @@ import kotlinx.coroutines.launch
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
-    private val linearInterpolator = LinearInterpolator()
+    private val mInterpolator = AccelerateInterpolator()
     private lateinit var gameViewModel: GameViewModel
     private lateinit var characterViewModel: ChineseCharacterViewModel
     private var _binding: FragmentGameBinding? = null
@@ -215,10 +218,8 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         repeat: Int
     ) =
         ObjectAnimator.ofFloat(shake, "rotation", startValue, endValue).apply {
-            repeatMode = ValueAnimator.RESTART
-            repeatCount = repeat
             duration = dur
-            interpolator = linearInterpolator
+            interpolator = mInterpolator
         }
 
     override fun onCellTouched(row: Int, col: Int) {
