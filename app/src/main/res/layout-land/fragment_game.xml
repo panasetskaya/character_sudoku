@@ -30,6 +30,8 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+
+
     <Chronometer
         android:id="@+id/chTimer"
         android:layout_width="wrap_content"
@@ -195,6 +197,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/win_animation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:lottie_rawRes="@raw/confetti_1"
+        app:layout_constraintTop_toTopOf="@+id/sudoku_board"
+        app:layout_constraintStart_toStartOf="@+id/sudoku_board"
+        app:layout_constraintEnd_toEndOf="@+id/sudoku_board"
+        app:layout_constraintBottom_toBottomOf="@+id/sudoku_board"
+
         />
 
     <androidx.constraintlayout.widget.Guideline

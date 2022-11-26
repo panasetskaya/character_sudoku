@@ -39,6 +39,10 @@ class GameViewModel @Inject constructor(
     val timeSpentFlow: StateFlow<Long>
         get() = _timeSpentFlow
 
+    private val _isWinFlow = MutableStateFlow(false)
+    val isWinFlow: StateFlow<Boolean>
+        get() = _isWinFlow
+
     private val _selectedCellFlow = MutableStateFlow(Pair(NO_SELECTION, NO_SELECTION))
     val selectedCellFlow: StateFlow<Pair<Int, Int>>
         get() = _selectedCellFlow
@@ -93,9 +97,7 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch {
             val randomBoard = getRandomBoard.invoke(diffLevel)
             updateNineChars(randomBoard.nineChars)
-            updateBoard(randomBoard)
-            _timeSpentFlow.value = randomBoard.timeSpent
-            setSettingsState(true)
+            reset(randomBoard)
         }
     }
 
@@ -104,9 +106,7 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch {
             val randomBoard = getRandomByCategory(category, diffLevel)
             updateNineChars(randomBoard.nineChars)
-            updateBoard(randomBoard)
-            _timeSpentFlow.value = randomBoard.timeSpent
-            setSettingsState(true)
+            reset(randomBoard)
         }
     }
 
@@ -119,10 +119,15 @@ class GameViewModel @Inject constructor(
             }
             updateNineChars(listString)
             val board = getNewGameWithSel(selected, level)
-            updateBoard(board)
-            _timeSpentFlow.value = board.timeSpent
-            setSettingsState(true)
+            reset(board)
         }
+    }
+
+    private fun reset(newBoard: Board) {
+        updateBoard(newBoard)
+        _timeSpentFlow.value = newBoard.timeSpent
+        _isWinFlow.value = false
+        setSettingsState(true)
     }
 
     fun setSettingsState(areSettingsDone: Boolean) {
@@ -160,12 +165,7 @@ class GameViewModel @Inject constructor(
             viewModelScope.launch {
                 val gameResult = getGameResult.invoke(currentBoard)
                 if (gameResult is SUCCESS) {
-                    Toast.makeText(
-                        getApplication(),
-                        getApplication<Application>().getString(R.string.game_succesful),
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
+                    _isWinFlow.value = true
                     updateBoard(gameResult.solution)
                     updateTimer(-1L)
                 } else {

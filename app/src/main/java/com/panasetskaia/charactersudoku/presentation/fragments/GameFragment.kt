@@ -29,6 +29,7 @@ import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
@@ -126,7 +127,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             button.setOnClickListener {
                 gameViewModel.handleInput(index)
                 AnimatorSet().apply {
-                    play(shakeAnimator(it, -10f, 0f, 40, 2))
+                    play(shakeAnimator(it, -10f, 0f, 40))
                     start()
                 }
             }
@@ -148,15 +149,17 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
         binding.refreshGame.setOnClickListener {
             AnimatorSet().apply {
-                play(shakeAnimator(it, -360f, 0f, 250, 0))
+                play(shakeAnimator(it, -360f, 0f, 250))
                 start()
             }
-            addThisFragment(ConfirmRefreshFragment::class.java)
-            gameViewModel.setSettingsState(false)
+            initiateNewGame()
+        }
+        binding.newGameButton?.setOnClickListener {
+            initiateNewGame()
         }
         binding.clearCell.setOnClickListener {
             AnimatorSet().apply {
-                play(shakeAnimator(it, -10f, 0f, 40, 2))
+                play(shakeAnimator(it, -10f, 0f, 40))
                 start()
             }
 
@@ -198,6 +201,28 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         }
                     }
                 }
+                launch {
+                    gameViewModel.isWinFlow.collectLatest {
+                        if (it) {
+                            binding.buttonsGroup?.visibility = View.GONE
+                            binding.gameFinishedGroup?.visibility = View.VISIBLE
+                            val timePassedMillis = (SystemClock.elapsedRealtime() - binding.chTimer.base)
+                            val timePassed = String.format(getString(R.string.time_formatted),
+                                TimeUnit.MILLISECONDS.toMinutes(timePassedMillis),
+                                TimeUnit.MILLISECONDS.toSeconds(timePassedMillis) -
+                                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timePassedMillis))
+                            );
+                            binding.tvGameFinished?.text = getString(R.string.game_finished, timePassed)
+                            with(binding.winAnimationView) {
+                                repeatCount = 2
+                                playAnimation()
+                            }
+                        } else {
+                            binding.buttonsGroup?.visibility = View.VISIBLE
+                            binding.gameFinishedGroup?.visibility = View.GONE
+                        }
+                    }
+                }
             }
         }
     }
@@ -214,8 +239,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         shake: View,
         startValue: Float,
         endValue: Float,
-        dur: Long,
-        repeat: Int
+        dur: Long
     ) =
         ObjectAnimator.ofFloat(shake, "rotation", startValue, endValue).apply {
             duration = dur
@@ -258,5 +282,10 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             val timeWhenStopped = it.base - SystemClock.elapsedRealtime()
             gameViewModel.updateTimer(timeWhenStopped)
         }
+    }
+
+    private fun initiateNewGame() {
+        addThisFragment(ConfirmRefreshFragment::class.java)
+        gameViewModel.setSettingsState(false)
     }
 }

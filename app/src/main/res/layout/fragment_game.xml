@@ -1,76 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/gameConstraintLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gameConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragments.GameFragment"
-    >
+    tools:context=".presentation.fragments.GameFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="0dp">
+        app:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/app_bar"
+            style="@style/Widget.Sudoku.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title=""
-            style="@style/Widget.Sudoku.Toolbar"
             android:paddingStart="12dp"
             android:paddingLeft="12dp"
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
             app:contentInsetStart="0dp"
-            />
+            app:title="" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <Chronometer
         android:id="@+id/chTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        app:layout_constraintBottom_toTopOf="@+id/sudoku_board"
         android:layout_marginTop="12dp"
-        />
+        app:layout_constraintBottom_toTopOf="@+id/sudoku_board"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
     <ImageView
         android:id="@+id/refreshGame"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:contentDescription="@string/refresh_button"
+        android:src="@drawable/ic_baseline_refresh_24"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
         app:layout_constraintEnd_toStartOf="@+id/buttonsLayout"
-        app:layout_constraintTop_toTopOf="@+id/buttonsLayout"
-        android:src="@drawable/ic_baseline_refresh_24"
-        android:contentDescription="@string/refresh_button" />
+        app:layout_constraintTop_toTopOf="@+id/buttonsLayout" />
 
     <ImageView
         android:id="@+id/clearCell"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:visibility="visible"
         android:contentDescription="@string/clear_cell_button"
+        android:src="@drawable/ic_baseline_clear_24"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
         app:layout_constraintStart_toEndOf="@+id/buttonsLayout"
-        app:layout_constraintTop_toTopOf="@+id/buttonsLayout"
-        android:src="@drawable/ic_baseline_clear_24" />
+        app:layout_constraintTop_toTopOf="@+id/buttonsLayout" />
 
     <View
         android:id="@+id/chosen_background"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@drawable/white_background"
         app:layout_constraintBottom_toBottomOf="@+id/sudoku_board"
         app:layout_constraintEnd_toEndOf="@+id/sudoku_board"
-        app:layout_constraintTop_toTopOf="@+id/sudoku_board"
         app:layout_constraintStart_toStartOf="@+id/sudoku_board"
-        android:background="@drawable/white_background"/>
+        app:layout_constraintTop_toTopOf="@+id/sudoku_board" />
 
 
     <com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
@@ -90,97 +87,95 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
         android:columnCount="3"
         android:rowCount="3"
-        android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sudoku_board"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/sudoku_board">
 
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/oneButton"
+            style="@style/sudokuButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="0"
             android:layout_column="0"
-            style="@style/sudokuButtonStyle"
             tools:text="1" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/twoButton"
+            style="@style/sudokuButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="0"
-            android:padding="0dp"
-            tools:text="2"
             android:layout_column="1"
-            style="@style/sudokuButtonStyle"
-            />
+            android:padding="0dp"
+            tools:text="2" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/threeButton"
+            style="@style/sudokuButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="0"
             android:layout_column="2"
-            style="@style/sudokuButtonStyle"
             tools:text="3" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/fourButton"
+            style="@style/sudokuButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="1"
             android:layout_column="0"
-            style="@style/sudokuButtonStyle"
             tools:text="4" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/fiveButton"
+            style="@style/sudokuButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="1"
             android:layout_column="1"
-            style="@style/sudokuButtonStyle"
             tools:text="5" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sixButton"
+            style="@style/sudokuButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="1"
             android:layout_column="2"
-            style="@style/sudokuButtonStyle"
             tools:text="6" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sevenButton"
+            style="@style/sudokuButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="2"
             android:layout_column="0"
-            style="@style/sudokuButtonStyle"
             tools:text="7" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/eightButton"
+            style="@style/sudokuButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="2"
             android:layout_column="1"
-            style="@style/sudokuButtonStyle"
             tools:text="8" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/nineButton"
+            style="@style/sudokuButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="2"
             android:layout_column="2"
-            style="@style/sudokuButtonStyle"
             tools:text="9" />
     </GridLayout>
 
@@ -191,6 +186,59 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/win_animation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:lottie_rawRes="@raw/confetti_1"
+        app:layout_constraintTop_toTopOf="@+id/sudoku_board"
+        app:layout_constraintStart_toStartOf="@+id/sudoku_board"
+        app:layout_constraintEnd_toEndOf="@+id/sudoku_board"
+        app:layout_constraintBottom_toBottomOf="@+id/sudoku_board"
+
         />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/buttons_group"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:constraint_referenced_ids="refreshGame, clearCell, buttonsLayout" />
+
+    <TextView
+        android:id="@+id/tv_gameFinished"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/primaryLightColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sudoku_board"
+        app:layout_constraintBottom_toTopOf="@+id/newGameButton"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/newGameButton"
+        style="@style/simpleButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/refresh"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_gameFinished"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/game_finished_group"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:constraint_referenced_ids="tv_gameFinished,newGameButton" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
