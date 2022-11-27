@@ -44,6 +44,10 @@ class GameViewModel @Inject constructor(
     val isWinFlow: StateFlow<Boolean>
         get() = _isWinFlow
 
+    private val _isNewFlow = MutableStateFlow(false)
+    val isNewFlow: StateFlow<Boolean>
+        get() = _isNewFlow
+
     private val _selectedCellFlow = MutableStateFlow(Pair(NO_SELECTION, NO_SELECTION))
     val selectedCellFlow: StateFlow<Pair<Int, Int>>
         get() = _selectedCellFlow
@@ -129,6 +133,7 @@ class GameViewModel @Inject constructor(
         _timeSpentFlow.value = newBoard.timeSpent
         _isWinFlow.value = false
         setSettingsState(true)
+        _isNewFlow.value = true
     }
 
     fun setSettingsState(areSettingsDone: Boolean) {
@@ -136,6 +141,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun saveBoard(timeSpent: Long) {
+        _isNewFlow.value = false
         viewModelScope.launch {
             val boardToSave = if (isWinFlow.value) {
                 currentBoard.copy(timeSpent = timeSpent, alreadyFinished = true)
@@ -148,6 +154,7 @@ class GameViewModel @Inject constructor(
     }
 
     private fun getSavedBoard() {
+        _isNewFlow.value = false
         _isWinFlow.value = false
         viewModelScope.launch {
             val savedBoard = getSavedGameUseCase()

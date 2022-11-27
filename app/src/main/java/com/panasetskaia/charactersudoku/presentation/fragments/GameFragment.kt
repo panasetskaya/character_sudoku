@@ -57,6 +57,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         super.onResume()
         binding.refreshGame.isClickable = true
         binding.clearCell.isClickable = true
+
     }
 
     override fun onPause() {
@@ -236,6 +237,17 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                             binding.buttonsGroup.visibility = View.VISIBLE
                             binding.gameFinishedGroup.visibility = View.GONE
                         }
+                    }
+                }
+                launch {
+                    gameViewModel.isNewFlow.collectLatest {
+                        if (it) {
+                            binding.rippleAnimationView.visibility = View.VISIBLE
+                            binding.rippleAnimationView.playAnimation()
+                        } else {
+                            binding.rippleAnimationView.visibility = View.GONE
+                        }
+
                     }
                 }
             }
