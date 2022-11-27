@@ -49,5 +49,6 @@
     <string name="confirmDelete">Точно удалить?</string>
     <string name="refresh">Новая игра</string>
     <string name="game_finished">Ура!\nВы завершили эту игру за %1$s!</string>
-    <string name="time_formatted">%d мин. %d сек.</string>
+    <string name="time_formatted">%d м. %d с.</string>
+    <string name="rating">Рейтинг</string>
 </resources>
