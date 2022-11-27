@@ -98,6 +98,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun getNewRandomGame(diffLevel: Level) {
+        _isNewFlow.value = false
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val randomBoard = getRandomBoard.invoke(diffLevel)
@@ -107,6 +108,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun getRandomGameWithCategory(category: String, diffLevel: Level) {
+        _isNewFlow.value = false
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val randomBoard = getRandomByCategory(category, diffLevel)
@@ -116,6 +118,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun getGameWithSelected() {
+        _isNewFlow.value = false
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val listString = mutableListOf<String>()
@@ -134,6 +137,7 @@ class GameViewModel @Inject constructor(
         _isWinFlow.value = false
         setSettingsState(true)
         _isNewFlow.value = true
+
     }
 
     fun setSettingsState(areSettingsDone: Boolean) {

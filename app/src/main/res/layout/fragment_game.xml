@@ -182,8 +182,8 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/win_animation_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:lottie_rawRes="@raw/confetti_1"
         app:layout_constraintTop_toTopOf="@+id/sudoku_board"
         app:layout_constraintStart_toStartOf="@+id/sudoku_board"
@@ -242,8 +242,8 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/ripple_animation_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:lottie_rawRes="@raw/ripple_animation"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
