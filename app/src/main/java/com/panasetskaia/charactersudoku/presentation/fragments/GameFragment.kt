@@ -1,5 +1,6 @@
 package com.panasetskaia.charactersudoku.presentation.fragments
 
+import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
@@ -240,14 +241,38 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                     }
                 }
                 launch {
-                    gameViewModel.isNewFlow.collectLatest {
-                        if (it) {
-                            binding.rippleAnimationView.visibility = View.VISIBLE
-                            binding.rippleAnimationView.playAnimation()
-                        } else {
-                            binding.rippleAnimationView.visibility = View.GONE
-                        }
+                    gameViewModel.isNewFlow.collectLatest { isNew ->
+                        with (binding.rippleAnimationView) {
+                            if (isNew) {
+                                binding.buttonsGroup.visibility = View.GONE
+                                binding.sudokuBoard.visibility = View.GONE
+                                binding.chTimer.visibility = View.GONE
+                                visibility = View.VISIBLE
+                                playAnimation()
+                                addAnimatorListener (object : Animator.AnimatorListener{
+                                    override fun onAnimationStart(p0: Animator) {
+                                    }
 
+                                    override fun onAnimationEnd(p0: Animator) {
+                                        visibility = View.GONE
+                                        binding.buttonsGroup.visibility = View.VISIBLE
+                                        binding.sudokuBoard.visibility = View.VISIBLE
+                                        binding.chTimer.visibility = View.VISIBLE
+                                    }
+
+                                    override fun onAnimationCancel(p0: Animator) {
+                                    }
+
+                                    override fun onAnimationRepeat(p0: Animator) {
+                                    }
+
+                                })
+
+
+                            } else {
+                                visibility = View.GONE
+                            }
+                        }
                     }
                 }
             }
