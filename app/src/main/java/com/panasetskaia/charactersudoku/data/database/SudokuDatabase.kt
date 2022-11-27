@@ -2,14 +2,15 @@ package com.panasetskaia.charactersudoku.data.database
 
 import android.app.Application
 import androidx.room.*
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Database(
 entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class],
-version = 15,
-autoMigrations = [AutoMigration (from = 14, to = 15)], //todo: что с этим-то делать????
+version = 16,
+//autoMigrations = [AutoMigration (from = 13, to = 14)], //todo: здесь, похоже, надо будет добавить ручные миграции с 14 версии
 exportSchema = true)
 @TypeConverters(SudokuConverters::class)
 abstract class SudokuDatabase: RoomDatabase() {
@@ -25,6 +26,12 @@ abstract class SudokuDatabase: RoomDatabase() {
         private const val NO_CAT = "-"
         private val initialCategory = CategoryDbModel(0,NO_CAT)
 
+        val MIGRATION_15_16 = object : Migration(15, 16) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE BoardDbModel ADD COLUMN alreadyFinished INTEGER DEFAULT 0 NOT NULL")
+            }
+        }
+
         fun getInstance(application: Application): SudokuDatabase {
 
             synchronized(LOCK){
@@ -33,6 +40,7 @@ abstract class SudokuDatabase: RoomDatabase() {
                 }
                 val db = Room.databaseBuilder(application, SudokuDatabase::class.java, DB_NAME)
                     .fallbackToDestructiveMigration()
+                    .addMigrations(MIGRATION_15_16)
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)

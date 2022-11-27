@@ -7,7 +7,8 @@ data class Board(
     val size: Int = SudokuGame.GRID_SIZE,
     val cells: List<Cell>,
     val nineChars: List<String>,
-    var timeSpent: Long = 0
+    var timeSpent: Long = 0,
+    var alreadyFinished: Boolean = false
 ) {
 
     fun getCell(row: Int, col: Int) = cells[row * size + col]

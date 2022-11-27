@@ -1,6 +1,7 @@
 package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -136,12 +137,18 @@ class GameViewModel @Inject constructor(
 
     fun saveBoard(timeSpent: Long) {
         viewModelScope.launch {
-            val boardToSave = currentBoard.copy(timeSpent = timeSpent)
+            val boardToSave = if (isWinFlow.value) {
+                currentBoard.copy(timeSpent = timeSpent, alreadyFinished = true)
+            } else {
+                currentBoard.copy(timeSpent = timeSpent, alreadyFinished = false)
+            }
+            Log.d("MYMYMY", "boardToSave.alreadyFinished ${boardToSave.alreadyFinished}")
             saveGameUseCase(boardToSave)
         }
     }
 
     private fun getSavedBoard() {
+        _isWinFlow.value = false
         viewModelScope.launch {
             val savedBoard = getSavedGameUseCase()
             savedBoard?.let {
@@ -161,12 +168,13 @@ class GameViewModel @Inject constructor(
                 count++
             }
         }
+
         if (count < EMPTY_CELLS_MINIMUM) {
             viewModelScope.launch {
                 val gameResult = getGameResult.invoke(currentBoard)
                 if (gameResult is SUCCESS) {
                     _isWinFlow.value = true
-                    updateBoard(gameResult.solution)
+                    updateBoard(gameResult.solution.copy(alreadyFinished = true))
                     updateTimer(-1L)
                 } else {
                     Toast.makeText(
