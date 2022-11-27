@@ -67,6 +67,12 @@
         <item name="titleTextAppearance">@style/TextAppearance.Sudoku.Toolbar</item>
     </style>
 
+    <style name="Widget.Sudoku.ToolbarNoTitle" parent="Widget.AppCompat.Toolbar">
+        <item name="android:theme">?theme</item>
+        <item name="showTitle">false</item>
+        <item name="titleTextColor">@color/primaryColor</item>
+    </style>
+
     <style name="TextAppearance.Sudoku.Toolbar" parent="TextAppearance.AppCompat.Menu">
         <item name="android:textSize">20sp</item>
         <item name="textAllCaps">true</item>
@@ -74,4 +80,5 @@
         <item name="android:textColor">@color/primaryTextColor</item>
         <item name="actionMenuTextColor">@color/primaryTextColor</item>
     </style>
+
 </resources>

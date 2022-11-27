@@ -107,6 +107,9 @@ class DictionaryFragment : Fragment() {
                             .commit()
                         true
                     }
+                    R.id.dict_export_import_icon -> {
+                        true
+                    }
                     else -> true
                 }
             }
@@ -200,7 +203,13 @@ class DictionaryFragment : Fragment() {
                 if (filter== NO_FILTER) {
                     launch {
                         characterViewModel.dictionaryFlow.collectLatest {
+                            if (it.size>0) {
+                                binding.tvDefaultText.visibility = View.GONE
+                            } else {
+                                binding.tvDefaultText.visibility = View.VISIBLE
+                            }
                             listAdapter.submitList(it)
+
                         }
                     }
                 } else {
