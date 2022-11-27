@@ -196,7 +196,6 @@
         android:id="@+id/buttons_group"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="visible"
         app:constraint_referenced_ids="refreshGame, clearCell, buttonsLayout" />
 
     <TextView
@@ -230,7 +229,6 @@
         android:id="@+id/game_finished_group"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="gone"
         app:constraint_referenced_ids="tv_gameFinished,newGameButton" />
 
     <androidx.fragment.app.FragmentContainerView
