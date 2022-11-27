@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 @Database(
 entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class],
 version = 14,
-autoMigrations = [AutoMigration (from = 13, to = 14)],
+//todo: autoMigrations = [AutoMigration (from = 13, to = 14)],
 exportSchema = true)
 @TypeConverters(SudokuConverters::class)
 abstract class SudokuDatabase: RoomDatabase() {
