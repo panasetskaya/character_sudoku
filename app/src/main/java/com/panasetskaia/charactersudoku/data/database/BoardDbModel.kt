@@ -14,5 +14,6 @@ data class BoardDbModel (
     @TypeConverters(SudokuConverters::class)
     val cells: List<Cell>,
     val nineChars: List<String>,
-    var timeSpent: Long = 0
+    var timeSpent: Long = 0,
+    var alreadyFinished: Boolean = false
         )

@@ -2,14 +2,10 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.*
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.BounceInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +32,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private val mInterpolator = AccelerateInterpolator()
     private lateinit var gameViewModel: GameViewModel
     private lateinit var characterViewModel: ChineseCharacterViewModel
+    private var wasThisGameAlreadyFinished = false
     private var _binding: FragmentGameBinding? = null
     private val binding: FragmentGameBinding
         get() = _binding ?: throw RuntimeException("FragmentGameBinding is null")
@@ -134,14 +131,20 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             button.setOnLongClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        characterViewModel.getOneCharacterByChinese(button.text.toString()).collectLatest {
-                            if (it.pinyin.length>0 || it.translation.length>0) {
-                                Toast.makeText(activity, "${it.character} [ ${it.pinyin.trim()} ] ${it.translation}", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(activity, it.character, Toast.LENGTH_SHORT).show()
-                            }
+                        characterViewModel.getOneCharacterByChinese(button.text.toString())
+                            .collectLatest {
+                                if (it.pinyin.length > 0 || it.translation.length > 0) {
+                                    Toast.makeText(
+                                        activity,
+                                        "${it.character} [ ${it.pinyin.trim()} ] ${it.translation}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(activity, it.character, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
 
-                        }
+                            }
                     }
                 }
                 true
@@ -154,7 +157,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             }
             initiateNewGame()
         }
-        binding.newGameButton?.setOnClickListener {
+        binding.newGameButton.setOnClickListener {
             initiateNewGame()
         }
         binding.clearCell.setOnClickListener {
@@ -173,6 +176,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 launch {
                     gameViewModel.boardSharedFlow.collectLatest {
                         updateCells(it.cells)
+                        wasThisGameAlreadyFinished = it.alreadyFinished
                     }
                 }
                 launch {
@@ -203,29 +207,41 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 }
                 launch {
                     gameViewModel.isWinFlow.collectLatest {
-                        if (it) {
-                            binding.buttonsGroup?.visibility = View.GONE
-                            binding.gameFinishedGroup?.visibility = View.VISIBLE
-                            val timePassedMillis = (SystemClock.elapsedRealtime() - binding.chTimer.base)
-                            val timePassed = String.format(getString(R.string.time_formatted),
+                        if (!wasThisGameAlreadyFinished && it) {
+                            binding.buttonsGroup.visibility = View.GONE
+                            binding.gameFinishedGroup.visibility = View.VISIBLE
+                            val timePassedMillis =
+                                (SystemClock.elapsedRealtime() - binding.chTimer.base)
+                            val timePassed = String.format(
+                                getString(R.string.time_formatted),
                                 TimeUnit.MILLISECONDS.toMinutes(timePassedMillis),
                                 TimeUnit.MILLISECONDS.toSeconds(timePassedMillis) -
-                                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timePassedMillis))
+                                        TimeUnit.MINUTES.toSeconds(
+                                            TimeUnit.MILLISECONDS.toMinutes(
+                                                timePassedMillis
+                                            )
+                                        )
                             );
-                            binding.tvGameFinished?.text = getString(R.string.game_finished, timePassed)
+                            binding.tvGameFinished.text =
+                                getString(R.string.game_finished, timePassed)
                             with(binding.winAnimationView) {
                                 repeatCount = 2
                                 playAnimation()
                             }
+                        } else if (wasThisGameAlreadyFinished && it) {
+                            binding.buttonsGroup.visibility = View.GONE
+                            binding.tvGameFinished.visibility = View.GONE
+                            binding.newGameButton.visibility = View.VISIBLE
                         } else {
-                            binding.buttonsGroup?.visibility = View.VISIBLE
-                            binding.gameFinishedGroup?.visibility = View.GONE
+                            binding.buttonsGroup.visibility = View.VISIBLE
+                            binding.gameFinishedGroup.visibility = View.GONE
                         }
                     }
                 }
             }
         }
     }
+
 
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {
         binding.sudokuBoard.updateSelectedCellUI(cell.first, cell.second)
