@@ -24,6 +24,7 @@ import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
 import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmRefreshFragment
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import com.panasetskaia.charactersudoku.utils.formatToTime
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -218,16 +219,8 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                             binding.gameFinishedGroup.visibility = View.VISIBLE
                             val timePassedMillis =
                                 (SystemClock.elapsedRealtime() - binding.chTimer.base)
-                            val timePassed = String.format(
-                                getString(R.string.time_formatted),
-                                TimeUnit.MILLISECONDS.toMinutes(timePassedMillis),
-                                TimeUnit.MILLISECONDS.toSeconds(timePassedMillis) -
-                                        TimeUnit.MINUTES.toSeconds(
-                                            TimeUnit.MILLISECONDS.toMinutes(
-                                                timePassedMillis
-                                            )
-                                        )
-                            );
+                            gameViewModel.saveRecord(timePassedMillis)
+                            val timePassed = timePassedMillis.formatToTime(requireActivity())
                             binding.tvGameFinished.text =
                                 getString(R.string.game_finished, timePassed)
                             with(binding.winAnimationView) {

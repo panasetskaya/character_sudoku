@@ -51,7 +51,7 @@
     <string name="big_char" translatable="false">Big char</string>
     <string name="refresh">New game</string>
     <string name="game_finished">Congratulations!\nYou have finished this mandarindoku in \n%1$s!</string>
-    <string name="time_formatted">%d min and %d sec</string>
+    <string name="time_formatted">%02d:%02d:%02d</string>
     <string name="rating">Rating</string>
     <string name="export_dict">Dictionary export and import</string>
     <string name="default_dict_text">Here you can your own characters or symbols to the dictionary and then use them for the sudoku game</string>

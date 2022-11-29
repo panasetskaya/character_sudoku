@@ -10,6 +10,7 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.entities.Level
+import com.panasetskaia.charactersudoku.domain.entities.Record
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,6 +18,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.inject.Inject
 
 class GameViewModel @Inject constructor(
@@ -26,7 +30,9 @@ class GameViewModel @Inject constructor(
     private val getSavedGameUseCase: GetSavedGameUseCase,
     private val saveGameUseCase: SaveGameUseCase,
     private val getNewGameWithSel: GetNewGameUseCase,
-    private val getRandomByCategory: GetRandomWithCategoryUseCase
+    private val getRandomByCategory: GetRandomWithCategoryUseCase,
+    private val supplyNewRecord: SupplyNewRecordUseCase,
+    private val getTopFifteenRecords: GetTopFifteenRecordsUseCase
 ) : AndroidViewModel(application) {
 
     private var selectedRow = NO_SELECTION
@@ -152,7 +158,6 @@ class GameViewModel @Inject constructor(
             } else {
                 currentBoard.copy(timeSpent = timeSpent, alreadyFinished = false)
             }
-            Log.d("MYMYMY", "boardToSave.alreadyFinished ${boardToSave.alreadyFinished}")
             saveGameUseCase(boardToSave)
         }
     }
@@ -226,6 +231,17 @@ class GameViewModel @Inject constructor(
 
     fun setSelected(newSelected: List<ChineseCharacter>) {
         selected = newSelected
+    }
+
+    fun saveRecord(recordTime: Long) {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formattedDate = current.format(formatter)
+        val newRecord = Record(0, recordTime, level, formattedDate)
+        Log.d("MYMYMY", newRecord.toString())
+        viewModelScope.launch {
+            supplyNewRecord(newRecord)
+        }
     }
 
     companion object {
