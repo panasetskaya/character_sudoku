@@ -16,7 +16,8 @@ import javax.inject.Inject
 class CharacterSudokuRepositoryImpl @Inject constructor(
     private val mapper: SudokuMapper,
     private val charactersDao: ChineseCharacterDao,
-    private val boardDao: BoardDao
+    private val boardDao: BoardDao,
+    private val recordsDao: RecordsDao
 ) : CharacterSudokuRepository {
 
     private var temporaryDict = INITIAL_9_CHAR
@@ -33,7 +34,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
             return getNewGameWithStrings(randomCharacters, diffLevel)
         } else {
             val missingSize = 9 - wholeList.size
-            val adding = INITIAL_9_CHAR.subList(0,missingSize)
+            val adding = INITIAL_9_CHAR.subList(0, missingSize)
             val randomCharacters = wholeList + adding
             return getNewGameWithStrings(randomCharacters, diffLevel)
         }
@@ -51,7 +52,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
             return getNewGameWithStrings(randomCharacters, diffLevel)
         } else {
             val missingSize = 9 - listForCategory.size
-            val adding = INITIAL_9_CHAR.subList(0,missingSize)
+            val adding = INITIAL_9_CHAR.subList(0, missingSize)
             val randomCharacters = listForCategory + adding
             return getNewGameWithStrings(randomCharacters, diffLevel)
         }
@@ -81,7 +82,10 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getNewGame(nineCharacters: List<ChineseCharacter>, diffLevel: Level): Board {
+    override suspend fun getNewGame(
+        nineCharacters: List<ChineseCharacter>,
+        diffLevel: Level
+    ): Board {
         val listString = mutableListOf<String>()
         for (i in nineCharacters) {
             listString.add(i.character)
@@ -94,7 +98,10 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun getNewGameWithStrings(nineCharacters: List<String>, diffLevel: Level): Board {
+    private suspend fun getNewGameWithStrings(
+        nineCharacters: List<String>,
+        diffLevel: Level
+    ): Board {
         temporaryDict = nineCharacters
         return withContext(Dispatchers.Default) {
             val grid = generateNumberGrid(diffLevel).values.toList()[0]
@@ -142,11 +149,11 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteCategory(catName:String) {
+    override suspend fun deleteCategory(catName: String) {
         charactersDao.deleteCategory(catName)
         charactersDao.getWholeDictionary().map {
             for (i in it) {
-                if (i.category==catName) {
+                if (i.category == catName) {
                     val replaceChar = i.copy(category = NO_CAT)
                     charactersDao.addOrEditCharacter(replaceChar)
                 }
@@ -157,6 +164,30 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     override suspend fun addCategory(category: Category) {
         if (!charactersDao.categoryExists(category.categoryName)) {
             charactersDao.addOrEditCategory(mapper.mapDomainCategoryToDbModel(category))
+        }
+    }
+
+    override suspend fun getAllRecords(): List<Record> {
+        val recordsFromDB = recordsDao.getTopFifteen()
+        val records = mutableListOf<Record>()
+        recordsFromDB.forEach {
+            val record = mapper.mapDbModelToDomainRecord(it)
+            records.add(record)
+        }
+        return records
+    }
+
+    override suspend fun supplyNewRecord(record: Record) {
+        val recordsFromDB = recordsDao.getTopFifteen()
+        if (recordsFromDB.size < 14) {
+            recordsDao.saveNewRecord(mapper.mapDomainEntityToRecordDbModel(record))
+        } else {
+            val getsToTop = recordsFromDB.any {
+                it.recordTime >= record.recordTime
+            }
+            if (getsToTop) {
+                recordsDao.saveNewRecord(mapper.mapDomainEntityToRecordDbModel(record))
+            }
         }
     }
 

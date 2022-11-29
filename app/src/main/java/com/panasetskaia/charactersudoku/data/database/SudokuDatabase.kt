@@ -8,8 +8,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Database(
-entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class],
-version = 16,
+entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class, RecordDbModel::class],
+version = 17,
 //autoMigrations = [AutoMigration (from = 13, to = 14)], //todo: здесь, похоже, надо будет добавить ручные миграции с 14 версии
 exportSchema = true)
 @TypeConverters(SudokuConverters::class)
@@ -17,6 +17,7 @@ abstract class SudokuDatabase: RoomDatabase() {
 
     abstract fun chineseCharacterDao(): ChineseCharacterDao
     abstract fun boardDao(): BoardDao
+    abstract fun recordsDao(): RecordsDao
 
     companion object {
 
@@ -32,6 +33,13 @@ abstract class SudokuDatabase: RoomDatabase() {
             }
         }
 
+        val MIGRATION_16_17 = object : Migration(16, 17) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE `RecordDbModel` (`id` INTEGER DEFAULT 0 PRIMARY KEY AUTOINCREMENT NOT NULL, `recordTime` INTEGER NOT NULL, `level` TEXT NOT NULL, `date` TEXT NOT NULL)")
+            }
+        }
+
+
         fun getInstance(application: Application): SudokuDatabase {
 
             synchronized(LOCK){
@@ -40,7 +48,7 @@ abstract class SudokuDatabase: RoomDatabase() {
                 }
                 val db = Room.databaseBuilder(application, SudokuDatabase::class.java, DB_NAME)
                     .fallbackToDestructiveMigration()
-                    .addMigrations(MIGRATION_15_16)
+                    .addMigrations(MIGRATION_15_16, MIGRATION_16_17)
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
