@@ -55,5 +55,6 @@
     <string name="rating">Rating</string>
     <string name="export_dict">Dictionary export and import</string>
     <string name="default_dict_text">Here you can your own characters or symbols to the dictionary and then use them for the sudoku game</string>
+    <string name="records_title">Your top games</string>
 
 </resources>
