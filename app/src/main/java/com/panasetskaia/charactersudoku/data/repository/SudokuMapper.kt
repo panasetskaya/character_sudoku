@@ -3,9 +3,11 @@ package com.panasetskaia.charactersudoku.data.repository
 import com.panasetskaia.charactersudoku.data.database.BoardDbModel
 import com.panasetskaia.charactersudoku.data.database.CategoryDbModel
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
+import com.panasetskaia.charactersudoku.data.database.RecordDbModel
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import com.panasetskaia.charactersudoku.domain.entities.Record
 import javax.inject.Inject
 
 class SudokuMapper @Inject constructor() {
@@ -66,6 +68,24 @@ class SudokuMapper @Inject constructor() {
         return Category(
             category.id,
             category.categoryName
+        )
+    }
+
+    fun mapDbModelToDomainRecord(dbModel: RecordDbModel): Record {
+        return Record(
+            dbModel.id,
+            dbModel.recordTime,
+            dbModel.level,
+            dbModel.date
+        )
+    }
+
+    fun mapDomainEntityToRecordDbModel(record: Record): RecordDbModel {
+        return RecordDbModel(
+            0,
+            record.recordTime,
+            record.level,
+            record.date
         )
     }
 

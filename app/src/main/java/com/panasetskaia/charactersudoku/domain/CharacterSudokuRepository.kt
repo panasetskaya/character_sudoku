@@ -1,9 +1,6 @@
 package com.panasetskaia.charactersudoku.domain
 
-import com.panasetskaia.charactersudoku.domain.entities.Board
-import com.panasetskaia.charactersudoku.domain.entities.Category
-import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
-import com.panasetskaia.charactersudoku.domain.entities.Level
+import com.panasetskaia.charactersudoku.domain.entities.*
 import kotlinx.coroutines.flow.Flow
 
 interface CharacterSudokuRepository {
@@ -31,5 +28,9 @@ interface CharacterSudokuRepository {
     suspend fun deleteCategory(catName:String)
 
     suspend fun addCategory(category: Category)
+
+    suspend fun getAllRecords(): List<Record>
+
+    suspend fun supplyNewRecord(record: Record)
 
 }

@@ -3,6 +3,7 @@ package com.panasetskaia.charactersudoku.di
 import android.app.Application
 import com.panasetskaia.charactersudoku.data.database.BoardDao
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.RecordsDao
 import com.panasetskaia.charactersudoku.data.database.SudokuDatabase
 import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
@@ -29,6 +30,12 @@ interface DataModule {
         @Provides
         fun provideCharacterDao(application: Application): ChineseCharacterDao {
             return SudokuDatabase.getInstance(application).chineseCharacterDao()
+        }
+
+        @SudokuAppScope
+        @Provides
+        fun provideRecordsDao(application: Application): RecordsDao {
+            return SudokuDatabase.getInstance(application).recordsDao()
         }
 
     }

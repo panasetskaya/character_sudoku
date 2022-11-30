@@ -2,6 +2,7 @@ package com.panasetskaia.charactersudoku.data.database
 
 import androidx.room.TypeConverter
 import com.panasetskaia.charactersudoku.domain.entities.Cell
+import com.panasetskaia.charactersudoku.domain.entities.Level
 
 class SudokuConverters {
 
@@ -44,5 +45,30 @@ class SudokuConverters {
     @TypeConverter
     fun toListOfStrings(s: String): List<String> {
         return s.split(",")
+    }
+
+    @TypeConverter
+    fun fromLevelToString(level: Level): String {
+        return when (level) {
+            Level.EASY -> EASY
+            Level.MEDIUM -> MEDIUM
+            Level.HARD -> HARD
+        }
+    }
+
+    @TypeConverter
+    fun fromStringToLevel(s: String): Level {
+        return when (s) {
+            EASY -> Level.EASY
+            MEDIUM -> Level.MEDIUM
+            HARD -> Level.HARD
+            else -> Level.EASY
+        }
+    }
+
+    companion object {
+        const val EASY = "easy"
+        const val MEDIUM = "medium"
+        const val HARD = "hard"
     }
 }
