@@ -13,10 +13,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.domain.entities.Record
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -40,7 +37,9 @@ class GameViewModel @Inject constructor(
     private lateinit var currentBoard: Board
     private lateinit var nineChars: List<String>
     private lateinit var selected: List<ChineseCharacter>
-    private var level = Level.MEDIUM
+
+
+    private val levelFlow = MutableStateFlow(Level.MEDIUM)
 
     private val _timeSpentFlow = MutableStateFlow(0L)
     val timeSpentFlow: StateFlow<Long>
@@ -71,6 +70,13 @@ class GameViewModel @Inject constructor(
     private var _settingsFinishedStateFlow = MutableStateFlow(true)
     val settingsFinishedStateFlow: StateFlow<Boolean>
         get() = _settingsFinishedStateFlow
+
+    private val _recordsFlow = MutableSharedFlow<List<Record>>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val recordsFlow: SharedFlow<List<Record>>
+        get() = _recordsFlow
 
     init {
         getSavedBoard()
@@ -105,6 +111,7 @@ class GameViewModel @Inject constructor(
 
     fun getNewRandomGame(diffLevel: Level) {
         _isNewFlow.value = false
+        levelFlow.value = diffLevel
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val randomBoard = getRandomBoard.invoke(diffLevel)
@@ -115,6 +122,7 @@ class GameViewModel @Inject constructor(
 
     fun getRandomGameWithCategory(category: String, diffLevel: Level) {
         _isNewFlow.value = false
+        levelFlow.value = diffLevel
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val randomBoard = getRandomByCategory(category, diffLevel)
@@ -132,7 +140,7 @@ class GameViewModel @Inject constructor(
                 listString.add(i.character)
             }
             updateNineChars(listString)
-            val board = getNewGameWithSel(selected, level)
+            val board = getNewGameWithSel(selected, levelFlow.value)
             reset(board)
         }
     }
@@ -226,7 +234,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun setLevel(chosenLevel: Level) {
-        level = chosenLevel
+        levelFlow.value = chosenLevel
     }
 
     fun setSelected(newSelected: List<ChineseCharacter>) {
@@ -237,10 +245,17 @@ class GameViewModel @Inject constructor(
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val formattedDate = current.format(formatter)
-        val newRecord = Record(0, recordTime, level, formattedDate)
-        Log.d("MYMYMY", newRecord.toString())
+        val newRecord = Record(0, recordTime, levelFlow.value, formattedDate)
         viewModelScope.launch {
             supplyNewRecord(newRecord)
+        }
+    }
+
+    fun getRecords() {
+        viewModelScope.launch {
+            _recordsFlow.tryEmit(
+                getTopFifteenRecords()
+            )
         }
     }
 

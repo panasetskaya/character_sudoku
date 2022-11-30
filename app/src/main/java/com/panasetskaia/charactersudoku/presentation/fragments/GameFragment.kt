@@ -98,7 +98,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         true
                     }
                     R.id.records_icon -> {
-
+                        replaceWithThisFragment(RecordsFragment::class.java, null)
                         true
                     }
                     else -> {true}

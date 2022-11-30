@@ -11,7 +11,7 @@ interface RecordsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveNewRecord(recordDbModel: RecordDbModel)
 
-    @Query("SELECT * FROM RecordDbModel ORDER BY recordTime DESC LIMIT 15")
+    @Query("SELECT * FROM RecordDbModel ORDER BY recordTime ASC LIMIT 15")
     suspend fun getTopFifteen(): List<RecordDbModel>
 
 }
