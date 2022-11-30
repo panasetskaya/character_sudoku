@@ -1,6 +1,10 @@
 package com.panasetskaia.charactersudoku.data.repository
 
-import com.panasetskaia.charactersudoku.data.database.*
+import android.os.Environment
+import com.panasetskaia.charactersudoku.data.database.BoardDao
+import com.panasetskaia.charactersudoku.data.database.CategoryDbModel
+import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.RecordsDao
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
@@ -11,7 +15,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
+
 
 class CharacterSudokuRepositoryImpl @Inject constructor(
     private val mapper: SudokuMapper,
@@ -191,6 +197,20 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveDictToCSV() {
+        withContext(Dispatchers.IO) {
+            TODO("Not yet implemented")
+        }
+    }
+
+    override suspend fun saveDictToJson() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addExternalJsonDict() {
+        TODO("Not yet implemented")
+    }
+
     private suspend fun generateNumberGrid(diffLevel: Level): Map<String, String> {
         return SudokuGame().fillGrid(diffLevel)
     }
@@ -230,9 +250,32 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         return gridString
     }
 
+    private fun isExternalStorageReadOnly(): Boolean {
+        val extStorageState = Environment.getExternalStorageState()
+        return Environment.MEDIA_MOUNTED_READ_ONLY == extStorageState
+    }
+
+    private fun isExternalStorageAvailable(): Boolean {
+        val extStorageState = Environment.getExternalStorageState()
+        return Environment.MEDIA_MOUNTED == extStorageState
+    }
+
+    private fun saveFile(myData: List<ChineseCharacter>, method: String) {
+        val filename = "SampleFile.txt"
+        val filepath = "MyFileStorage"
+        var myExternalFile: File
+
+        if (isExternalStorageAvailable() && !isExternalStorageReadOnly()) {
+
+        }
+    }
+
+
     companion object {
         private val INITIAL_9_CHAR = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
         private const val EMPTY_CELL = "0"
         private const val NO_CAT = "-"
+        private const val TO_JSON = "json"
+        private const val TO_CSV = "csv"
     }
 }

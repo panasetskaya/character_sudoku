@@ -19,7 +19,10 @@ class ChineseCharacterViewModel @Inject constructor(
     private val getWholeDict: GetWholeDictionaryUseCase,
     private val getAllCategories: GetAllCategoriesUseCase,
     private val addCategory: AddCategoryUseCase,
-    private val deleteCategory: DeleteCategoryUseCase
+    private val deleteCategory: DeleteCategoryUseCase,
+    private val saveDictToCSV: SaveDictToCSVUseCase,
+    private val saveDictToJson: SaveDictToJsonUseCase,
+    private val addExternalDict: AddExternalDictionaryUseCase
 ) : AndroidViewModel(application) {
 
     private lateinit var selected: List<ChineseCharacter>
