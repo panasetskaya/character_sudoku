@@ -54,7 +54,7 @@
     <string name="time_formatted">%02d:%02d:%02d</string>
     <string name="rating">Rating</string>
     <string name="export_dict">Dictionary export and import</string>
-    <string name="default_dict_text">Here you can your own characters or symbols to the dictionary and then use them for the sudoku game</string>
+    <string name="default_dict_text">Here you can add your own characters or symbols to the dictionary\nand then use them for the sudoku game</string>
     <string name="records_title">Your top games</string>
 
 </resources>
