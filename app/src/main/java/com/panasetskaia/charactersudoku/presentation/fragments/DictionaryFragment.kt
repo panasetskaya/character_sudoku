@@ -215,6 +215,11 @@ class DictionaryFragment : Fragment() {
                 } else {
                     launch {
                         characterViewModel.getDictionaryByCategory(filter).collectLatest {
+                            if (it.size>0) {
+                                binding.tvDefaultText.visibility = View.GONE
+                            } else {
+                                binding.tvDefaultText.visibility = View.VISIBLE
+                            }
                             listAdapter.submitList(it)
                         }
                     }

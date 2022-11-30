@@ -72,38 +72,18 @@ class RecordsFragment : Fragment() {
     private fun setupMenu() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.help_menu, menu)
+                menuInflater.inflate(R.menu.records_menu, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
-                    R.id.help_dict_icon -> {
-                        val arguments = Bundle().apply {
-                            putString(
-                                DictionaryFragment.FILTER_EXTRA,
-                                DictionaryFragment.NO_FILTER
-                            )
-                        }
+                    R.id.records_to_sudoku_icon -> {
                         parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(DictionaryFragment::class.java, arguments)
-                        true
-                    }
-                    R.id.help_sudoku_icon -> {
-                        parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(GameFragment::class.java, null)
                         true
                     }
                     else -> true
                 }
             }
         }, viewLifecycleOwner)
-    }
-
-    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
-        parentFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .replace(R.id.fcvMain, fragment, args)
-            .addToBackStack(null)
-            .commit()
     }
 }
