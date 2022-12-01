@@ -108,6 +108,8 @@ class DictionaryFragment : Fragment() {
                         true
                     }
                     R.id.dict_export_import_icon -> {
+                        characterViewModel.saveDictionaryToCSV()
+                        Toast.makeText(requireActivity(),getString(R.string.file_saved), Toast.LENGTH_LONG).show()
                         true
                     }
                     else -> true

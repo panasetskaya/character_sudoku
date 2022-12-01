@@ -1,6 +1,8 @@
 package com.panasetskaia.charactersudoku.data.repository
 
+import android.app.Application
 import android.os.Environment
+import com.google.gson.Gson
 import com.panasetskaia.charactersudoku.data.database.BoardDao
 import com.panasetskaia.charactersudoku.data.database.CategoryDbModel
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
@@ -13,13 +15,16 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
 
 class CharacterSudokuRepositoryImpl @Inject constructor(
+    private val application: Application,
     private val mapper: SudokuMapper,
     private val charactersDao: ChineseCharacterDao,
     private val boardDao: BoardDao,
@@ -199,12 +204,32 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
     override suspend fun saveDictToCSV() {
         withContext(Dispatchers.IO) {
-            TODO("Not yet implemented")
+            charactersDao.getWholeDictionary().map { dbModelList ->
+                val entityList = mutableListOf<ChineseCharacter>()
+                for (i in dbModelList) {
+                    val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+                    entityList.add(entity)
+                }
+                entityList
+            }.collectLatest {
+                saveFile(it, TO_CSV)
+            }
         }
     }
 
     override suspend fun saveDictToJson() {
-        TODO("Not yet implemented")
+        withContext(Dispatchers.IO) {
+            charactersDao.getWholeDictionary().map { dbModelList ->
+                val entityList = mutableListOf<ChineseCharacter>()
+                for (i in dbModelList) {
+                    val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+                    entityList.add(entity)
+                }
+                entityList
+            }.collectLatest {
+                saveFile(it, TO_JSON)
+            }
+        }
     }
 
     override suspend fun addExternalJsonDict() {
@@ -261,15 +286,49 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     }
 
     private fun saveFile(myData: List<ChineseCharacter>, method: String) {
-        val filename = "SampleFile.txt"
-        val filepath = "MyFileStorage"
-        var myExternalFile: File
+        val path = if (isExternalStorageAvailable() && !isExternalStorageReadOnly()) {
+            application.getExternalFilesDir(null)
+        } else {
+            application.filesDir
+        }
+        val exportDir = File(path, "")
+        if (!exportDir.exists()) {
+            exportDir.mkdirs()
+        }
 
-        if (isExternalStorageAvailable() && !isExternalStorageReadOnly()) {
+        when (method) {
+            TO_CSV -> {
 
+                val filename = CSV_FILE_NAME
+                val file = File(exportDir, filename)
+                var sb = ""
+                var afterFirst = false
+                for (character in myData) {
+                    if (!afterFirst) {
+                        sb += CSV_HEADERS
+                    }
+                    afterFirst = true
+                    sb += "${character.character},${character.pinyin},${character.translation},${character.usages},${character.category}\n"
+                }
+                try {
+                    file.writeText(sb)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+            TO_JSON -> {
+                val filename = JSON_FILE_NAME
+                val file = File(exportDir, filename)
+                val gson = Gson()
+                val jsonString = gson.toJson(myData)
+                try {
+                    file.appendText(jsonString)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
         }
     }
-
 
     companion object {
         private val INITIAL_9_CHAR = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
@@ -277,5 +336,8 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         private const val NO_CAT = "-"
         private const val TO_JSON = "json"
         private const val TO_CSV = "csv"
+        private const val CSV_FILE_NAME = "mandarindoku_dict.csv"
+        private const val JSON_FILE_NAME = "mandarindoku_dict.json"
+        private const val CSV_HEADERS = "Character,Pinyin,Translation,Usages,Category\n"
     }
 }

@@ -54,4 +54,5 @@
     <string name="export_dict">Импорт и экспорт словаря</string>
     <string name="default_dict_text">Здесь вы можете добавить в словарь свои иероглифы, чтобы использовать их в игре</string>
     <string name="records_title">Ваши лучшие судоку</string>
+    <string name="file_saved">Сохранено: sdcard/Android/data/com.panasetskaia.charactersudoku/files</string>
 </resources>

@@ -194,4 +194,16 @@ class ChineseCharacterViewModel @Inject constructor(
     fun setSelectedForDeleting(newSelected: List<ChineseCharacter>) {
         selected = newSelected
     }
+
+    fun saveDictionaryToCSV() {
+        viewModelScope.launch {
+            saveDictToCSV()
+        }
+    }
+
+    fun saveDictionaryToJson() {
+        viewModelScope.launch {
+            saveDictToJson()
+        }
+    }
 }
