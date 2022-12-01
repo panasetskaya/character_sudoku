@@ -312,7 +312,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 }
                 try {
                     file.writeText(sb)
-                } catch (e: IOException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
@@ -323,7 +323,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 val jsonString = gson.toJson(myData)
                 try {
                     file.appendText(jsonString)
-                } catch (e: IOException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
