@@ -1,16 +1,25 @@
 package com.panasetskaia.charactersudoku.presentation.fragments
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentExportBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.io.File
 
 class ExportFragment : Fragment() {
 
@@ -34,6 +43,12 @@ class ExportFragment : Fragment() {
         viewModel = (activity as MainActivity).characterViewModel
         setupMenu()
         setupListeners()
+        viewModel.pathLiveData.observe(viewLifecycleOwner) {
+            Log.d("MYMYMY", it)
+            if (it!="") {
+                startFileShareIntent(it)
+            }
+        }
     }
 
     private fun setupListeners() {
@@ -44,7 +59,8 @@ class ExportFragment : Fragment() {
             viewModel.saveDictionaryToJson()
         }
         binding.fromJsonButton.setOnClickListener {
-            Toast.makeText(requireActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show() //todo: импорт из внешнего json
+            Toast.makeText(requireActivity(), "Not implemented yet", Toast.LENGTH_SHORT)
+                .show() //todo: импорт из внешнего json
         }
     }
 
@@ -69,5 +85,26 @@ class ExportFragment : Fragment() {
                 }
             }
         }, viewLifecycleOwner)
+    }
+
+    private fun startFileShareIntent(filePath: String) {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "*/*"
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            putExtra(
+                Intent.EXTRA_SUBJECT,
+                "Sharing file from Mandarindoku"
+            )
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "Sharing file from Mandarindoku"
+            )
+            val fileURI = FileProvider.getUriForFile(
+                requireContext(), requireActivity().application.packageName + ".provider",
+                File(filePath)
+            )
+            putExtra(Intent.EXTRA_STREAM, fileURI)
+        }
+        startActivity(shareIntent)
     }
 }

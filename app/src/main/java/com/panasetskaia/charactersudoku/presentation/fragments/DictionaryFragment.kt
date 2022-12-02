@@ -2,11 +2,14 @@ package com.panasetskaia.charactersudoku.presentation.fragments
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -28,6 +31,7 @@ import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.io.File
 
 class DictionaryFragment : Fragment() {
 
@@ -108,8 +112,7 @@ class DictionaryFragment : Fragment() {
                         true
                     }
                     R.id.dict_export_import_icon -> {
-                        characterViewModel.saveDictionaryToCSV()
-                        Toast.makeText(requireActivity(),getString(R.string.file_saved), Toast.LENGTH_LONG).show()
+                        replaceWithThisFragment(ExportFragment::class.java, null)
                         true
                     }
                     else -> true

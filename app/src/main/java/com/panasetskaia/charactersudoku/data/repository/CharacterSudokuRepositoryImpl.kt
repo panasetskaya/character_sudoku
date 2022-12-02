@@ -1,7 +1,10 @@
 package com.panasetskaia.charactersudoku.data.repository
 
 import android.app.Application
+import android.content.Intent
 import android.os.Environment
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.google.gson.Gson
 import com.panasetskaia.charactersudoku.data.database.BoardDao
 import com.panasetskaia.charactersudoku.data.database.CategoryDbModel
@@ -202,34 +205,24 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveDictToCSV() {
-        withContext(Dispatchers.IO) {
-            charactersDao.getWholeDictionary().map { dbModelList ->
-                val entityList = mutableListOf<ChineseCharacter>()
-                for (i in dbModelList) {
-                    val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
-                    entityList.add(entity)
-                }
-                entityList
-            }.collectLatest {
-                saveFile(it, TO_CSV)
-            }
+    override suspend fun saveDictToCSV(): String {
+        val dataDB = charactersDao.getAllDictAsList()
+        val entityList = mutableListOf<ChineseCharacter>()
+        for (i in dataDB) {
+            val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+            entityList.add(entity)
         }
+        return saveFile(entityList, TO_CSV)
     }
 
-    override suspend fun saveDictToJson() {
-        withContext(Dispatchers.IO) {
-            charactersDao.getWholeDictionary().map { dbModelList ->
-                val entityList = mutableListOf<ChineseCharacter>()
-                for (i in dbModelList) {
-                    val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
-                    entityList.add(entity)
-                }
-                entityList
-            }.collectLatest {
-                saveFile(it, TO_JSON)
-            }
+    override suspend fun saveDictToJson(): String {
+        val dataDB = charactersDao.getAllDictAsList()
+        val entityList = mutableListOf<ChineseCharacter>()
+        for (i in dataDB) {
+            val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+            entityList.add(entity)
         }
+        return saveFile(entityList, TO_JSON)
     }
 
     override suspend fun addExternalJsonDict() {
@@ -285,7 +278,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         return Environment.MEDIA_MOUNTED == extStorageState
     }
 
-    private fun saveFile(myData: List<ChineseCharacter>, method: String) {
+    private fun saveFile(myData: List<ChineseCharacter>, method: String): String {
         val path = if (isExternalStorageAvailable() && !isExternalStorageReadOnly()) {
             application.getExternalFilesDir(null)
         } else {
@@ -298,7 +291,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
         when (method) {
             TO_CSV -> {
-
                 val filename = CSV_FILE_NAME
                 val file = File(exportDir, filename)
                 var sb = ""
@@ -315,6 +307,8 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+                val mPath = file.path
+                return mPath
             }
             TO_JSON -> {
                 val filename = JSON_FILE_NAME
@@ -326,9 +320,13 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+                val mPath = file.path
+                return mPath
             }
+            else -> return ""
         }
     }
+
 
     companion object {
         private val INITIAL_9_CHAR = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")

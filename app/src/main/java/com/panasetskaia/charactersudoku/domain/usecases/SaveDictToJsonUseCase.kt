@@ -5,8 +5,8 @@ import javax.inject.Inject
 
 class SaveDictToJsonUseCase @Inject constructor(private val repository: CharacterSudokuRepository) {
 
-    suspend operator fun invoke() {
-        repository.saveDictToJson()
+    suspend operator fun invoke(): String {
+        return repository.saveDictToJson()
     }
 
 }

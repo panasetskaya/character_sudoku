@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class SaveDictToCSVUseCase @Inject constructor(private val repository: CharacterSudokuRepository) {
 
-    suspend operator fun invoke() {
-        repository.saveDictToCSV()
+    suspend operator fun invoke(): String {
+        return repository.saveDictToCSV()
     }
 }
