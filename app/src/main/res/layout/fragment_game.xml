@@ -198,6 +198,19 @@
         android:layout_height="0dp"
         app:constraint_referenced_ids="refreshGame, clearCell, buttonsLayout" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/newGameButton"
+        style="@style/simpleSmallerButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/refresh"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sudoku_board"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
     <TextView
         android:id="@+id/tv_gameFinished"
         android:layout_width="0dp"
@@ -206,22 +219,11 @@
         android:layout_marginEnd="24dp"
         android:gravity="center"
         android:textSize="16sp"
+        android:visibility="gone"
         android:textColor="@color/primaryLightColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sudoku_board"
-        app:layout_constraintBottom_toTopOf="@+id/newGameButton"
-        />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/newGameButton"
-        style="@style/simpleSmallerButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/refresh"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_gameFinished"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

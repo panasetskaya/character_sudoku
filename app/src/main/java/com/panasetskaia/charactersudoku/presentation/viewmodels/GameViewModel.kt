@@ -172,7 +172,6 @@ class GameViewModel @Inject constructor(
 
     private fun getSavedBoard() {
         _isNewFlow.value = false
-        _isWinFlow.value = false
         viewModelScope.launch {
             val savedBoard = getSavedGameUseCase()
             savedBoard?.let {
@@ -180,6 +179,7 @@ class GameViewModel @Inject constructor(
                 updateBoard(it)
                 updateSelection(0, 0)
                 _timeSpentFlow.value = it.timeSpent
+                _isWinFlow.value = it.alreadyFinished
             } ?: getNewRandomGame(Level.MEDIUM)
         }
     }

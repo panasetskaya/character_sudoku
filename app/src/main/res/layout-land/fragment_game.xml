@@ -224,11 +224,12 @@
         android:layout_marginEnd="24dp"
         android:gravity="center"
         android:textSize="16sp"
+        android:visibility="gone"
         android:textColor="@color/primaryLightColor"
         app:layout_constraintStart_toEndOf="@+id/sudoku_board"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/sudoku_board"
-        app:layout_constraintBottom_toTopOf="@+id/newGameButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -237,9 +238,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/refresh"
+        android:visibility="gone"
+
         app:layout_constraintStart_toEndOf="@+id/sudoku_board"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_gameFinished"
+        app:layout_constraintTop_toTopOf="@+id/sudoku_board"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

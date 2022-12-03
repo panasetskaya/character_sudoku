@@ -48,7 +48,7 @@
     <string name="choose_level">Сложность:</string>
     <string name="confirmDelete">Точно удалить?</string>
     <string name="refresh">Новая игра</string>
-    <string name="game_finished">Ура!\nВы завершили эту игру за %1$s!</string>
+    <string name="game_finished">Поздравляем!</string>
     <string name="time_formatted">%02d:%02d:%02d</string>
     <string name="rating">Рейтинг</string>
     <string name="export_dict">Импорт и экспорт словаря</string>
@@ -57,7 +57,7 @@
     <string name="file_saved">Сохранено: sdcard/Android/data/com.panasetskaia.charactersudoku/files</string>
     <string name="to_csv">в CSV</string>
     <string name="to_json">в JSON</string>
-    <string name="export_explain">Вы можете сохранить свой словарь в форматах .csv или .json.\n\nCSV подойдет для табличного редактора (например, для MS Excel); JSON подойдет, если вы хотите перенести свой словарь в приложение Mandarindoku на другом устройстве.\n\nФайл сохранится на SD-карте (или в аналогичной директории во внутренней памяти, если карты нет) по адресу:\n\nAndroid/data/com.panasetskaia.charactersudoku/files.</string>
+    <string name="export_explain">Вы можете сохранить свой словарь в форматах .csv или .json.\n\nCSV подойдет для табличного редактора (например, для MS Excel); JSON подойдет, если вы хотите перенести свой словарь в приложение Mandarindoku на другом устройстве.</string>
     <string name="import_explain">Импортируйте словарь с другого устройства из файла .json</string>
-    <string name="from_json">из .json</string>
+    <string name="from_json">из JSON</string>
 </resources>

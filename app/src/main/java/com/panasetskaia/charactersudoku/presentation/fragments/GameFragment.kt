@@ -25,6 +25,7 @@ import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.C
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
 import com.panasetskaia.charactersudoku.utils.formatToTime
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -51,6 +52,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.sudokuBoard.registerListener(this)
+        binding.newGameButton.visibility = View.GONE
         setupMenu()
         interactWithViewModel()
     }
@@ -60,13 +62,14 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         binding.refreshGame.isClickable = true
         binding.clearCell.isClickable = true
 
+
     }
 
     override fun onPause() {
         super.onPause()
         val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
         gameViewModel.saveBoard(timeWhenStopped)
-
+        binding.rippleAnimationView.cancelAnimation()
     }
 
     override fun onDestroyView() {
@@ -98,10 +101,13 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         true
                     }
                     R.id.records_icon -> {
+                        parentFragmentManager.popBackStack()
                         replaceWithThisFragment(RecordsFragment::class.java, null)
                         true
                     }
-                    else -> {true}
+                    else -> {
+                        true
+                    }
                 }
             }
         }, viewLifecycleOwner)
@@ -216,37 +222,57 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                     gameViewModel.isWinFlow.collectLatest {
                         if (!wasThisGameAlreadyFinished && it) {
                             binding.buttonsGroup.visibility = View.GONE
-                            binding.gameFinishedGroup.visibility = View.VISIBLE
+                            binding.tvGameFinished.visibility = View.VISIBLE
                             val timePassedMillis =
                                 (SystemClock.elapsedRealtime() - binding.chTimer.base)
                             gameViewModel.saveRecord(timePassedMillis)
-                            val timePassed = timePassedMillis.formatToTime(requireActivity())
+                            binding.chTimer.stop()
                             binding.tvGameFinished.text =
-                                getString(R.string.game_finished, timePassed)
+                                getString(R.string.game_finished)
                             with(binding.winAnimationView) {
-                                repeatCount = 2
                                 playAnimation()
+                                repeatCount = 1
+                                addAnimatorListener(object : Animator.AnimatorListener {
+                                    override fun onAnimationStart(p0: Animator) {
+                                    }
+
+                                    override fun onAnimationEnd(p0: Animator) {
+                                        binding.tvGameFinished.visibility = View.GONE
+                                        binding.newGameButton.visibility = View.VISIBLE
+                                    }
+
+                                    override fun onAnimationCancel(p0: Animator) {
+                                    }
+
+                                    override fun onAnimationRepeat(p0: Animator) {
+                                    }
+                                })
                             }
-                        } else if (wasThisGameAlreadyFinished && it) {
+                        } else if (it) {
+                            binding.newGameButton.visibility = View.VISIBLE
                             binding.buttonsGroup.visibility = View.GONE
                             binding.tvGameFinished.visibility = View.GONE
-                            binding.newGameButton.visibility = View.VISIBLE
+                            binding.chTimer.visibility = View.INVISIBLE
+
                         } else {
                             binding.buttonsGroup.visibility = View.VISIBLE
-                            binding.gameFinishedGroup.visibility = View.GONE
+                            binding.tvGameFinished.visibility = View.GONE
+                            binding.newGameButton.visibility = View.GONE
                         }
                     }
                 }
                 launch {
                     gameViewModel.isNewFlow.collectLatest { isNew ->
-                        with (binding.rippleAnimationView) {
+                        with(binding.rippleAnimationView) {
                             if (isNew) {
                                 binding.buttonsGroup.visibility = View.GONE
                                 binding.sudokuBoard.visibility = View.GONE
                                 binding.chTimer.visibility = View.GONE
+                                binding.tvGameFinished.visibility = View.GONE
+                                binding.newGameButton.visibility = View.GONE
                                 visibility = View.VISIBLE
                                 playAnimation()
-                                addAnimatorListener (object : Animator.AnimatorListener{
+                                addAnimatorListener(object : Animator.AnimatorListener {
                                     override fun onAnimationStart(p0: Animator) {
                                     }
 
@@ -264,11 +290,11 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                                     }
 
                                 })
-
-
-                            } else {
+                            }
+                            else {
                                 visibility = View.GONE
                             }
+
                         }
                     }
                 }

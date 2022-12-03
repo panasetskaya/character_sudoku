@@ -50,7 +50,7 @@
     <string name="choose_level">Level:</string>
     <string name="big_char" translatable="false">Big char</string>
     <string name="refresh">New game</string>
-    <string name="game_finished">Congratulations!\nYou have finished this mandarindoku in \n%1$s!</string>
+    <string name="game_finished">Congratulations!</string>
     <string name="time_formatted">%02d:%02d:%02d</string>
     <string name="rating">Rating</string>
     <string name="export_dict">Dictionary export and import</string>
