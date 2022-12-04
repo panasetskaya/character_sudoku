@@ -367,8 +367,6 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
     private fun setSettings() {
-        val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
-        gameViewModel.saveBoard(timeWhenStopped)
         with (binding) {
             buttonsGroup.visibility = View.GONE
             rippleAnimationView.visibility = View.GONE

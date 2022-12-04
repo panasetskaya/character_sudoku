@@ -57,7 +57,7 @@
     <string name="file_saved">Сохранено: sdcard/Android/data/com.panasetskaia.charactersudoku/files</string>
     <string name="to_csv">в CSV</string>
     <string name="to_json">в JSON</string>
-    <string name="export_explain">Вы можете сохранить свой словарь в форматах .csv или .json.\n\nCSV подойдет для табличного редактора (например, для MS Excel); JSON подойдет, если вы хотите перенести свой словарь в приложение Mandarindoku на другом устройстве.</string>
+    <string name="export_explain">Вы можете сохранить свой словарь в форматах .csv или .json.\n\n- CSV подойдет для табличного редактора (например, для MS Excel)\n\n- JSON подойдет, если вы хотите перенести свой словарь в приложение Mandarindoku на другом устройстве</string>
     <string name="import_explain">Импортируйте словарь с другого устройства из файла .json</string>
     <string name="from_json">из JSON</string>
 </resources>
