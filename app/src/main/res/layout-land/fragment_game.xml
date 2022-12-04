@@ -45,7 +45,6 @@
         android:id="@+id/refreshGame"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:visibility="visible"
         android:contentDescription="@string/refresh_button"
         app:layout_constraintBottom_toTopOf="@+id/buttonsLayout"
         app:layout_constraintEnd_toEndOf="@+id/buttonsLayout"
@@ -57,7 +56,6 @@
         android:id="@+id/clearCell"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:visibility="visible"
         android:contentDescription="@string/clear_cell_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/buttonsLayout"
@@ -224,7 +222,6 @@
         android:layout_marginEnd="24dp"
         android:gravity="center"
         android:textSize="16sp"
-        android:visibility="gone"
         android:textColor="@color/primaryLightColor"
         app:layout_constraintStart_toEndOf="@+id/sudoku_board"
         app:layout_constraintEnd_toEndOf="parent"
@@ -238,19 +235,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/refresh"
-        android:visibility="gone"
-
         app:layout_constraintStart_toEndOf="@+id/sudoku_board"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/sudoku_board"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/game_finished_group"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:constraint_referenced_ids="tv_gameFinished,newGameButton" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/gameContainerView"

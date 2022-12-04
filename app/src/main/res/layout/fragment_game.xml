@@ -31,7 +31,6 @@
         android:id="@+id/chTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         app:layout_constraintBottom_toTopOf="@+id/sudoku_board"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +42,6 @@
         android:layout_height="60dp"
         android:contentDescription="@string/refresh_button"
         android:src="@drawable/ic_baseline_refresh_24"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
         app:layout_constraintEnd_toStartOf="@+id/buttonsLayout"
         app:layout_constraintTop_toTopOf="@+id/buttonsLayout" />
@@ -54,7 +52,6 @@
         android:layout_height="60dp"
         android:contentDescription="@string/clear_cell_button"
         android:src="@drawable/ic_baseline_clear_24"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/buttonsLayout"
         app:layout_constraintStart_toEndOf="@+id/buttonsLayout"
         app:layout_constraintTop_toTopOf="@+id/buttonsLayout" />
@@ -74,10 +71,10 @@
         android:id="@+id/sudoku_board"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="35dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chTimer"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
 
         />
 
@@ -204,7 +201,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/refresh"
-        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sudoku_board"
@@ -219,19 +215,13 @@
         android:layout_marginEnd="24dp"
         android:gravity="center"
         android:textSize="16sp"
-        android:visibility="gone"
+        android:text="@string/game_finished"
         android:textColor="@color/primaryLightColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sudoku_board"
         app:layout_constraintBottom_toBottomOf="parent"
         />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/game_finished_group"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:constraint_referenced_ids="tv_gameFinished,newGameButton" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/gameContainerView"

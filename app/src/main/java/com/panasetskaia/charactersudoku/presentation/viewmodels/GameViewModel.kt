@@ -1,11 +1,8 @@
 package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
@@ -15,6 +12,7 @@ import com.panasetskaia.charactersudoku.domain.usecases.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.lang.Math.abs
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -38,38 +36,26 @@ class GameViewModel @Inject constructor(
     private lateinit var nineChars: List<String>
     private lateinit var selected: List<ChineseCharacter>
 
-
     private val levelFlow = MutableStateFlow(Level.MEDIUM)
-
-    private val _timeSpentFlow = MutableStateFlow(0L)
-    val timeSpentFlow: StateFlow<Long>
-        get() = _timeSpentFlow
-
-    private val _isWinFlow = MutableStateFlow(false)
-    val isWinFlow: StateFlow<Boolean>
-        get() = _isWinFlow
-
-    private val _isNewFlow = MutableStateFlow(false)
-    val isNewFlow: StateFlow<Boolean>
-        get() = _isNewFlow
 
     private val _selectedCellFlow = MutableStateFlow(Pair(NO_SELECTION, NO_SELECTION))
     val selectedCellFlow: StateFlow<Pair<Int, Int>>
         get() = _selectedCellFlow
 
-    private val _boardSharedFlow =
-        MutableSharedFlow<Board>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    val boardSharedFlow: SharedFlow<Board>
-        get() = _boardSharedFlow
+    private val _finalErrorFlow = MutableStateFlow(false)
+    val finalErrorFlow: StateFlow<Boolean>
+    get() = _finalErrorFlow
 
-    private val _nineCharSharedFlow =
-        MutableSharedFlow<List<String>>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    val nineCharSharedFlow: SharedFlow<List<String>>
-        get() = _nineCharSharedFlow
+    private val _timerFlow = MutableStateFlow(0L)
+    val timerFlow : StateFlow<Long>
+        get() = _timerFlow
 
-    private var _settingsFinishedStateFlow = MutableStateFlow(true)
-    val settingsFinishedStateFlow: StateFlow<Boolean>
-        get() = _settingsFinishedStateFlow
+
+    private val _gameStateFlow = MutableSharedFlow<GameState>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val gameStateFlow: SharedFlow<GameState>
+        get() = _gameStateFlow
 
     private val _recordsFlow = MutableSharedFlow<List<Record>>(
         replay = 1,
@@ -82,109 +68,113 @@ class GameViewModel @Inject constructor(
         getSavedBoard()
     }
 
-    fun handleInput(number: Int) {
+    fun handleInput(number: Int, currentTime: Long) {
         if (selectedRow == NO_SELECTION || selectedCol == NO_SELECTION) return
         if (!currentBoard.getCell(selectedRow, selectedCol).isFixed) {
             val characterValue = nineChars[number]
             currentBoard.getCell(selectedRow, selectedCol).value = characterValue
             currentBoard.getCell(selectedRow, selectedCol).isDoubtful = false
-            updateBoard(currentBoard)
+            currentBoard.timeSpent = currentTime
+            updateViewModelBoard(currentBoard)
         }
-        checkForSolution()
+        checkForSolution(currentTime)
     }
 
-    fun markSelectedAsDoubtful() {
+    fun markSelectedAsDoubtful(currentTime: Long) {
         val board = currentBoard
         val isCellDoubtful = board.getCell(selectedRow, selectedCol).isDoubtful
         board.getCell(selectedRow, selectedCol).isDoubtful = !isCellDoubtful
-        updateBoard(board)
+        board.timeSpent = currentTime
+        updateViewModelBoard(board)
+        saveBoard(currentTime)
+        launchRefreshedGame()
     }
 
-    fun clearSelected() {
+    fun clearSelected(currentTime: Long) {
         if (selectedRow == NO_SELECTION || selectedCol == NO_SELECTION) return
         val board = currentBoard
         if (!board.getCell(selectedRow, selectedCol).isFixed) {
             board.getCell(selectedRow, selectedCol).value = EMPTY_CELL
         }
-        updateBoard(board)
+        board.timeSpent = currentTime
+        updateViewModelBoard(board)
+        saveBoard(currentTime)
+        launchRefreshedGame()
     }
 
     fun getNewRandomGame(diffLevel: Level) {
-        _isNewFlow.value = false
         levelFlow.value = diffLevel
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val randomBoard = getRandomBoard.invoke(diffLevel)
-            updateNineChars(randomBoard.nineChars)
-            reset(randomBoard)
+            val randomBoard = getRandomBoard.invoke(diffLevel).copy(timeSpent = 0, alreadyFinished = false)
+            updateViewModelBoard(randomBoard)
+            _gameStateFlow.emit(REFRESHING)
         }
     }
 
     fun getRandomGameWithCategory(category: String, diffLevel: Level) {
-        _isNewFlow.value = false
         levelFlow.value = diffLevel
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val randomBoard = getRandomByCategory(category, diffLevel)
-            updateNineChars(randomBoard.nineChars)
-            reset(randomBoard)
+            val randomBoard = getRandomByCategory(category, diffLevel).copy(timeSpent = 0, alreadyFinished = false)
+            updateViewModelBoard(randomBoard)
+            _gameStateFlow.emit(REFRESHING)
         }
     }
 
     fun getGameWithSelected() {
-        _isNewFlow.value = false
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             val listString = mutableListOf<String>()
             for (i in selected) {
                 listString.add(i.character)
             }
-            updateNineChars(listString)
-            val board = getNewGameWithSel(selected, levelFlow.value)
-            reset(board)
+            val newBoard = getNewGameWithSel(selected, levelFlow.value).copy(timeSpent = 0, alreadyFinished = false)
+            updateViewModelBoard(newBoard)
+            _gameStateFlow.emit(REFRESHING)
         }
     }
 
-    private fun reset(newBoard: Board) {
-        updateBoard(newBoard)
-        _timeSpentFlow.value = newBoard.timeSpent
-        _isWinFlow.value = false
-        setSettingsState(true)
-        _isNewFlow.value = true
-
+    fun setSettingsState() {
+        _gameStateFlow.tryEmit(SETTING)
     }
 
-    fun setSettingsState(areSettingsDone: Boolean) {
-        _settingsFinishedStateFlow.value = areSettingsDone
-    }
-
-    fun saveBoard(timeSpent: Long) {
-        _isNewFlow.value = false
+    fun saveBoard(timeSpent: Long? = null) {
         viewModelScope.launch {
-            val boardToSave = if (isWinFlow.value) {
-                currentBoard.copy(timeSpent = timeSpent, alreadyFinished = true)
-            } else {
-                currentBoard.copy(timeSpent = timeSpent, alreadyFinished = false)
+            if (timeSpent!=null) {
+                val board = currentBoard.copy(timeSpent = timeSpent)
+                updateViewModelBoard(board)
             }
-            saveGameUseCase(boardToSave)
+            saveGameUseCase(currentBoard)
         }
     }
 
     private fun getSavedBoard() {
-        _isNewFlow.value = false
         viewModelScope.launch {
             val savedBoard = getSavedGameUseCase()
             savedBoard?.let {
-                updateNineChars(it.nineChars)
-                updateBoard(it)
-                updateSelection(0, 0)
-                _timeSpentFlow.value = it.timeSpent
-                _isWinFlow.value = it.alreadyFinished
+                if (it.alreadyFinished) {
+                    _gameStateFlow.tryEmit(DISPLAY(it))
+                } else {
+                    _gameStateFlow.tryEmit(PLAYING(it))
+                    _timerFlow.tryEmit(it.timeSpent)
+                }
+                updateViewModelBoard(it)
+                updateSelection(NO_SELECTION, NO_SELECTION)
             } ?: getNewRandomGame(Level.MEDIUM)
         }
     }
 
-    private fun checkForSolution() {
+    fun launchRefreshedGame() {
+        _gameStateFlow.tryEmit(PLAYING(currentBoard))
+    }
+
+    fun launchOldBoard() {
+        getSavedBoard()
+    }
+
+    private fun checkForSolution(currentTime: Long) {
+        _finalErrorFlow.value = false
         val boardCells = currentBoard.cells
         var count = 0
         for (i in boardCells) {
@@ -192,35 +182,31 @@ class GameViewModel @Inject constructor(
                 count++
             }
         }
-
         if (count < EMPTY_CELLS_MINIMUM) {
             viewModelScope.launch {
                 val gameResult = getGameResult.invoke(currentBoard)
                 if (gameResult is SUCCESS) {
-                    _isWinFlow.value = true
-                    updateBoard(gameResult.solution.copy(alreadyFinished = true))
-                    updateTimer(-1L)
+                    val solution = gameResult.solution.copy(alreadyFinished = true, timeSpent = currentTime)
+                    updateViewModelBoard(solution)
+                    saveBoard()
+                    _gameStateFlow.emit(PLAYING(currentBoard))
+                    saveRecord(currentTime)
+                    _gameStateFlow.tryEmit(WIN)
                 } else {
-                    Toast.makeText(
-                        getApplication(),
-                        getApplication<Application>().getString(R.string.check_again),
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
+                    _finalErrorFlow.value = true
+                    _gameStateFlow.emit(PLAYING(currentBoard))
+                    saveBoard()
                 }
             }
+        } else {
+            saveBoard()
+            _gameStateFlow.tryEmit(PLAYING(currentBoard))
         }
     }
 
-    private fun updateBoard(newBoard: Board) {
+    private fun updateViewModelBoard(newBoard: Board) {
         currentBoard = newBoard
-        _boardSharedFlow.tryEmit(newBoard)
-
-    }
-
-    private fun updateNineChars(newNineChars: List<String>) {
-        nineChars = newNineChars
-        _nineCharSharedFlow.tryEmit(newNineChars)
+        nineChars = newBoard.nineChars
     }
 
     fun updateSelection(row: Int, col: Int) {
@@ -229,9 +215,9 @@ class GameViewModel @Inject constructor(
         _selectedCellFlow.value = Pair(row, col)
     }
 
-    fun updateTimer(timeWhenStopped: Long) {
-        _timeSpentFlow.value = timeWhenStopped
-    }
+//    fun updateTimer(timeWhenStopped: Long) {
+//        _timeSpentFlow.value = timeWhenStopped
+//    }
 
     fun setLevel(chosenLevel: Level) {
         levelFlow.value = chosenLevel
@@ -241,7 +227,7 @@ class GameViewModel @Inject constructor(
         selected = newSelected
     }
 
-    fun saveRecord(recordTime: Long) {
+    private fun saveRecord(recordTime: Long) {
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val formattedDate = current.format(formatter)

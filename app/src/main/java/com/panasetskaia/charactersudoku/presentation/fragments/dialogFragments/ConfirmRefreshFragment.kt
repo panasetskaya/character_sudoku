@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
@@ -32,7 +33,7 @@ class ConfirmRefreshFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).gameViewModel
         binding.cancelButton.setOnClickListener {
-            viewModel.setSettingsState(true)
+            viewModel.launchOldBoard()
             parentFragmentManager.popBackStack()
         }
         binding.yesButton.setOnClickListener {
@@ -46,6 +47,18 @@ class ConfirmRefreshFragment : Fragment() {
                 add(R.id.gameContainerView, RandomOrSelectDialogFragment::class.java, args)
                 addToBackStack(null)
             }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            viewModel.launchOldBoard()
+            parentFragmentManager.popBackStack()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            isEnabled = false
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
 
