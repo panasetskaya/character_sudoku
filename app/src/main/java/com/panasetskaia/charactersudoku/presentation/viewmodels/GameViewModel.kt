@@ -140,9 +140,6 @@ class GameViewModel @Inject constructor(
                 val board = currentBoard.copy(timeSpent = timeSpent)
                 updateViewModelBoard(board)
                 saveGameUseCase(board)
-                _gameStateFlow.collectLatest {
-
-                }
                 getSavedBoard()
             } else {
                 saveGameUseCase(currentBoard)
