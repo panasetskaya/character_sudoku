@@ -59,12 +59,13 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         setupMenu()
         setAnimations()
         interactWithViewModel()
+
     }
 
     override fun onPause() {
-        super.onPause()
-        val timeWhenStopped = SystemClock.elapsedRealtime() - binding.chTimer.base
+        val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
         gameViewModel.saveBoard(timeWhenStopped)
+        super.onPause()
     }
 
     override fun onDestroyView() {
@@ -81,6 +82,8 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.dictionary_icon -> {
+                        val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
+                        gameViewModel.saveBoard(timeWhenStopped)
                         val arguments = Bundle().apply {
                             putString(
                                 DictionaryFragment.FILTER_EXTRA,
@@ -92,10 +95,14 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         true
                     }
                     R.id.game_help_icon -> {
+                        val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
+                        gameViewModel.saveBoard(timeWhenStopped)
                         replaceWithThisFragment(HelpFragment::class.java, null)
                         true
                     }
                     R.id.records_icon -> {
+                        val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
+                        gameViewModel.saveBoard(timeWhenStopped)
                         parentFragmentManager.popBackStack()
                         replaceWithThisFragment(RecordsFragment::class.java, null)
                         true
@@ -130,7 +137,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         buttons.forEachIndexed { index, button ->
             button.setOnClickListener {
                 val currentTime =
-                    SystemClock.elapsedRealtime() - binding.chTimer.base
+                    binding.chTimer.base - SystemClock.elapsedRealtime()
                 gameViewModel.handleInput(index, currentTime)
                 AnimatorSet().apply {
                     play(shakeAnimator(it, -10f, 0f, 40))
@@ -174,7 +181,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 play(shakeAnimator(it, -10f, 0f, 40))
                 start()
             }
-            val currentTime = SystemClock.elapsedRealtime() - binding.chTimer.base
+            val currentTime = binding.chTimer.base - SystemClock.elapsedRealtime()
             gameViewModel.clearSelected(currentTime)
         }
     }
@@ -204,11 +211,6 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                                         )
                                             .show()
                                     }
-                                }
-                            }
-                            launch {
-                                gameViewModel.timerFlow.collectLatest { time->
-                                    continueTimer(time)
                                 }
                             }
                         }
@@ -253,7 +255,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     override fun onCellLongTouched(row: Int, col: Int) {
         gameViewModel.updateSelection(row, col)
-        val currentTime = SystemClock.elapsedRealtime() - binding.chTimer.base
+        val currentTime = binding.chTimer.base - SystemClock.elapsedRealtime()
         gameViewModel.markSelectedAsDoubtful(currentTime)
     }
 
@@ -354,7 +356,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             chTimer.visibility = View.VISIBLE
             tvGameFinished.visibility = View.GONE
             newGameButton.visibility = View.GONE
-
+            continueTimer(board.timeSpent)
             refreshGame.isClickable = true
             clearCell.isClickable = true
             buttons.forEachIndexed { index, button ->
@@ -365,7 +367,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
     private fun setSettings() {
-        val timeWhenStopped = SystemClock.elapsedRealtime() - binding.chTimer.base
+        val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
         gameViewModel.saveBoard(timeWhenStopped)
         with (binding) {
             buttonsGroup.visibility = View.GONE

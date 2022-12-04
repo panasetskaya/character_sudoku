@@ -46,11 +46,6 @@ class GameViewModel @Inject constructor(
     val finalErrorFlow: StateFlow<Boolean>
     get() = _finalErrorFlow
 
-    private val _timerFlow = MutableStateFlow(0L)
-    val timerFlow : StateFlow<Long>
-        get() = _timerFlow
-
-
     private val _gameStateFlow = MutableSharedFlow<GameState>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST)
@@ -144,8 +139,14 @@ class GameViewModel @Inject constructor(
             if (timeSpent!=null) {
                 val board = currentBoard.copy(timeSpent = timeSpent)
                 updateViewModelBoard(board)
+                saveGameUseCase(board)
+                _gameStateFlow.collectLatest {
+
+                }
+                getSavedBoard()
+            } else {
+                saveGameUseCase(currentBoard)
             }
-            saveGameUseCase(currentBoard)
         }
     }
 
@@ -157,7 +158,6 @@ class GameViewModel @Inject constructor(
                     _gameStateFlow.tryEmit(DISPLAY(it))
                 } else {
                     _gameStateFlow.tryEmit(PLAYING(it))
-                    _timerFlow.tryEmit(it.timeSpent)
                 }
                 updateViewModelBoard(it)
                 updateSelection(NO_SELECTION, NO_SELECTION)
