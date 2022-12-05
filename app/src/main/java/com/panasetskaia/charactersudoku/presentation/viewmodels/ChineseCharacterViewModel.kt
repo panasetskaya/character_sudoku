@@ -1,7 +1,10 @@
 package com.panasetskaia.charactersudoku.presentation.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
@@ -19,10 +22,16 @@ class ChineseCharacterViewModel @Inject constructor(
     private val getWholeDict: GetWholeDictionaryUseCase,
     private val getAllCategories: GetAllCategoriesUseCase,
     private val addCategory: AddCategoryUseCase,
-    private val deleteCategory: DeleteCategoryUseCase
+    private val deleteCategory: DeleteCategoryUseCase,
+    private val saveDictToCSV: SaveDictToCSVUseCase,
+    private val saveDictToJson: SaveDictToJsonUseCase,
 ) : AndroidViewModel(application) {
 
     private lateinit var selected: List<ChineseCharacter>
+
+    private val _pathLiveData = MutableLiveData<String>()
+    val pathLiveData: LiveData<String>
+        get() = _pathLiveData
 
     private val _dictionaryFlow = MutableSharedFlow<List<ChineseCharacter>>(
         replay = 1,
@@ -190,5 +199,29 @@ class ChineseCharacterViewModel @Inject constructor(
 
     fun setSelectedForDeleting(newSelected: List<ChineseCharacter>) {
         selected = newSelected
+    }
+
+    fun saveDictionaryToCSV() {
+        viewModelScope.launch {
+            val path = saveDictToCSV()
+            Log.d("MYMYMY", "path is $path")
+            _pathLiveData.postValue(path)
+        }
+    }
+
+    fun saveDictionaryToJson() {
+        viewModelScope.launch {
+            val path = saveDictToJson()
+            Log.d("MYMYMY", "path is $path")
+            _pathLiveData.postValue(path)
+        }
+    }
+
+    fun parseExternalDict(newDict: List<ChineseCharacter>) {
+        viewModelScope.launch {
+            for (i in newDict) {
+                addCharacterToDict(i)
+            }
+        }
     }
 }

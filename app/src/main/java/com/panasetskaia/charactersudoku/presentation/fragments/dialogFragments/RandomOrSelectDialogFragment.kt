@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -96,7 +97,6 @@ class RandomOrSelectDialogFragment : Fragment() {
             }
         }
         binding.selectCharactersButton.setOnClickListener {
-            gameViewModel.setSettingsState(true)
             parentFragmentManager.popBackStack()
             val args = Bundle().apply {
                 putString(
@@ -109,6 +109,10 @@ class RandomOrSelectDialogFragment : Fragment() {
                 replace(R.id.fcvMain, DictionaryFragment::class.java, args)
                 addToBackStack(null)
             }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            gameViewModel.launchOldBoard()
+            parentFragmentManager.popBackStack()
         }
     }
 
@@ -164,6 +168,14 @@ class RandomOrSelectDialogFragment : Fragment() {
                 Level.HARD
             }
             else -> Level.MEDIUM
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            isEnabled = false
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
 

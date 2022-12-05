@@ -1,6 +1,13 @@
 package com.panasetskaia.charactersudoku.data.repository
 
-import com.panasetskaia.charactersudoku.data.database.*
+import android.app.Application
+import android.os.Environment
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.panasetskaia.charactersudoku.data.database.BoardDao
+import com.panasetskaia.charactersudoku.data.database.CategoryDbModel
+import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.RecordsDao
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
@@ -11,9 +18,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
+
 class CharacterSudokuRepositoryImpl @Inject constructor(
+    private val application: Application,
     private val mapper: SudokuMapper,
     private val charactersDao: ChineseCharacterDao,
     private val boardDao: BoardDao,
@@ -191,6 +201,26 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveDictToCSV(): String {
+        val dataDB = charactersDao.getAllDictAsList()
+        val entityList = mutableListOf<ChineseCharacter>()
+        for (i in dataDB) {
+            val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+            entityList.add(entity)
+        }
+        return saveFile(entityList, TO_CSV)
+    }
+
+    override suspend fun saveDictToJson(): String {
+        val dataDB = charactersDao.getAllDictAsList()
+        val entityList = mutableListOf<ChineseCharacter>()
+        for (i in dataDB) {
+            val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+            entityList.add(entity)
+        }
+        return saveFile(entityList, TO_JSON)
+    }
+
     private suspend fun generateNumberGrid(diffLevel: Level): Map<String, String> {
         return SudokuGame().fillGrid(diffLevel)
     }
@@ -203,8 +233,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 stringGrid[i].toString()
             )
         }
-        val board = Board(cells = cells, nineChars = temporaryDict)
-        return board
+        return Board(cells = cells, nineChars = temporaryDict)
     }
 
     private fun translateNumbersToCharacters(board: Board): Board {
@@ -230,9 +259,74 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         return gridString
     }
 
+    private fun isExternalStorageReadOnly(): Boolean {
+        val extStorageState = Environment.getExternalStorageState()
+        return Environment.MEDIA_MOUNTED_READ_ONLY == extStorageState
+    }
+
+    private fun isExternalStorageAvailable(): Boolean {
+        val extStorageState = Environment.getExternalStorageState()
+        return Environment.MEDIA_MOUNTED == extStorageState
+    }
+
+    private fun saveFile(myData: List<ChineseCharacter>, method: String): String {
+        val path = if (isExternalStorageAvailable() && !isExternalStorageReadOnly()) {
+            application.getExternalFilesDir(null)
+        } else {
+            application.filesDir
+        }
+        val exportDir = File(path, "")
+        if (!exportDir.exists()) {
+            exportDir.mkdirs()
+        }
+        when (method) {
+            TO_CSV -> {
+                val filename = CSV_FILE_NAME
+                val file = File(exportDir, filename)
+                var sb = ""
+                var afterFirst = false
+                for (character in myData) {
+                    if (!afterFirst) {
+                        sb += CSV_HEADERS
+                    }
+                    afterFirst = true
+                    sb += "${character.character},${character.pinyin},${character.translation},${character.usages},${character.category}\n"
+                }
+                try {
+                    file.writeText(sb)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return file.path
+            }
+            TO_JSON -> {
+                val filename = JSON_FILE_NAME
+                val file = File(exportDir, filename)
+                val gson = Gson()
+                val typeToken = object : TypeToken<List<ChineseCharacter>>() {}.type
+                val jsonString = gson.toJson(myData, typeToken)
+                try {
+                    file.writeText(jsonString)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return file.path
+            }
+            else -> return ""
+        }
+    }
+
+
+
+
     companion object {
         private val INITIAL_9_CHAR = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
         private const val EMPTY_CELL = "0"
         private const val NO_CAT = "-"
+        private const val TO_JSON = "json"
+        private const val TO_CSV = "csv"
+        private const val CSV_FILE_NAME = "mandarindoku_dict.csv"
+        private const val JSON_FILE_NAME = "mandarindoku_dict.json"
+        private const val CSV_HEADERS = "Character,Pinyin,Translation,Usages,Category\n"
     }
 }

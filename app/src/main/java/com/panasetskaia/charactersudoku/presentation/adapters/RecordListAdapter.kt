@@ -9,6 +9,7 @@ import com.panasetskaia.charactersudoku.databinding.RecordItemBinding
 import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.domain.entities.Record
 import com.panasetskaia.charactersudoku.utils.formatToTime
+import java.lang.Math.abs
 
 class RecordListAdapter(private val activity: Activity) :
     ListAdapter<Record, RecordListAdapter.RecordViewHolder>(RecordItemDiffUtil()) {

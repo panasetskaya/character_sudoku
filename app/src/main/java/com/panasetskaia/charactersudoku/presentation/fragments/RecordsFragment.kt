@@ -79,11 +79,20 @@ class RecordsFragment : Fragment() {
                 return when (menuItem.itemId) {
                     R.id.records_to_sudoku_icon -> {
                         parentFragmentManager.popBackStack()
+                        replaceWithThisFragment(GameFragment::class.java, null)
                         true
                     }
                     else -> true
                 }
             }
         }, viewLifecycleOwner)
+    }
+
+    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
+        parentFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
+            .replace(R.id.fcvMain, fragment, args)
+            .addToBackStack(null)
+            .commit()
     }
 }

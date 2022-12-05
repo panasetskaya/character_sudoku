@@ -10,6 +10,9 @@ interface ChineseCharacterDao {
     suspend fun getAllChineseAsList(): List<String>
 
     @Query("SELECT * FROM chinesecharacterdbmodel")
+    suspend fun getAllDictAsList(): List<ChineseCharacterDbModel>
+
+    @Query("SELECT * FROM chinesecharacterdbmodel")
     fun getWholeDictionary(): Flow<List<ChineseCharacterDbModel>>
 
     @Query("DELETE FROM chinesecharacterdbmodel WHERE id=:characterId")

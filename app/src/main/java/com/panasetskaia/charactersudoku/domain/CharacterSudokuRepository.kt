@@ -33,4 +33,7 @@ interface CharacterSudokuRepository {
 
     suspend fun supplyNewRecord(record: Record)
 
+    suspend fun saveDictToCSV(): String
+
+    suspend fun saveDictToJson(): String
 }

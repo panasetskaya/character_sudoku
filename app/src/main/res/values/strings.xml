@@ -50,11 +50,19 @@
     <string name="choose_level">Level:</string>
     <string name="big_char" translatable="false">Big char</string>
     <string name="refresh">New game</string>
-    <string name="game_finished">Congratulations!\nYou have finished this mandarindoku in \n%1$s!</string>
+    <string name="game_finished">Congratulations!</string>
     <string name="time_formatted">%02d:%02d:%02d</string>
     <string name="rating">Rating</string>
     <string name="export_dict">Dictionary export and import</string>
-    <string name="default_dict_text">Here you can your own characters or symbols to the dictionary and then use them for the sudoku game</string>
+    <string name="default_dict_text">Here you can add your own characters or symbols to the dictionary\nand then use them for the sudoku game</string>
     <string name="records_title">Your top games</string>
+    <string name="file_saved">saved to: sdcard/Android/data/com.panasetskaia.charactersudoku/files</string>
+    <string name="to_csv">to .csv</string>
+    <string name="to_json">to .json</string>
+    <string name="export_explain">You can export your dictionary to a .csv or to a .json file.\n\n- CSV is basically a spreadsheet (and you can use in MS Excel)\n\n- JSON file can be used to transfer the dictionary to Mandarindoku app on another device</string>
+    <string name="import_explain">Import your dictionary from another device using .json file</string>
+    <string name="from_json">from .json</string>
+    <string name="new_dict_added">External dictionary added</string>
+    <string name="invalid_dict">The file is not a correct dictionary</string>
 
 </resources>

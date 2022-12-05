@@ -1,6 +1,8 @@
 package com.panasetskaia.charactersudoku.utils
 
 import android.app.Activity
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.panasetskaia.charactersudoku.R
 import java.util.concurrent.TimeUnit
 
@@ -18,3 +20,6 @@ fun Long.formatToTime(context: Activity): String {
     )
     return timePassed
 }
+
+//
+//inline fun <reified T> Gson.fromJson(json: String) = fromJson<T>(json, object: TypeToken<T>() {}.type)

@@ -48,10 +48,18 @@
     <string name="choose_level">Сложность:</string>
     <string name="confirmDelete">Точно удалить?</string>
     <string name="refresh">Новая игра</string>
-    <string name="game_finished">Ура!\nВы завершили эту игру за %1$s!</string>
+    <string name="game_finished">Поздравляем!</string>
     <string name="time_formatted">%02d:%02d:%02d</string>
     <string name="rating">Рейтинг</string>
     <string name="export_dict">Импорт и экспорт словаря</string>
     <string name="default_dict_text">Здесь вы можете добавить в словарь свои иероглифы, чтобы использовать их в игре</string>
     <string name="records_title">Ваши лучшие судоку</string>
+    <string name="file_saved">Сохранено: sdcard/Android/data/com.panasetskaia.charactersudoku/files</string>
+    <string name="to_csv">в CSV</string>
+    <string name="to_json">в JSON</string>
+    <string name="export_explain">Вы можете сохранить свой словарь в форматах .csv или .json.\n\n- CSV подойдет для табличного редактора (например, для MS Excel)\n\n- JSON подойдет, если вы хотите перенести свой словарь в приложение Mandarindoku на другом устройстве</string>
+    <string name="import_explain">Импортируйте словарь с другого устройства из файла .json</string>
+    <string name="from_json">из JSON</string>
+    <string name="new_dict_added">Добавлен внешний словарь</string>
+    <string name="invalid_dict">В файле не найден словарь</string>
 </resources>

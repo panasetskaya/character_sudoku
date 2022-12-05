@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.fragments.ExportFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:paddingStart="12dp"
+            style="@style/Widget.Sudoku.Toolbar"
+            android:paddingLeft="12dp"
+            android:paddingEnd="12dp"
+            android:paddingRight="12dp"
+            app:contentInsetStart="0dp" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+<!--    style="@style/Widget.Sudoku.Toolbar"-->
+
+    <TextView
+        android:id="@+id/tv_export_explain"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="45dp"
+        android:text="@string/export_explain"
+
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/toCsvButton"
+        style="@style/simpleSmallerButtonStyleNoCaps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/to_csv"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/toJsonButton"
+        app:layout_constraintTop_toBottomOf="@+id/tv_export_explain"
+
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/toJsonButton"
+        style="@style/simpleSmallerButtonStyleNoCaps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/to_json"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toEndOf="@+id/toCsvButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_export_explain"
+        />
+
+    <View
+        android:id="@+id/fine_purple_line"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/primaryColor"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/toJsonButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_import"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        app:layout_constraintTop_toBottomOf="@+id/fine_purple_line"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="30dp"
+        android:text="@string/import_explain"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/fromJsonButton"
+        style="@style/simpleSmallerButtonStyleNoCaps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/from_json"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_import"
+        />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

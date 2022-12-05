@@ -61,7 +61,8 @@ class SudokuMapper @Inject constructor() {
     fun mapDomainCategoryToDbModel(category: Category): CategoryDbModel {
         return CategoryDbModel(
             category.id,
-            category.categoryName)
+            category.categoryName
+        )
     }
 
     fun mapDbModelToDomainCategory(category: CategoryDbModel): Category {
