@@ -228,7 +228,7 @@ class GameViewModel @Inject constructor(
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val formattedDate = current.format(formatter)
-        val newRecord = Record(0, recordTime, levelFlow.value, formattedDate)
+        val newRecord = Record(0, -recordTime, levelFlow.value, formattedDate)
         viewModelScope.launch {
             supplyNewRecord(newRecord)
         }

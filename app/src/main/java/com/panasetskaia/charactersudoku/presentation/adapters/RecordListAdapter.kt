@@ -35,7 +35,7 @@ class RecordListAdapter(private val activity: Activity) :
                 Level.MEDIUM -> MED
                 Level.HARD -> HARD
             }
-            tvRecordTime.text = abs(item.recordTime).formatToTime(activity)
+            tvRecordTime.text = item.recordTime.formatToTime(activity)
         }
     }
 
