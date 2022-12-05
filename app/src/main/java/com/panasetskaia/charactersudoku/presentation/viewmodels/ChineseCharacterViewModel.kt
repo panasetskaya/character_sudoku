@@ -25,7 +25,6 @@ class ChineseCharacterViewModel @Inject constructor(
     private val deleteCategory: DeleteCategoryUseCase,
     private val saveDictToCSV: SaveDictToCSVUseCase,
     private val saveDictToJson: SaveDictToJsonUseCase,
-    private val addExternalDict: AddExternalDictionaryUseCase
 ) : AndroidViewModel(application) {
 
     private lateinit var selected: List<ChineseCharacter>
@@ -215,6 +214,14 @@ class ChineseCharacterViewModel @Inject constructor(
             val path = saveDictToJson()
             Log.d("MYMYMY", "path is $path")
             _pathLiveData.postValue(path)
+        }
+    }
+
+    fun parseExternalDict(newDict: List<ChineseCharacter>) {
+        viewModelScope.launch {
+            for (i in newDict) {
+                addCharacterToDict(i)
+            }
         }
     }
 }

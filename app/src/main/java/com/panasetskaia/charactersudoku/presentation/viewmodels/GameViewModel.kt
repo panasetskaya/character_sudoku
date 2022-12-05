@@ -212,10 +212,6 @@ class GameViewModel @Inject constructor(
         _selectedCellFlow.value = Pair(row, col)
     }
 
-//    fun updateTimer(timeWhenStopped: Long) {
-//        _timeSpentFlow.value = timeWhenStopped
-//    }
-
     fun setLevel(chosenLevel: Level) {
         levelFlow.value = chosenLevel
     }

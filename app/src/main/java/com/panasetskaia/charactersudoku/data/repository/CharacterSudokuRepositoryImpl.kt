@@ -1,11 +1,9 @@
 package com.panasetskaia.charactersudoku.data.repository
 
 import android.app.Application
-import android.content.Intent
 import android.os.Environment
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.panasetskaia.charactersudoku.data.database.BoardDao
 import com.panasetskaia.charactersudoku.data.database.CategoryDbModel
 import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
@@ -18,11 +16,9 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.IOException
 import javax.inject.Inject
 
 
@@ -225,10 +221,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         return saveFile(entityList, TO_JSON)
     }
 
-    override suspend fun addExternalJsonDict() {
-        TODO("Not yet implemented")
-    }
-
     private suspend fun generateNumberGrid(diffLevel: Level): Map<String, String> {
         return SudokuGame().fillGrid(diffLevel)
     }
@@ -241,8 +233,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 stringGrid[i].toString()
             )
         }
-        val board = Board(cells = cells, nineChars = temporaryDict)
-        return board
+        return Board(cells = cells, nineChars = temporaryDict)
     }
 
     private fun translateNumbersToCharacters(board: Board): Board {
@@ -288,7 +279,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         if (!exportDir.exists()) {
             exportDir.mkdirs()
         }
-
         when (method) {
             TO_CSV -> {
                 val filename = CSV_FILE_NAME
@@ -307,25 +297,26 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                val mPath = file.path
-                return mPath
+                return file.path
             }
             TO_JSON -> {
                 val filename = JSON_FILE_NAME
                 val file = File(exportDir, filename)
                 val gson = Gson()
-                val jsonString = gson.toJson(myData)
+                val typeToken = object : TypeToken<List<ChineseCharacter>>() {}.type
+                val jsonString = gson.toJson(myData, typeToken)
                 try {
-                    file.appendText(jsonString)
+                    file.writeText(jsonString)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                val mPath = file.path
-                return mPath
+                return file.path
             }
             else -> return ""
         }
     }
+
+
 
 
     companion object {

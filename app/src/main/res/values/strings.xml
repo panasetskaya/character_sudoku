@@ -62,5 +62,7 @@
     <string name="export_explain">You can export your dictionary to a .csv or to a .json file.\n\n- CSV is basically a spreadsheet (and you can use in MS Excel)\n\n- JSON file can be used to transfer the dictionary to Mandarindoku app on another device</string>
     <string name="import_explain">Import your dictionary from another device using .json file</string>
     <string name="from_json">from .json</string>
+    <string name="new_dict_added">External dictionary added</string>
+    <string name="invalid_dict">The file is not a correct dictionary</string>
 
 </resources>
