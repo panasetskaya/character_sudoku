@@ -10,12 +10,13 @@ import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.domain.entities.Record
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.Math.abs
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 import javax.inject.Inject
 
 class GameViewModel @Inject constructor(
@@ -158,7 +159,7 @@ class GameViewModel @Inject constructor(
                 }
                 updateViewModelBoard(it)
                 updateSelection(NO_SELECTION, NO_SELECTION)
-            } ?: getNewRandomGame(Level.MEDIUM)
+            } ?: getNewRandomGame(Level.EASY)
         }
     }
 

@@ -62,4 +62,7 @@
     <string name="from_json">из JSON</string>
     <string name="new_dict_added">Добавлен внешний словарь</string>
     <string name="invalid_dict">В файле не найден словарь</string>
+    <string name="lvl1">Легкий</string>
+    <string name="lvl2">Средний</string>
+    <string name="lvl3">Сложный</string>
 </resources>

@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.RecordItemBinding
 import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.domain.entities.Record
 import com.panasetskaia.charactersudoku.utils.formatToTime
-import java.lang.Math.abs
 
 class RecordListAdapter(private val activity: Activity) :
     ListAdapter<Record, RecordListAdapter.RecordViewHolder>(RecordItemDiffUtil()) {
@@ -31,19 +31,11 @@ class RecordListAdapter(private val activity: Activity) :
         with(holder.binding) {
             tvRecordDate.text = item.date
             tvRecordLevel.text = when (item.level) {
-                Level.EASY -> EASY
-                Level.MEDIUM -> MED
-                Level.HARD -> HARD
+                Level.EASY -> activity.getString(R.string.lvl1)
+                Level.MEDIUM -> activity.getString(R.string.lvl2)
+                Level.HARD -> activity.getString(R.string.lvl3)
             }
             tvRecordTime.text = item.recordTime.formatToTime(activity)
         }
     }
-
-    companion object {
-        const val EASY = "Level 1"
-        const val MED = "Level 2"
-        const val HARD = "Level 3"
-
-    }
-
 }

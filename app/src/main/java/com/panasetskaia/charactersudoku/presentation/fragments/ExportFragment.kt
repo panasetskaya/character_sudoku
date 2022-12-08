@@ -13,11 +13,9 @@ import androidx.core.content.FileProvider
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.panasetskaia.charactersudoku.R
-import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
 import com.panasetskaia.charactersudoku.databinding.FragmentExportBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity

@@ -64,5 +64,8 @@
     <string name="from_json">from .json</string>
     <string name="new_dict_added">External dictionary added</string>
     <string name="invalid_dict">The file is not a correct dictionary</string>
+    <string name="lvl1">EASY</string>
+    <string name="lvl2">MEDIUM</string>
+    <string name="lvl3">HARD</string>
 
 </resources>
