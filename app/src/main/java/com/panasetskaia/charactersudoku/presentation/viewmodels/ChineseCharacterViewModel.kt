@@ -220,7 +220,7 @@ class ChineseCharacterViewModel @Inject constructor(
     fun parseExternalDict(newDict: List<ChineseCharacter>) {
         viewModelScope.launch {
             for (i in newDict) {
-                addCharacterToDict(i)
+                addCharacterToDict(i.copy(id=0))
             }
         }
     }
