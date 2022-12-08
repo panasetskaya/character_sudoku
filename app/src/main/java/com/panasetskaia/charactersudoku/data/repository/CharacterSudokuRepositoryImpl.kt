@@ -121,7 +121,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveGame(board: Board) {
-        boardDao.deleteEverything()
         val boardDbModel = mapper.mapDomainBoardToDbModel(board)
         boardDao.saveGame(boardDbModel)
     }

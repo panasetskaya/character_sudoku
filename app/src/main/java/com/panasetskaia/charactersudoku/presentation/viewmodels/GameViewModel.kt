@@ -157,7 +157,7 @@ class GameViewModel @Inject constructor(
                 }
                 updateViewModelBoard(it)
                 updateSelection(NO_SELECTION, NO_SELECTION)
-            } ?: getNewRandomGame(Level.EASY)
+            } ?: setInitialGame()
         }
     }
 
@@ -235,6 +235,11 @@ class GameViewModel @Inject constructor(
                 getTopFifteenRecords()
             )
         }
+    }
+
+    private fun setInitialGame() {
+        getNewRandomGame(Level.EASY)
+        _gameStateFlow.tryEmit(SETTING)
     }
 
     companion object {

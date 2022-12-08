@@ -9,7 +9,7 @@ interface BoardDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveGame(boardDbModel: BoardDbModel)
 
-    @Query("SELECT * FROM BoardDbModel LIMIT 1")
+    @Query("SELECT * FROM BoardDbModel ORDER BY id DESC LIMIT 1")
     suspend fun getSavedGame(): BoardDbModel?
 
     @Query("DELETE FROM BoardDbModel")
