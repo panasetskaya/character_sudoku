@@ -304,13 +304,6 @@ class DictionaryFragment : Fragment() {
                     val itemPosition = list.indexOf(list.filter { it.character==query }[0])
                     listAdapter.setFoundItemPosition(itemPosition)
                     binding.recyclerViewList.scrollToPosition(itemPosition)
-
-//                    val itemView = binding.recyclerViewList.findViewHolderForLayoutPosition(itemPosition)?.itemView
-//                    val itemId = listAdapter.getItemId(itemPosition)
-
-//                    itemView?.animate()?.apply {
-//                        translationX(400f)
-//                    }?.start()
                 } else {
                     Toast.makeText(requireContext(), getString(R.string.not_found), Toast.LENGTH_SHORT)
                         .show()
@@ -319,6 +312,12 @@ class DictionaryFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                val thereIs = list.any { it.character==newText }
+                if (thereIs) {
+                    val itemPosition = list.indexOf(list.filter { it.character==newText }[0])
+                    listAdapter.setFoundItemPosition(itemPosition)
+                    binding.recyclerViewList.scrollToPosition(itemPosition)
+                }
                 return false
             }
         })
