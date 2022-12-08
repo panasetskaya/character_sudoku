@@ -189,40 +189,42 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private fun collectFlows(buttons: List<Button>) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                gameViewModel.gameStateFlow.collectLatest {
-                    when (it) {
-                        is REFRESHING -> {
-                            refresh()
-                        }
-                        is PLAYING -> {
-                            play(it.currentBoard, buttons)
-                            launch {
-                                gameViewModel.selectedCellFlow.collectLatest { selectedCell ->
-                                    updateSelectedCellUI(selectedCell)
-                                }
+                launch {
+                    gameViewModel.gameStateFlow.collectLatest {
+                        when (it) {
+                            is REFRESHING -> {
+                                refresh()
                             }
-                            launch {
-                                gameViewModel.finalErrorFlow.collectLatest { error ->
-                                    if (error) {
-                                        Toast.makeText(
-                                            requireContext(),
-                                            getString(R.string.check_again),
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
+                            is PLAYING -> {
+                                play(it.currentBoard, buttons)
+                                launch {
+                                    gameViewModel.finalErrorFlow.collectLatest { error ->
+                                        if (error) {
+                                            Toast.makeText(
+                                                requireContext(),
+                                                getString(R.string.check_again),
+                                                Toast.LENGTH_SHORT
+                                            )
+                                                .show()
+                                        }
                                     }
                                 }
                             }
+                            is WIN -> {
+                                celebrate()
+                            }
+                            is SETTING -> {
+                                setSettings()
+                            }
+                            is DISPLAY -> {
+                                displayOldBoard(it.oldBoard)
+                            }
                         }
-                        is WIN -> {
-                            celebrate()
-                        }
-                        is SETTING -> {
-                            setSettings()
-                        }
-                        is DISPLAY -> {
-                            displayOldBoard(it.oldBoard)
-                        }
+                    }
+                }
+                launch {
+                    gameViewModel.selectedCellFlow.collectLatest { selectedCell ->
+                        updateSelectedCellUI(selectedCell)
                     }
                 }
             }

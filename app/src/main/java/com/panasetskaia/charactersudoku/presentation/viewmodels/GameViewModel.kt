@@ -82,7 +82,6 @@ class GameViewModel @Inject constructor(
         board.getCell(selectedRow, selectedCol).isDoubtful = !isCellDoubtful
         board.timeSpent = currentTime
         updateViewModelBoard(board)
-        saveBoard(currentTime)
         launchRefreshedGame()
     }
 
@@ -94,7 +93,6 @@ class GameViewModel @Inject constructor(
         }
         board.timeSpent = currentTime
         updateViewModelBoard(board)
-        saveBoard(currentTime)
         launchRefreshedGame()
     }
 
