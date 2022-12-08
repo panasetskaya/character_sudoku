@@ -7,6 +7,7 @@ import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -82,6 +83,7 @@ class DictionaryFragment : Fragment() {
         }
         filter = args.getString(FILTER_EXTRA) ?: NO_FILTER
     }
+
 
     private fun setupMenu() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
@@ -211,6 +213,7 @@ class DictionaryFragment : Fragment() {
                                 binding.tvDefaultText.visibility = View.VISIBLE
                             }
                             listAdapter.submitList(it)
+                            setupSearch(it)
 
                         }
                     }
@@ -223,6 +226,7 @@ class DictionaryFragment : Fragment() {
                                 binding.tvDefaultText.visibility = View.VISIBLE
                             }
                             listAdapter.submitList(it)
+                            setupSearch(it)
                         }
                     }
                 }
@@ -290,6 +294,34 @@ class DictionaryFragment : Fragment() {
             .add(R.id.fcvMain, fragment, args)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun setupSearch(list: List<ChineseCharacter>) {
+        binding.searchViewDict.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                val thereIs = list.any { it.character==query }
+                if (thereIs) {
+                    val itemPosition = list.indexOf(list.filter { it.character==query }[0])
+                    listAdapter.setFoundItemPosition(itemPosition)
+                    binding.recyclerViewList.scrollToPosition(itemPosition)
+
+//                    val itemView = binding.recyclerViewList.findViewHolderForLayoutPosition(itemPosition)?.itemView
+//                    val itemId = listAdapter.getItemId(itemPosition)
+
+//                    itemView?.animate()?.apply {
+//                        translationX(400f)
+//                    }?.start()
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.not_found), Toast.LENGTH_SHORT)
+                        .show()
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
     }
 
     companion object {

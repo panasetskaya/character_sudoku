@@ -67,5 +67,6 @@
     <string name="lvl1">EASY</string>
     <string name="lvl2">MEDIUM</string>
     <string name="lvl3">HARD</string>
+    <string name="not_found">Not found</string>
 
 </resources>

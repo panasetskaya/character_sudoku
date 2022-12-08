@@ -2,7 +2,9 @@ package com.panasetskaia.charactersudoku.presentation.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.ListAdapter
+import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.CharacterItemChosenBinding
 import com.panasetskaia.charactersudoku.databinding.CharacterItemNotChosenBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
@@ -12,6 +14,7 @@ class DictionaryListAdapter :
 
     var onCharacterItemClickListener: ((ChineseCharacter) -> Unit)? = null
     var onCharacterItemLongClickListener: ((ChineseCharacter) -> Unit)? = null
+    private var foundItemPosition: Int? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChineseCharViewHolder {
         val binding = when (viewType) {
@@ -66,12 +69,22 @@ class DictionaryListAdapter :
                 }
             }
         }
+        if (foundItemPosition!=null && foundItemPosition==position) {
+            binding.root.animation =
+                AnimationUtils.loadAnimation(holder.itemView.context, R.anim.scroll_anim)
+        }
+        foundItemPosition=null
+
     }
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
         return if (item.isChosen) CHOSEN
         else NOT_CHOSEN
+    }
+
+    fun setFoundItemPosition(p: Int) {
+        foundItemPosition = p
     }
 
     companion object {
