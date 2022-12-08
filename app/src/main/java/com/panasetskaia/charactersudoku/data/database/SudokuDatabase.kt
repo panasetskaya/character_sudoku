@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 @Database(
     entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class, RecordDbModel::class],
     version = 17,
+    autoMigrations = [AutoMigration (from = 13, to = 14)],
     exportSchema = true
 )
 @TypeConverters(SudokuConverters::class)
@@ -26,7 +27,6 @@ abstract class SudokuDatabase : RoomDatabase() {
         private const val DB_NAME = "mandarin_sudoku.db"
         private const val NO_CAT = "-"
         private val initialCategory = CategoryDbModel(0, NO_CAT)
-
 
         val MIGRATION_14_17 = object : Migration(14, 17) {
             override fun migrate(database: SupportSQLiteDatabase) {
