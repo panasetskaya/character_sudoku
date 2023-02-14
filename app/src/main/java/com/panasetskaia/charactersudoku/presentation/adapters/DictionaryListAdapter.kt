@@ -50,22 +50,14 @@ class DictionaryListAdapter :
                 with(binding) {
                     tvCharacterChinese.text = item.character
                     tvPinyin.text = item.pinyin
-                    val translationCut =
-                        if (item.translation.length <= 21) item.translation else item.translation.substring(
-                            0..21
-                        ) + "..."
-                    tvTranslation.text = translationCut
+                    tvTranslation.text = item.translation
                 }
             }
             is CharacterItemNotChosenBinding -> {
                 with(binding) {
                     tvCharacterChinese.text = item.character
                     tvPinyin.text = item.pinyin
-                    val translationCut =
-                        if (item.translation.length <= 21) item.translation else item.translation.substring(
-                            0..21
-                        ) + "..."
-                    tvTranslation.text = translationCut
+                    tvTranslation.text = item.translation
                 }
             }
         }

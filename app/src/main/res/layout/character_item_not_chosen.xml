@@ -62,11 +62,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="18sp"
+            android:maxLines="2"
+            android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageViewGoTo"
             app:layout_constraintStart_toEndOf="@+id/tvPinyin"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="оставаться, оставлять..." />
+            tools:text="оставаться, оставлять, танцевать, оставаться, оставлять, танцевать, оставаться, оставлять, танцевать" />
 
         <ImageView
             android:id="@+id/imageViewGoTo"
