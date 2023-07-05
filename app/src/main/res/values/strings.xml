@@ -68,5 +68,15 @@
     <string name="lvl2">MEDIUM</string>
     <string name="lvl3">HARD</string>
     <string name="not_found">Not found</string>
+    <string name="menu_game">Game</string>
+    <string name="menu_dictionary">Dictionary</string>
+    <string name="menu_profile">Settings</string>
+    <string name="new_user">New user</string>
+    <string name="login_button">Login</string>
+    <string name="my_records">My top results</string>
+    <string name="import_export">Import and share</string>
+    <string name="help">Help</string>
+    <string name="dictionary">Dictionary</string>
+    <string name="profile_settings">Profile &amp; settings</string>
 
 </resources>

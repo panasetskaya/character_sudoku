@@ -1,28 +1,24 @@
-package com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments
+package com.panasetskaia.charactersudoku.presentation.common_fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentRandomOrSelectDialogBinding
-import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.adapters.SpinnerAdapter
-import com.panasetskaia.charactersudoku.presentation.fragments.DictionaryFragment
-import com.panasetskaia.charactersudoku.presentation.fragments.GameFragment
-import com.panasetskaia.charactersudoku.presentation.fragments.SingleCharacterFragment
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.dict_screen.SpinnerAdapter
+import com.panasetskaia.charactersudoku.presentation.dict_screen.DictionaryFragment
+import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
+import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
+import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

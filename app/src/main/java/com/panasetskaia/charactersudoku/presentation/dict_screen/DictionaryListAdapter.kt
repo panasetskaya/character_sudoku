@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.adapters
+package com.panasetskaia.charactersudoku.presentation.dict_screen
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

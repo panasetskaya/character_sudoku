@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.adapters
+package com.panasetskaia.charactersudoku.presentation.settings_screen
 
 import android.app.Activity
 import android.view.LayoutInflater

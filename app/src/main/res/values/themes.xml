@@ -96,4 +96,15 @@
         <item name="actionMenuTextColor">@color/primaryTextColor</item>
     </style>
 
+    <style name="SettingsNavItemTextView">
+        <item name="fontFamily">@font/rubik</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/primaryColor</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:clickable">true</item>
+
+
+    </style>
+
 </resources>

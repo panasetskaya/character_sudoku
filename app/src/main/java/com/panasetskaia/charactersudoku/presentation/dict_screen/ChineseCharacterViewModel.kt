@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.viewmodels
+package com.panasetskaia.charactersudoku.presentation.dict_screen
 
 import android.app.Application
 import android.util.Log

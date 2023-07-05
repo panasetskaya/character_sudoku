@@ -1,10 +1,12 @@
-package com.panasetskaia.charactersudoku.presentation.fragments
+package com.panasetskaia.charactersudoku.presentation.dict_screen
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import android.view.animation.AccelerateInterpolator
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -20,13 +22,12 @@ import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.adapters.DictionaryListAdapter
-import com.panasetskaia.charactersudoku.presentation.adapters.MyItemTouchCallback
-import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ChooseCategoryFragment
-import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmDeletingDialogFragment
-import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.RandomOrSelectDialogFragment
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragment
+import com.panasetskaia.charactersudoku.presentation.settings_screen.HelpFragment
+import com.panasetskaia.charactersudoku.presentation.common_fragments.RandomOrSelectDialogFragment
+import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
+import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
+import com.panasetskaia.charactersudoku.utils.replaceWithThisFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -40,6 +41,7 @@ class DictionaryFragment : Fragment() {
     private val mInterpolator = AccelerateInterpolator()
     private var isFabPlayEnabled = false
     private var filter = NO_FILTER
+    private lateinit var searchView: SearchView
 
 
     private var _binding: FragmentDictionaryBinding? = null
@@ -56,7 +58,6 @@ class DictionaryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDictionaryBinding.inflate(inflater, container, false)
-        (activity as AppCompatActivity).setSupportActionBar(binding.appBar)
         return binding.root
     }
 
@@ -84,40 +85,28 @@ class DictionaryFragment : Fragment() {
         filter = args.getString(FILTER_EXTRA) ?: NO_FILTER
     }
 
-
+    @SuppressLint("DiscouragedApi")
     private fun setupMenu() {
-        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.dict_toolbar_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.sudoku_icon -> {
-                        parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(GameFragment::class.java, null)
-                        true
-                    }
-                    R.id.dict_help_icon -> {
-                        replaceWithThisFragment(HelpFragment::class.java, null)
-                        true
-                    }
-                    R.id.dict_filter_icon -> {
-                        parentFragmentManager.beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.fcvMain, ChooseCategoryFragment::class.java, arguments)
-                            .addToBackStack(null)
-                            .commit()
-                        true
-                    }
-                    R.id.dict_export_import_icon -> {
-                        replaceWithThisFragment(ExportFragment::class.java, null)
-                        true
-                    }
-                    else -> true
+        binding.appBar.inflateMenu(R.menu.dict_toolbar_menu)
+        searchView =
+            binding.appBar.menu.findItem(R.id.dict_search_icon).actionView as SearchView
+        val searchImgId = androidx.appcompat.R.id.search_button
+        val v: ImageView = searchView.findViewById(searchImgId)
+        v.setImageResource(R.drawable.ic_search_stroke_and_fill)
+        searchView.maxWidth = Integer.MAX_VALUE
+        binding.appBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.dict_filter_icon -> {
+                    parentFragmentManager.beginTransaction()
+                        .setReorderingAllowed(true)
+                        .add(R.id.fcvMain, ChooseCategoryFragment::class.java, arguments)
+                        .addToBackStack(null)
+                        .commit()
+                    true
                 }
+                else -> true
             }
-        }, viewLifecycleOwner)
+        }
     }
 
     private fun setupFab() {
@@ -140,7 +129,8 @@ class DictionaryFragment : Fragment() {
                 gameViewModel.setSelected(selectedCharacters)
                 parentFragmentManager.popBackStack()
                 val arguments = Bundle().apply {
-                    putString(RandomOrSelectDialogFragment.EXTRA_MODE,
+                    putString(
+                        RandomOrSelectDialogFragment.EXTRA_MODE,
                         RandomOrSelectDialogFragment.MODE_FROM_DICT)
                 }
                 replaceWithThisFragment(GameFragment::class.java,null)
@@ -280,14 +270,6 @@ class DictionaryFragment : Fragment() {
             interpolator = mInterpolator
         }
 
-    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
-        parentFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .replace(R.id.fcvMain, fragment, args)
-            .addToBackStack(null)
-            .commit()
-    }
-
     private fun addThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
         parentFragmentManager.beginTransaction()
             .setReorderingAllowed(true)
@@ -297,7 +279,7 @@ class DictionaryFragment : Fragment() {
     }
 
     private fun setupSearch(list: List<ChineseCharacter>) {
-        binding.searchViewDict.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 val thereIs = list.any { it.character==query }
                 if (thereIs) {

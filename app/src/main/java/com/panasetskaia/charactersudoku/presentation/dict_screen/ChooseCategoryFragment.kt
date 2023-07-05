@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments
+package com.panasetskaia.charactersudoku.presentation.dict_screen
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,10 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentChooseCategoryBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.adapters.SpinnerAdapter
-import com.panasetskaia.charactersudoku.presentation.fragments.DictionaryFragment
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -45,7 +42,7 @@ class ChooseCategoryFragment : Fragment() {
         collectCategories()
         binding.okButton.setOnClickListener {
             val category = binding.spinnerChooseCat.selectedItem.toString()
-            if (category==SpinnerAdapter.NO_CAT) {
+            if (category== SpinnerAdapter.NO_CAT) {
                 val arguments = Bundle().apply {
                     putString(
                         DictionaryFragment.FILTER_EXTRA,

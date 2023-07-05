@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.adapters
+package com.panasetskaia.charactersudoku.presentation.dict_screen
 
 
 import android.view.View
@@ -8,9 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.panasetskaia.charactersudoku.R
-import com.panasetskaia.charactersudoku.presentation.fragments.SingleCharacterFragment
-import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.RandomOrSelectDialogFragment
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
+import com.panasetskaia.charactersudoku.presentation.common_fragments.RandomOrSelectDialogFragment
 
 class SpinnerAdapter(
     private val mContext: Fragment,

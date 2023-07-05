@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments
+package com.panasetskaia.charactersudoku.presentation.dict_screen
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.panasetskaia.charactersudoku.databinding.FragmentConfirmDeletingDialogBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 
 class ConfirmDeletingDialogFragment : Fragment() {
 

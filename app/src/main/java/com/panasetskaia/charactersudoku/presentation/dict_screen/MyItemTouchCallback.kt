@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.adapters
+package com.panasetskaia.charactersudoku.presentation.dict_screen
 
 import android.annotation.SuppressLint
 import android.graphics.Canvas
@@ -10,9 +10,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
-import com.panasetskaia.charactersudoku.presentation.fragments.DictionaryFragment
-import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmDeletingDialogFragment
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

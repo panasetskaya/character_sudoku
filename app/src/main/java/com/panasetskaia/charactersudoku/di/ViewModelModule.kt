@@ -1,8 +1,8 @@
 package com.panasetskaia.charactersudoku.di
 
 import androidx.lifecycle.ViewModel
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
+import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

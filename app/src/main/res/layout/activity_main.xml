@@ -10,11 +10,24 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fcvMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.panasetskaia.charactersudoku.presentation.fragments.GameFragment"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="0dp"
+        android:name="com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/primaryColor"
+        app:menu="@menu/bottom_navigation"
+        app:itemIconTint="@drawable/bottom_color_selector"
+        app:itemTextColor="@drawable/bottom_color_selector"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

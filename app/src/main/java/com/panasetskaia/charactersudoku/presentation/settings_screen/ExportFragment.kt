@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.fragments
+package com.panasetskaia.charactersudoku.presentation.settings_screen
 
 import android.app.Activity
 import android.content.Intent
@@ -19,7 +19,7 @@ import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentExportBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
+import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader

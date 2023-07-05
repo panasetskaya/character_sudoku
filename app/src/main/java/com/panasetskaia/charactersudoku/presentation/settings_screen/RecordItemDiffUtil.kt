@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.adapters
+package com.panasetskaia.charactersudoku.presentation.settings_screen
 
 import androidx.recyclerview.widget.DiffUtil
 import com.panasetskaia.charactersudoku.domain.entities.Record

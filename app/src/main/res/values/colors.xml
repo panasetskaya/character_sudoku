@@ -15,5 +15,6 @@
     <color name="veryTransparentGr">#30A7D2CB</color>
     <color name="defaultBoardTextColor">#74a39b</color>
     <color name="boardLineColor">#1b0000</color>
+    <color name="inactiveColor">#4f4f4f</color>
 
 </resources>

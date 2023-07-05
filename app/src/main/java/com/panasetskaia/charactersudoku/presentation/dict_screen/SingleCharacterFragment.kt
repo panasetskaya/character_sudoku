@@ -1,10 +1,7 @@
-package com.panasetskaia.charactersudoku.presentation.fragments
+package com.panasetskaia.charactersudoku.presentation.dict_screen
 
 import android.os.Bundle
 import android.view.*
-import android.view.animation.BounceInterpolator
-import android.view.animation.CycleInterpolator
-import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.AdapterView
 import android.widget.Toast
@@ -20,8 +17,6 @@ import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentSingleCharacterBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.adapters.SpinnerAdapter
-import com.panasetskaia.charactersudoku.presentation.viewmodels.ChineseCharacterViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -156,7 +151,10 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             Toast.makeText(context, R.string.added, Toast.LENGTH_SHORT).show()
                             parentFragmentManager.popBackStack()
                             val arguments = Bundle().apply {
-                                putString(DictionaryFragment.FILTER_EXTRA,DictionaryFragment.NO_FILTER)
+                                putString(
+                                    DictionaryFragment.FILTER_EXTRA,
+                                    DictionaryFragment.NO_FILTER
+                                )
                             }
                             replaceWithThisFragment(DictionaryFragment::class.java,arguments)
                         } else if (chineseChar.length < MIN_LENGTH) {

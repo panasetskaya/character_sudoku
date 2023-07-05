@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.fragments
+package com.panasetskaia.charactersudoku.presentation.settings_screen
 
 import android.os.Bundle
 import android.view.*
@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentRecordsBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.adapters.RecordListAdapter
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
+import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -26,7 +26,6 @@ class RecordsFragment : Fragment() {
 
     private lateinit var gameViewModel: GameViewModel
     private lateinit var listAdapter: RecordListAdapter
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -79,20 +78,11 @@ class RecordsFragment : Fragment() {
                 return when (menuItem.itemId) {
                     R.id.records_to_sudoku_icon -> {
                         parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(GameFragment::class.java, null)
                         true
                     }
                     else -> true
                 }
             }
         }, viewLifecycleOwner)
-    }
-
-    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
-        parentFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .replace(R.id.fcvMain, fragment, args)
-            .addToBackStack(null)
-            .commit()
     }
 }

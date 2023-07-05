@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.viewmodels
+package com.panasetskaia.charactersudoku.presentation.game_screen
 import com.panasetskaia.charactersudoku.domain.entities.Board
 
 sealed class GameState

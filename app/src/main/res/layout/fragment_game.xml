@@ -5,7 +5,7 @@
     android:id="@+id/gameConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragments.GameFragment">
+    tools:context=".presentation.game_screen.GameFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -24,7 +24,7 @@
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
             app:contentInsetStart="0dp"
-            app:title="" />
+            app:title="@string/app_name" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <Chronometer
@@ -67,7 +67,7 @@
         app:layout_constraintTop_toTopOf="@+id/sudoku_board" />
 
 
-    <com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
+    <com.panasetskaia.charactersudoku.presentation.game_screen.SudokuBoardView
         android:id="@+id/sudoku_board"
         android:layout_width="match_parent"
         android:layout_height="0dp"

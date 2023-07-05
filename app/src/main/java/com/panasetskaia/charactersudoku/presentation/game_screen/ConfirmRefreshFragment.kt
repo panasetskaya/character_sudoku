@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments
+package com.panasetskaia.charactersudoku.presentation.game_screen
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,12 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentConfirmRefreshBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.viewmodels.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.common_fragments.RandomOrSelectDialogFragment
 
 class ConfirmRefreshFragment : Fragment() {
 
@@ -39,8 +38,10 @@ class ConfirmRefreshFragment : Fragment() {
         binding.yesButton.setOnClickListener {
             parentFragmentManager.popBackStack()
             val args = Bundle().apply {
-                putString(RandomOrSelectDialogFragment.EXTRA_MODE,
-                RandomOrSelectDialogFragment.MODE_FROM_GAME)
+                putString(
+                    RandomOrSelectDialogFragment.EXTRA_MODE,
+                    RandomOrSelectDialogFragment.MODE_FROM_GAME
+                )
             }
             parentFragmentManager.commit {
                 setReorderingAllowed(true)

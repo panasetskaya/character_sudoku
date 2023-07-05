@@ -1,11 +1,9 @@
-package com.panasetskaia.charactersudoku.presentation.fragments
+package com.panasetskaia.charactersudoku.presentation.game_screen
 
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.app.Application
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.SystemClock
 import android.view.*
 import android.view.animation.AccelerateInterpolator
@@ -23,15 +21,11 @@ import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
-import com.panasetskaia.charactersudoku.presentation.fragments.dialogFragments.ConfirmRefreshFragment
-import com.panasetskaia.charactersudoku.presentation.viewmodels.*
-import com.panasetskaia.charactersudoku.utils.formatToTime
-import kotlinx.coroutines.delay
+import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
+import com.panasetskaia.charactersudoku.presentation.settings_screen.HelpFragment
+import com.panasetskaia.charactersudoku.presentation.settings_screen.RecordsFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.lang.Math.abs
-import java.util.concurrent.TimeUnit
 
 class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
@@ -49,14 +43,12 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentGameBinding.inflate(inflater, container, false)
-        (activity as AppCompatActivity).setSupportActionBar(binding.appBar)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.sudokuBoard.registerListener(this)
-        setupMenu()
         setAnimations()
         interactWithViewModel()
 
@@ -71,48 +63,6 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun setupMenu() {
-        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.game_toolbar_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.dictionary_icon -> {
-                        val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
-                        gameViewModel.saveBoard(timeWhenStopped)
-                        val arguments = Bundle().apply {
-                            putString(
-                                DictionaryFragment.FILTER_EXTRA,
-                                DictionaryFragment.NO_FILTER
-                            )
-                        }
-                        parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(DictionaryFragment::class.java, arguments)
-                        true
-                    }
-                    R.id.game_help_icon -> {
-                        val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
-                        gameViewModel.saveBoard(timeWhenStopped)
-                        replaceWithThisFragment(HelpFragment::class.java, null)
-                        true
-                    }
-                    R.id.records_icon -> {
-                        val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
-                        gameViewModel.saveBoard(timeWhenStopped)
-                        parentFragmentManager.popBackStack()
-                        replaceWithThisFragment(RecordsFragment::class.java, null)
-                        true
-                    }
-                    else -> {
-                        true
-                    }
-                }
-            }
-        }, viewLifecycleOwner)
     }
 
     private fun interactWithViewModel() {
