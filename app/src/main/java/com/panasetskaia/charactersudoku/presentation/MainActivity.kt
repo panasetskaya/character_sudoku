@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.application.SudokuApplication
 import com.panasetskaia.charactersudoku.databinding.ActivityMainBinding
@@ -40,49 +42,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.bottomNavigation.setOnItemSelectedListener { item ->
-            if (item.itemId!=binding.bottomNavigation.selectedItemId) {
-                when (item.itemId) {
-                    R.id.action_game -> {
-                        goToGame()
-                    }
-                    R.id.action_dictionary -> {
-                        goToDict()
-                    }
-                    R.id.action_profile -> {
-                        goToProfile()
-                    }
-                }
-            }
-            true
-        }
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fcvMain) as NavHostFragment
+        binding.bottomNavigation.setupWithNavController(navHostFragment.navController)
     }
 
     override fun onStop() {
         characterViewModel.markAllUnselected()
         super.onStop()
     }
-
-    private fun goToGame() {
-        supportFragmentManager.popBackStack()
-        replaceWithThisFragment(GameFragment::class.java, null)
-    }
-
-    private fun goToProfile() {
-        supportFragmentManager.popBackStack()
-        replaceWithThisFragment(SettingsFragment::class.java, null)
-    }
-
-    private fun goToDict() {
-        val arguments = Bundle().apply {
-            putString(
-                DictionaryFragment.FILTER_EXTRA,
-                DictionaryFragment.NO_FILTER
-            )
-        }
-        supportFragmentManager.popBackStack()
-        replaceWithThisFragment(DictionaryFragment::class.java, arguments)
-    }
-
-
 }

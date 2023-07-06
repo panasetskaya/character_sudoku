@@ -48,10 +48,6 @@ class DictionaryFragment : Fragment() {
     private val binding: FragmentDictionaryBinding
         get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        parseParams()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,7 +76,7 @@ class DictionaryFragment : Fragment() {
     private fun parseParams() {
         val args = requireArguments()
         if (!args.containsKey(FILTER_EXTRA)) {
-            throw RuntimeException("No param: filter")
+            filter = NO_FILTER
         }
         filter = args.getString(FILTER_EXTRA) ?: NO_FILTER
     }
