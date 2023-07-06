@@ -26,74 +26,204 @@
             app:title="@string/profile_settings" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ImageView
-        android:id="@+id/ivUserImage"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        app:layout_constraintStart_toStartOf="parent"
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        android:layout_marginTop="32dp"
-        android:src="@drawable/ic_account"
-        app:tint="@color/secondaryColor" />
+        android:paddingBottom="110dp">
 
-    <TextView
-        android:id="@+id/tvUserName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivUserImage"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:text="@string/new_user" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvUserName"
-        android:text="@string/login_button"
-        android:backgroundTint="@color/primaryLightColor"
-        android:layout_marginTop="16dp"/>
+            <ImageView
+                android:id="@+id/ivUserImage"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="32dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_account"
+                app:tint="@color/secondaryColor" />
 
-    <TextView
-        android:id="@+id/buttonTopResults"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonLogin"
-        android:text="@string/my_records"
-        android:layout_marginTop="48dp"
-        android:clickable="true"
-        style="@style/SettingsNavItemTextView"/>
+            <TextView
+                android:id="@+id/tvUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/new_user" />
 
-    <TextView
-        android:id="@+id/buttonExport"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTopResults"
-        android:text="@string/import_export"
-        android:layout_marginTop="16dp"
-        android:clickable="true"
-        style="@style/SettingsNavItemTextView"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/login_button"
+                android:backgroundTint="@color/secondaryColor"
+                android:layout_marginTop="16dp"/>
 
-    <TextView
-        android:id="@+id/buttonHelp"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonExport"
-        android:text="@string/help"
-        android:layout_marginTop="16dp"
-        android:clickable="true"
-        style="@style/SettingsNavItemTextView"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/buttonTopResults"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="32dp"
+                android:clickable="true"
+                android:elevation="16dp"
+                app:cardBackgroundColor="@color/primaryColor"
+                app:shapeAppearance="@style/Rounded">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="6dp">
+
+                    <ImageView
+                        android:id="@+id/game_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="0dp"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/ic_sudoku_icon_stroke_and_fill"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_top_games_title"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_top_games_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:text="@string/my_records"
+                        android:textAllCaps="true"
+                        android:textColor="@color/primaryTextColor"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/game_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/buttonExport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="36dp"
+                android:layout_marginEnd="32dp"
+                android:padding="8dp"
+                android:clickable="true"
+                android:elevation="16dp"
+                app:cardBackgroundColor="@color/primaryColor"
+                app:shapeAppearance="@style/Rounded">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="6dp">
+
+                    <ImageView
+                        android:id="@+id/export_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="0dp"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/ic_baseline_share_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_export_title"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_export_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:text="@string/import_export"
+                        android:textAllCaps="true"
+                        android:textColor="@color/primaryTextColor"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/export_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/buttonHelp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="36dp"
+                android:layout_marginEnd="32dp"
+                android:padding="8dp"
+                android:clickable="true"
+                android:elevation="16dp"
+                app:cardBackgroundColor="@color/primaryColor"
+                app:shapeAppearance="@style/Rounded">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="6dp">
+
+                    <ImageView
+                        android:id="@+id/help_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="0dp"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/ic_question_stroke_and_fill"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_help_title"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_help_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:text="@string/help"
+                        android:textAllCaps="true"
+                        android:textColor="@color/primaryTextColor"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/help_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
 
 
 

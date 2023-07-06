@@ -55,7 +55,7 @@
     <string name="rating">Rating</string>
     <string name="export_dict">Dictionary export and import</string>
     <string name="default_dict_text">Here you can add your own characters or symbols to the dictionary\nand then use them for the sudoku game</string>
-    <string name="records_title">Your top games</string>
+    <string name="records_title">Your best games</string>
     <string name="file_saved">saved to: sdcard/Android/data/com.panasetskaia.charactersudoku/files</string>
     <string name="to_csv">to .csv</string>
     <string name="to_json">to .json</string>
@@ -78,5 +78,7 @@
     <string name="help">Help</string>
     <string name="dictionary">Dictionary</string>
     <string name="profile_settings">Profile &amp; settings</string>
+    <string name="expimp">Export/import</string>
+    <string name="top_results">Top results</string>
 
 </resources>

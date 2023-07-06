@@ -32,7 +32,6 @@ class RecordsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentRecordsBinding.inflate(inflater, container, false)
-        (activity as AppCompatActivity).setSupportActionBar(binding.appBar)
         return binding.root
     }
 
@@ -69,20 +68,9 @@ class RecordsFragment : Fragment() {
     }
 
     private fun setupMenu() {
-        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.records_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.records_to_sudoku_icon -> {
-                        parentFragmentManager.popBackStack()
-                        true
-                    }
-                    else -> true
-                }
-            }
-        }, viewLifecycleOwner)
+        binding.appBar.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+            true
+        }
     }
 }

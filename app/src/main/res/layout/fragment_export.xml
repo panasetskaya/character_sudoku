@@ -22,7 +22,10 @@
             android:paddingLeft="12dp"
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
-            app:contentInsetStart="0dp" />
+            app:contentInsetStart="0dp"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:title="@string/expimp"
+            />
     </com.google.android.material.appbar.AppBarLayout>
 
 <!--    style="@style/Widget.Sudoku.Toolbar"-->
