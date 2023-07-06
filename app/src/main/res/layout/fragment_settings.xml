@@ -90,7 +90,7 @@
                         android:layout_width="40dp"
                         android:layout_height="0dp"
                         android:layout_margin="4dp"
-                        android:src="@drawable/ic_sudoku_icon_stroke_and_fill"
+                        android:src="@drawable/top_ten"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tv_top_games_title"
                         app:layout_constraintHorizontal_chainStyle="packed"
