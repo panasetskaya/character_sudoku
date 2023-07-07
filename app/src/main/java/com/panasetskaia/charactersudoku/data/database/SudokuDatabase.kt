@@ -4,6 +4,13 @@ import android.app.Application
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.panasetskaia.charactersudoku.data.database.board.BoardDao
+import com.panasetskaia.charactersudoku.data.database.board.BoardDbModel
+import com.panasetskaia.charactersudoku.data.database.dictionary.CategoryDbModel
+import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDbModel
+import com.panasetskaia.charactersudoku.data.database.records.RecordDbModel
+import com.panasetskaia.charactersudoku.data.database.records.RecordsDao
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 

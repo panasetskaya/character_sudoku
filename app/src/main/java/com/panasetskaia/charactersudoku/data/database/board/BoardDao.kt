@@ -1,6 +1,7 @@
-package com.panasetskaia.charactersudoku.data.database
+package com.panasetskaia.charactersudoku.data.database.board
 
 import androidx.room.*
+import com.panasetskaia.charactersudoku.data.database.SudokuConverters
 
 @Dao
 @TypeConverters(SudokuConverters::class)

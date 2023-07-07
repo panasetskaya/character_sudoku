@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.data.database
+package com.panasetskaia.charactersudoku.data.database.dictionary
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

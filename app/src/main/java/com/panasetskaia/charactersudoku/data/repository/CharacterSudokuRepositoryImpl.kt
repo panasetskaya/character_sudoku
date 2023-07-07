@@ -4,10 +4,10 @@ import android.app.Application
 import android.os.Environment
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.panasetskaia.charactersudoku.data.database.BoardDao
-import com.panasetskaia.charactersudoku.data.database.CategoryDbModel
-import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
-import com.panasetskaia.charactersudoku.data.database.RecordsDao
+import com.panasetskaia.charactersudoku.data.database.board.BoardDao
+import com.panasetskaia.charactersudoku.data.database.dictionary.CategoryDbModel
+import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.records.RecordsDao
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED

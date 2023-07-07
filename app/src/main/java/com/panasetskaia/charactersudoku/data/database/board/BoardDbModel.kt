@@ -1,8 +1,9 @@
-package com.panasetskaia.charactersudoku.data.database
+package com.panasetskaia.charactersudoku.data.database.board
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.panasetskaia.charactersudoku.data.database.SudokuConverters
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 

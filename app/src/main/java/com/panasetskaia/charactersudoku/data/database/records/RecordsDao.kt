@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.data.database
+package com.panasetskaia.charactersudoku.data.database.records
 
 import androidx.room.Dao
 import androidx.room.Insert

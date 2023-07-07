@@ -1,9 +1,9 @@
 package com.panasetskaia.charactersudoku.di
 
 import android.app.Application
-import com.panasetskaia.charactersudoku.data.database.BoardDao
-import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
-import com.panasetskaia.charactersudoku.data.database.RecordsDao
+import com.panasetskaia.charactersudoku.data.database.board.BoardDao
+import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.records.RecordsDao
 import com.panasetskaia.charactersudoku.data.database.SudokuDatabase
 import com.panasetskaia.charactersudoku.data.repository.CharacterSudokuRepositoryImpl
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository

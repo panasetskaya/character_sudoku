@@ -1,9 +1,9 @@
 package com.panasetskaia.charactersudoku.data.repository
 
-import com.panasetskaia.charactersudoku.data.database.BoardDbModel
-import com.panasetskaia.charactersudoku.data.database.CategoryDbModel
-import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDbModel
-import com.panasetskaia.charactersudoku.data.database.RecordDbModel
+import com.panasetskaia.charactersudoku.data.database.board.BoardDbModel
+import com.panasetskaia.charactersudoku.data.database.dictionary.CategoryDbModel
+import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDbModel
+import com.panasetskaia.charactersudoku.data.database.records.RecordDbModel
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
