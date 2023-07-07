@@ -94,15 +94,9 @@ class RandomOrSelectDialogFragment : Fragment() {
         }
         binding.selectCharactersButton.setOnClickListener {
             parentFragmentManager.popBackStack()
-            val args = Bundle().apply {
-                putString(
-                    DictionaryFragment.FILTER_EXTRA,
-                    DictionaryFragment.NO_FILTER
-                )
-            }
             parentFragmentManager.commit {
                 setReorderingAllowed(true)
-                replace(R.id.fcvMain, DictionaryFragment::class.java, args)
+                replace(R.id.fcvMain, DictionaryFragment::class.java, null)
                 addToBackStack(null)
             }
         }

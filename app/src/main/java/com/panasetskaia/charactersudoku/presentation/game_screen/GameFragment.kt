@@ -3,16 +3,14 @@ package com.panasetskaia.charactersudoku.presentation.game_screen
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
-import android.view.*
+import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.widget.Button
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -20,54 +18,44 @@ import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
-import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
-import com.panasetskaia.charactersudoku.presentation.settings_screen.HelpFragment
-import com.panasetskaia.charactersudoku.presentation.settings_screen.RecordsFragment
+import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
+import com.panasetskaia.charactersudoku.utils.getAppComponent
+import com.panasetskaia.charactersudoku.utils.toast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
+class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGameBinding::inflate), SudokuBoardView.OnTouchListener {
 
     private val mInterpolator = AccelerateInterpolator()
 
-    private lateinit var gameViewModel: GameViewModel
-    private lateinit var characterViewModel: ChineseCharacterViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
-    private var _binding: FragmentGameBinding? = null
-    private val binding: FragmentGameBinding
-        get() = _binding ?: throw RuntimeException("FragmentGameBinding is null")
+    override val viewModel by viewModels<GameViewModel> { viewModelFactory }
+    private val characterViewModel by viewModels<ChineseCharacterViewModel> { viewModelFactory }
+    // todo: зачем тебе тут две тяжеленные вьюмодели?? пихай юзкейсы в нужную!
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentGameBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        getAppComponent().inject(this)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onReady(savedInstanceState: Bundle?) {
         binding.sudokuBoard.registerListener(this)
         setAnimations()
-        interactWithViewModel()
-
+        setButtons()
     }
 
     override fun onPause() {
         val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
-        gameViewModel.saveBoard(timeWhenStopped)
+        viewModel.saveBoard(timeWhenStopped)
         super.onPause()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun interactWithViewModel() {
-        gameViewModel = (activity as MainActivity).gameViewModel
-        characterViewModel = (activity as MainActivity).characterViewModel
+    private fun setButtons() {
         val buttons = listOf(
             binding.oneButton,
             binding.twoButton,
@@ -88,7 +76,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             button.setOnClickListener {
                 val currentTime =
                     binding.chTimer.base - SystemClock.elapsedRealtime()
-                gameViewModel.handleInput(index, currentTime)
+                viewModel.handleInput(index, currentTime)
                 AnimatorSet().apply {
                     play(shakeAnimator(it, -10f, 0f, 40))
                     start()
@@ -100,14 +88,9 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                         characterViewModel.getOneCharacterByChinese(button.text.toString())
                             .collectLatest {
                                 if (it.pinyin.length > 0 || it.translation.length > 0) {
-                                    Toast.makeText(
-                                        activity,
-                                        "${it.character} [ ${it.pinyin.trim()} ] ${it.translation}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    toast("${it.character} [ ${it.pinyin.trim()} ] ${it.translation}")
                                 } else {
-                                    Toast.makeText(activity, it.character, Toast.LENGTH_SHORT)
-                                        .show()
+                                    toast(it.character)
                                 }
 
                             }
@@ -132,7 +115,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 start()
             }
             val currentTime = binding.chTimer.base - SystemClock.elapsedRealtime()
-            gameViewModel.clearSelected(currentTime)
+            viewModel.clearSelected(currentTime)
         }
     }
 
@@ -140,7 +123,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    gameViewModel.gameStateFlow.collectLatest {
+                    viewModel.gameStateFlow.collectLatest {
                         when (it) {
                             is REFRESHING -> {
                                 refresh()
@@ -148,14 +131,9 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                             is PLAYING -> {
                                 play(it.currentBoard, buttons)
                                 launch {
-                                    gameViewModel.finalErrorFlow.collectLatest { error ->
+                                    viewModel.finalErrorFlow.collectLatest { error ->
                                         if (error) {
-                                            Toast.makeText(
-                                                requireContext(),
-                                                getString(R.string.check_again),
-                                                Toast.LENGTH_SHORT
-                                            )
-                                                .show()
+                                            toast(R.string.check_again)
                                         }
                                     }
                                 }
@@ -173,7 +151,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
                     }
                 }
                 launch {
-                    gameViewModel.selectedCellFlow.collectLatest { selectedCell ->
+                    viewModel.selectedCellFlow.collectLatest { selectedCell ->
                         updateSelectedCellUI(selectedCell)
                     }
                 }
@@ -202,21 +180,13 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
 
     override fun onCellTouched(row: Int, col: Int) {
-        gameViewModel.updateSelection(row, col)
+        viewModel.updateSelection(row, col)
     }
 
     override fun onCellLongTouched(row: Int, col: Int) {
-        gameViewModel.updateSelection(row, col)
+        viewModel.updateSelection(row, col)
         val currentTime = binding.chTimer.base - SystemClock.elapsedRealtime()
-        gameViewModel.markSelectedAsDoubtful(currentTime)
-    }
-
-    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
-        parentFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .replace(R.id.fcvMain, fragment, args)
-            .addToBackStack(null)
-            .commit()
+        viewModel.markSelectedAsDoubtful(currentTime)
     }
 
     private fun addThisFragment(fragment: Class<out Fragment>) {
@@ -235,7 +205,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     private fun initiateNewGame() {
         addThisFragment(ConfirmRefreshFragment::class.java)
-        gameViewModel.setSettingsState()
+        viewModel.setSettingsState()
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -244,12 +214,15 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         binding.rippleAnimationView.addAnimatorListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(p0: Animator) {
             }
+
             override fun onAnimationEnd(p0: Animator) {
                 binding.rippleAnimationView.visibility = View.GONE
                 launchRefreshed()
             }
+
             override fun onAnimationCancel(p0: Animator) {
             }
+
             override fun onAnimationRepeat(p0: Animator) {
             }
         })
@@ -257,13 +230,16 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
         binding.winAnimationView.addAnimatorListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(p0: Animator) {
             }
+
             override fun onAnimationEnd(p0: Animator) {
                 binding.tvGameFinished.visibility = View.GONE
                 binding.newGameButton.visibility = View.VISIBLE
                 launchOldBoard()
             }
+
             override fun onAnimationCancel(p0: Animator) {
             }
+
             override fun onAnimationRepeat(p0: Animator) {
             }
         })
@@ -278,8 +254,6 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             chTimer.visibility = View.INVISIBLE
             tvGameFinished.visibility = View.GONE
             newGameButton.visibility = View.GONE
-
-
             rippleAnimationView.playAnimation()
         }
     }
@@ -294,13 +268,13 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             tvGameFinished.visibility = View.VISIBLE
             newGameButton.visibility = View.GONE
             chTimer.stop()
-            updateSelectedCellUI(Pair(-1,-1))
+            updateSelectedCellUI(Pair(-1, -1))
             winAnimationView.playAnimation()
         }
     }
 
     private fun play(board: Board, buttons: List<Button>) {
-        with (binding) {
+        with(binding) {
             buttonsGroup.visibility = View.VISIBLE
             rippleAnimationView.visibility = View.GONE
             winAnimationView.visibility = View.GONE
@@ -319,7 +293,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
     private fun setSettings() {
-        with (binding) {
+        with(binding) {
             buttonsGroup.visibility = View.GONE
             rippleAnimationView.visibility = View.GONE
             winAnimationView.visibility = View.GONE
@@ -334,7 +308,7 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
     private fun displayOldBoard(board: Board) {
-        with (binding) {
+        with(binding) {
             buttonsGroup.visibility = View.GONE
             rippleAnimationView.visibility = View.GONE
             winAnimationView.visibility = View.GONE
@@ -343,16 +317,16 @@ class GameFragment : Fragment(), SudokuBoardView.OnTouchListener {
             tvGameFinished.visibility = View.GONE
             newGameButton.visibility = View.VISIBLE
             updateCells(board.cells)
-            updateSelectedCellUI(Pair(-1,-1))
+            updateSelectedCellUI(Pair(-1, -1))
         }
     }
 
     private fun launchRefreshed() {
-        gameViewModel.launchRefreshedGame()
+        viewModel.launchRefreshedGame()
     }
 
     private fun launchOldBoard() {
-        gameViewModel.launchOldBoard()
+        viewModel.launchOldBoard()
     }
 
 

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.*
+import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -16,7 +17,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ChineseCharacterViewModel @Inject constructor(
-    application: Application,
     private val addCharacterToDict: AddOrEditCharacterUseCase,
     private val deleteCharacter: DeleteCharacterFromDictUseCase,
     private val getWholeDict: GetWholeDictionaryUseCase,
@@ -25,7 +25,7 @@ class ChineseCharacterViewModel @Inject constructor(
     private val deleteCategory: DeleteCategoryUseCase,
     private val saveDictToCSV: SaveDictToCSVUseCase,
     private val saveDictToJson: SaveDictToJsonUseCase,
-) : AndroidViewModel(application) {
+) : BaseViewModel() {
 
     private lateinit var selected: List<ChineseCharacter>
 

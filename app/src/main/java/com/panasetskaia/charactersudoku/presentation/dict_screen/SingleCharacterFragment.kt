@@ -19,6 +19,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.panasetskaia.charactersudoku.utils.replaceWithThisFragment
 
 class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
@@ -150,13 +151,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             addCharacter(category)
                             Toast.makeText(context, R.string.added, Toast.LENGTH_SHORT).show()
                             parentFragmentManager.popBackStack()
-                            val arguments = Bundle().apply {
-                                putString(
-                                    DictionaryFragment.FILTER_EXTRA,
-                                    DictionaryFragment.NO_FILTER
-                                )
-                            }
-                            replaceWithThisFragment(DictionaryFragment::class.java,arguments)
+                            replaceWithThisFragment(DictionaryFragment::class.java,null)
                         } else if (chineseChar.length < MIN_LENGTH) {
                             Toast.makeText(context, R.string.no_char, Toast.LENGTH_SHORT).show()
                         } else {
@@ -191,15 +186,6 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }
             }
         }
-    }
-
-
-    private fun replaceWithThisFragment(fragment: Class<out Fragment>, arguments: Bundle) {
-        parentFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .replace(R.id.fcvMain, fragment, arguments)
-            .addToBackStack(null)
-            .commit()
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {

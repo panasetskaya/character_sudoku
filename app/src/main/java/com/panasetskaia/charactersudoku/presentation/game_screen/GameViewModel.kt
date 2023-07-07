@@ -1,7 +1,5 @@
 package com.panasetskaia.charactersudoku.presentation.game_screen
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.Board
@@ -9,6 +7,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.domain.entities.Record
 import com.panasetskaia.charactersudoku.domain.usecases.*
+import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +19,6 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class GameViewModel @Inject constructor(
-    application: Application,
     private val getGameResult: GetResultUseCase,
     private val getRandomBoard: GetRandomBoard,
     private val getSavedGameUseCase: GetSavedGameUseCase,
@@ -29,7 +27,7 @@ class GameViewModel @Inject constructor(
     private val getRandomByCategory: GetRandomWithCategoryUseCase,
     private val supplyNewRecord: SupplyNewRecordUseCase,
     private val getTopFifteenRecords: GetTopFifteenRecordsUseCase
-) : AndroidViewModel(application) {
+) : BaseViewModel() {
 
     private var selectedRow = NO_SELECTION
     private var selectedCol = NO_SELECTION
@@ -45,11 +43,12 @@ class GameViewModel @Inject constructor(
 
     private val _finalErrorFlow = MutableStateFlow(false)
     val finalErrorFlow: StateFlow<Boolean>
-    get() = _finalErrorFlow
+        get() = _finalErrorFlow
 
     private val _gameStateFlow = MutableSharedFlow<GameState>(
         replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST)
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     val gameStateFlow: SharedFlow<GameState>
         get() = _gameStateFlow
 
@@ -100,7 +99,8 @@ class GameViewModel @Inject constructor(
         levelFlow.value = diffLevel
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val randomBoard = getRandomBoard.invoke(diffLevel).copy(timeSpent = 0, alreadyFinished = false)
+            val randomBoard =
+                getRandomBoard.invoke(diffLevel).copy(timeSpent = 0, alreadyFinished = false)
             updateViewModelBoard(randomBoard)
             _gameStateFlow.emit(REFRESHING)
         }
@@ -110,7 +110,10 @@ class GameViewModel @Inject constructor(
         levelFlow.value = diffLevel
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val randomBoard = getRandomByCategory(category, diffLevel).copy(timeSpent = 0, alreadyFinished = false)
+            val randomBoard = getRandomByCategory(category, diffLevel).copy(
+                timeSpent = 0,
+                alreadyFinished = false
+            )
             updateViewModelBoard(randomBoard)
             _gameStateFlow.emit(REFRESHING)
         }
@@ -123,7 +126,10 @@ class GameViewModel @Inject constructor(
             for (i in selected) {
                 listString.add(i.character)
             }
-            val newBoard = getNewGameWithSel(selected, levelFlow.value).copy(timeSpent = 0, alreadyFinished = false)
+            val newBoard = getNewGameWithSel(selected, levelFlow.value).copy(
+                timeSpent = 0,
+                alreadyFinished = false
+            )
             updateViewModelBoard(newBoard)
             _gameStateFlow.emit(REFRESHING)
         }
@@ -135,7 +141,7 @@ class GameViewModel @Inject constructor(
 
     fun saveBoard(timeSpent: Long? = null) {
         viewModelScope.launch {
-            if (timeSpent!=null) {
+            if (timeSpent != null) {
                 val board = currentBoard.copy(timeSpent = timeSpent)
                 updateViewModelBoard(board)
                 saveGameUseCase(board)
@@ -182,7 +188,8 @@ class GameViewModel @Inject constructor(
             viewModelScope.launch {
                 val gameResult = getGameResult.invoke(currentBoard)
                 if (gameResult is SUCCESS) {
-                    val solution = gameResult.solution.copy(alreadyFinished = true, timeSpent = currentTime)
+                    val solution =
+                        gameResult.solution.copy(alreadyFinished = true, timeSpent = currentTime)
                     updateViewModelBoard(solution)
                     saveBoard()
                     _gameStateFlow.emit(PLAYING(currentBoard))

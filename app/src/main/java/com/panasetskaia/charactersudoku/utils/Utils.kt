@@ -2,9 +2,13 @@ package com.panasetskaia.charactersudoku.utils
 
 import android.app.Activity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.panasetskaia.charactersudoku.R
+import com.panasetskaia.charactersudoku.application.SudokuApplication
+import com.panasetskaia.charactersudoku.di.AppComponent
 import java.util.concurrent.TimeUnit
 
 fun Long.formatToTime(context: Activity): String {
@@ -37,3 +41,15 @@ fun AppCompatActivity.replaceWithThisFragment(fragment: Class<out Fragment>, arg
         .addToBackStack(null)
         .commit()
 }
+
+
+fun Fragment.toast(@StringRes stringRes: Int) {
+    Toast.makeText(requireContext(), stringRes, Toast.LENGTH_SHORT).show()
+}
+
+fun Fragment.toast(s: String) {
+    Toast.makeText(requireContext(), s, Toast.LENGTH_SHORT).show()
+}
+
+fun Fragment.getAppComponent(): AppComponent =
+    (requireActivity().application as SudokuApplication).component

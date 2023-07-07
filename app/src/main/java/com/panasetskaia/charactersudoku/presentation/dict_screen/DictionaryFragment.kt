@@ -3,16 +3,14 @@ package com.panasetskaia.charactersudoku.presentation.dict_screen
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -21,64 +19,45 @@ import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
-import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragment
-import com.panasetskaia.charactersudoku.presentation.settings_screen.HelpFragment
+import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.common_fragments.RandomOrSelectDialogFragment
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
+import com.panasetskaia.charactersudoku.utils.getAppComponent
 import com.panasetskaia.charactersudoku.utils.replaceWithThisFragment
+import com.panasetskaia.charactersudoku.utils.toast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DictionaryFragment : Fragment() {
+class DictionaryFragment :
+    BaseFragment<FragmentDictionaryBinding, ChineseCharacterViewModel>(FragmentDictionaryBinding::inflate) {
 
-    private lateinit var characterViewModel: ChineseCharacterViewModel
-    private lateinit var gameViewModel: GameViewModel
+
     private lateinit var listAdapter: DictionaryListAdapter
     private lateinit var itemTouchCallback: MyItemTouchCallback
     private lateinit var selectedCharacters: List<ChineseCharacter>
     private val mInterpolator = AccelerateInterpolator()
     private var isFabPlayEnabled = false
-    private var filter = NO_FILTER
     private lateinit var searchView: SearchView
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
-    private var _binding: FragmentDictionaryBinding? = null
-    private val binding: FragmentDictionaryBinding
-        get() = _binding ?: throw RuntimeException("FragmentDictionaryBinding is null")
+    override val viewModel by viewModels<ChineseCharacterViewModel> { viewModelFactory }
+    private val gameViewModel by viewModels<GameViewModel> { viewModelFactory }
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentDictionaryBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        getAppComponent().inject(this)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        characterViewModel = (activity as MainActivity).characterViewModel
-        gameViewModel = (activity as MainActivity).gameViewModel
+    override fun onReady(savedInstanceState: Bundle?) {
         setupMenu()
         setupFab()
         setupRecyclerView()
         collectFlows()
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun parseParams() {
-        val args = requireArguments()
-        if (!args.containsKey(FILTER_EXTRA)) {
-            filter = NO_FILTER
-        }
-        filter = args.getString(FILTER_EXTRA) ?: NO_FILTER
     }
 
     @SuppressLint("DiscouragedApi")
@@ -98,6 +77,7 @@ class DictionaryFragment : Fragment() {
                         .add(R.id.fcvMain, ChooseCategoryFragment::class.java, arguments)
                         .addToBackStack(null)
                         .commit()
+                    //todo: поменять на bottom sheet
                     true
                 }
                 else -> true
@@ -119,6 +99,7 @@ class DictionaryFragment : Fragment() {
                 )
             }
             replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
+            //todo: поменять навигацию
         }
         binding.fabPlay.setOnClickListener {
             if (isFabPlayEnabled) {
@@ -127,22 +108,23 @@ class DictionaryFragment : Fragment() {
                 val arguments = Bundle().apply {
                     putString(
                         RandomOrSelectDialogFragment.EXTRA_MODE,
-                        RandomOrSelectDialogFragment.MODE_FROM_DICT)
+                        RandomOrSelectDialogFragment.MODE_FROM_DICT
+                    )
                 }
-                replaceWithThisFragment(GameFragment::class.java,null)
+                replaceWithThisFragment(GameFragment::class.java, null)
                 addThisFragment(RandomOrSelectDialogFragment::class.java, arguments)
+
+                //todo: поменять навигацию
             } else {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.not_enough),
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
+                toast(R.string.not_enough)
             }
         }
         binding.fabDeleteSelected.setOnClickListener {
             val arguments = Bundle().apply {
-                putString(ConfirmDeletingDialogFragment.MODE_EXTRA, ConfirmDeletingDialogFragment.MODE_LIST)
+                putString(
+                    ConfirmDeletingDialogFragment.MODE_EXTRA,
+                    ConfirmDeletingDialogFragment.MODE_LIST
+                )
             }
             parentFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
@@ -154,7 +136,10 @@ class DictionaryFragment : Fragment() {
 
     private fun setupRecyclerView() {
         listAdapter = DictionaryListAdapter()
-        itemTouchCallback = object : MyItemTouchCallback(this, listAdapter, characterViewModel) {}
+        itemTouchCallback = object : MyItemTouchCallback(
+            this, listAdapter,
+            viewModel
+        ) {}
         listAdapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         with(binding.recyclerViewList) {
@@ -168,7 +153,7 @@ class DictionaryFragment : Fragment() {
                 DictionaryListAdapter.MAX_POOL_SIZE
             )
             listAdapter.onCharacterItemLongClickListener = {
-                characterViewModel.changeIsChosenState(it)
+                viewModel.changeIsChosenState(it)
             }
             listAdapter.onCharacterItemClickListener = {
                 val arguments = Bundle().apply {
@@ -182,6 +167,7 @@ class DictionaryFragment : Fragment() {
                     )
                 }
                 replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
+                //todo: поменять навигацию
             }
             setupSwipeListener(binding.recyclerViewList)
         }
@@ -190,10 +176,11 @@ class DictionaryFragment : Fragment() {
     private fun collectFlows() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                if (filter== NO_FILTER) {
+                //todo: фильтрация через вьюмодель
+//                if (filter == NO_FILTER) {
                     launch {
-                        characterViewModel.dictionaryFlow.collectLatest {
-                            if (it.size>0) {
+                        viewModel.dictionaryFlow.collectLatest {
+                            if (it.size > 0) {
                                 binding.tvDefaultText.visibility = View.GONE
                             } else {
                                 binding.tvDefaultText.visibility = View.VISIBLE
@@ -203,24 +190,24 @@ class DictionaryFragment : Fragment() {
 
                         }
                     }
-                } else {
-                    launch {
-                        characterViewModel.getDictionaryByCategory(filter).collectLatest {
-                            if (it.size>0) {
-                                binding.tvDefaultText.visibility = View.GONE
-                            } else {
-                                binding.tvDefaultText.visibility = View.VISIBLE
-                            }
-                            listAdapter.submitList(it)
-                            setupSearch(it)
-                        }
-                    }
-                }
+//                } else {
+//                    launch {
+//                        viewModel.getDictionaryByCategory(filter).collectLatest {
+//                            if (it.size > 0) {
+//                                binding.tvDefaultText.visibility = View.GONE
+//                            } else {
+//                                binding.tvDefaultText.visibility = View.VISIBLE
+//                            }
+//                            listAdapter.submitList(it)
+//                            setupSearch(it)
+//                        }
+//                    }
+//                }
                 launch {
-                    characterViewModel.selectedCharactersSharedFlow.collectLatest { selected ->
+                    viewModel.selectedCharactersSharedFlow.collectLatest { selected ->
                         if (selected.size > 0) {
                             binding.fabDeleteSelected.visibility = View.VISIBLE
-                            characterViewModel.setSelectedForDeleting(selected)
+                            viewModel.setSelectedForDeleting(selected)
                         } else {
                             binding.fabDeleteSelected.visibility = View.GONE
                         }
@@ -260,8 +247,6 @@ class DictionaryFragment : Fragment() {
 
     private fun shakeAnimator(shake: View, propertyName: String, finalvalue: Float) =
         ObjectAnimator.ofFloat(shake, propertyName, -270f, finalvalue).apply {
-//            repeatMode = ValueAnimator.RESTART
-//            repeatCount = 1
             duration = 400
             interpolator = mInterpolator
         }
@@ -277,33 +262,26 @@ class DictionaryFragment : Fragment() {
     private fun setupSearch(list: List<ChineseCharacter>) {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                val thereIs = list.any { it.character==query }
+                val thereIs = list.any { it.character == query }
                 if (thereIs) {
-                    val itemPosition = list.indexOf(list.filter { it.character==query }[0])
+                    val itemPosition = list.indexOf(list.filter { it.character == query }[0])
                     listAdapter.setFoundItemPosition(itemPosition)
                     binding.recyclerViewList.scrollToPosition(itemPosition)
                 } else {
-                    Toast.makeText(requireContext(), getString(R.string.not_found), Toast.LENGTH_SHORT)
-                        .show()
+                    toast(R.string.not_found)
                 }
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val thereIs = list.any { it.character==newText }
+                val thereIs = list.any { it.character == newText }
                 if (thereIs) {
-                    val itemPosition = list.indexOf(list.filter { it.character==newText }[0])
+                    val itemPosition = list.indexOf(list.filter { it.character == newText }[0])
                     listAdapter.setFoundItemPosition(itemPosition)
                     binding.recyclerViewList.scrollToPosition(itemPosition)
                 }
                 return false
             }
         })
-    }
-
-    companion object {
-        const val FILTER_EXTRA = "filter_extra"
-        const val NO_FILTER = "no_filter"
-
     }
 }

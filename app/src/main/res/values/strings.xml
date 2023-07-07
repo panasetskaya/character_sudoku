@@ -80,5 +80,7 @@
     <string name="profile_settings">Profile &amp; settings</string>
     <string name="expimp">Export/import</string>
     <string name="top_results">Top results</string>
+    <string name="binding_null">Fragment Binding is null</string>
+    <string name="soon">Coming soon!</string>
 
 </resources>

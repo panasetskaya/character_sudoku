@@ -1,6 +1,7 @@
 package com.panasetskaia.charactersudoku.presentation.settings_screen
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,40 +14,38 @@ import androidx.core.content.FileProvider
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentExportBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
+import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
+import com.panasetskaia.charactersudoku.utils.getAppComponent
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import javax.inject.Inject
 
 
-class ExportFragment : Fragment() {
+class ExportFragment : BaseFragment<FragmentExportBinding, ChineseCharacterViewModel>(FragmentExportBinding::inflate) {
 
-    private lateinit var viewModel: ChineseCharacterViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    override val viewModel by viewModels<ChineseCharacterViewModel> { viewModelFactory }
 
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
-    private var _binding: FragmentExportBinding? = null
-    private val binding: FragmentExportBinding
-        get() = _binding ?: throw RuntimeException("FragmentExportBinding is null")
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentExportBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        getAppComponent().inject(this)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as MainActivity).characterViewModel
+    override fun onReady(savedInstanceState: Bundle?) {
         setupMenu()
         setupListeners()
         setupResultLauncher()
@@ -83,15 +82,9 @@ class ExportFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     private fun setupMenu() {
         binding.appBar.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
-            true
+            viewModel.navigateBack()
         }
     }
 

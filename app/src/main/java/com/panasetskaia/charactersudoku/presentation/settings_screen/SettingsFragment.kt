@@ -1,52 +1,47 @@
 package com.panasetskaia.charactersudoku.presentation.settings_screen
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.panasetskaia.charactersudoku.R
-import com.panasetskaia.charactersudoku.databinding.FragmentRecordsBinding
 import com.panasetskaia.charactersudoku.databinding.FragmentSettingsBinding
-import com.panasetskaia.charactersudoku.utils.replaceWithThisFragment
+import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
+import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
+import com.panasetskaia.charactersudoku.utils.getAppComponent
+import com.panasetskaia.charactersudoku.utils.toast
+import javax.inject.Inject
 
+class SettingsFragment :
+    BaseFragment<FragmentSettingsBinding, SettingsViewModel>(FragmentSettingsBinding::inflate) {
 
-class SettingsFragment : Fragment() {
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
-    private var _binding: FragmentSettingsBinding? = null
-    private val binding: FragmentSettingsBinding
-        get() = _binding ?: throw RuntimeException("FragmentSettingsBinding is null")
+    override val viewModel by viewModels<SettingsViewModel> { viewModelFactory }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        getAppComponent().inject(this)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onReady(savedInstanceState: Bundle?) {
         setListeners()
     }
 
     private fun setListeners() {
         with(binding) {
             buttonTopResults.setOnClickListener {
-                replaceWithThisFragment(RecordsFragment::class.java, null)
+                viewModel.goToTopRecords()
             }
             buttonExport.setOnClickListener {
-                replaceWithThisFragment(ExportFragment::class.java, null)
+                viewModel.goToExportImport()
             }
             buttonHelp.setOnClickListener {
-                replaceWithThisFragment(HelpFragment::class.java, null)
+                viewModel.goToHelp()
+            }
+            buttonLogin.setOnClickListener {
+                toast(R.string.soon)
             }
         }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
 }

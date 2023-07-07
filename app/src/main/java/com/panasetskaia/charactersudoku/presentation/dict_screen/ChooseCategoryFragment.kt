@@ -12,6 +12,7 @@ import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentChooseCategoryBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
+import com.panasetskaia.charactersudoku.utils.replaceWithThisFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -43,23 +44,11 @@ class ChooseCategoryFragment : Fragment() {
         binding.okButton.setOnClickListener {
             val category = binding.spinnerChooseCat.selectedItem.toString()
             if (category== SpinnerAdapter.NO_CAT) {
-                val arguments = Bundle().apply {
-                    putString(
-                        DictionaryFragment.FILTER_EXTRA,
-                        DictionaryFragment.NO_FILTER
-                    )
-                }
                 parentFragmentManager.popBackStack()
-                replaceWithThisFragment(DictionaryFragment::class.java, arguments)
+                replaceWithThisFragment(DictionaryFragment::class.java, null)
             } else {
-                val arguments = Bundle().apply {
-                    putString(
-                        DictionaryFragment.FILTER_EXTRA,
-                        category
-                    )
-                }
                 parentFragmentManager.popBackStack()
-                replaceWithThisFragment(DictionaryFragment::class.java, arguments)
+                replaceWithThisFragment(DictionaryFragment::class.java, null)
             }
         }
     }
@@ -90,13 +79,5 @@ class ChooseCategoryFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle) {
-        parentFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .replace(R.id.fcvMain, fragment, args)
-            .addToBackStack(null)
-            .commit()
     }
 }
