@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import android.view.animation.OvershootInterpolator
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -17,9 +16,10 @@ import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentSingleCharacterBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.utils.replaceWithThisFragment
+import com.panasetskaia.charactersudoku.utils.toast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.panasetskaia.charactersudoku.utils.replaceWithThisFragment
 
 class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
@@ -53,10 +53,10 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
         viewModel = (activity as MainActivity).characterViewModel
         binding.spinnerCat.onItemSelectedListener = this
         setupMenu()
-        if (mode== MODE_ADD) {
+        if (mode == MODE_ADD) {
             launchModeAdd()
         }
-        if (mode== MODE_EDIT) {
+        if (mode == MODE_EDIT) {
             launchModeEdit()
         }
         collectCategories()
@@ -149,13 +149,13 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         if (chineseChar.length == 1) {
                             val category = binding.spinnerCat.selectedItem.toString()
                             addCharacter(category)
-                            Toast.makeText(context, R.string.added, Toast.LENGTH_SHORT).show()
+                            toast(R.string.added)
                             parentFragmentManager.popBackStack()
-                            replaceWithThisFragment(DictionaryFragment::class.java,null)
+                            replaceWithThisFragment(DictionaryFragment::class.java, null)
                         } else if (chineseChar.length < MIN_LENGTH) {
-                            Toast.makeText(context, R.string.no_char, Toast.LENGTH_SHORT).show()
+                            toast(R.string.no_char)
                         } else {
-                            Toast.makeText(context, R.string.too_many, Toast.LENGTH_SHORT).show()
+                            toast(R.string.too_many)
                         }
                         true
                     }
@@ -207,7 +207,7 @@ class SingleCharacterFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun setSpinnerSelection(cat: String) {
         val position = adapterForSpinner.getPosition(cat)
-        if (position!=-1) {
+        if (position != -1) {
             binding.spinnerCat.setSelection(position)
         }
     }
