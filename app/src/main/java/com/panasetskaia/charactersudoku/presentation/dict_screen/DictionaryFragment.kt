@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.animation.AccelerateInterpolator
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -16,7 +17,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.panasetskaia.charactersudoku.R
+import com.panasetskaia.charactersudoku.databinding.BottomSheetChooseCategoryBinding
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
@@ -40,6 +43,8 @@ class DictionaryFragment :
     private val mInterpolator = AccelerateInterpolator()
     private var isFabPlayEnabled = false
     private lateinit var searchView: SearchView
+    private lateinit var bottomSheetDialog: BottomSheetDialog
+    private lateinit var spinnerByCategoryAdapter: SpinnerAdapter
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -54,6 +59,7 @@ class DictionaryFragment :
     }
 
     override fun onReady(savedInstanceState: Bundle?) {
+        bottomSheetDialog = BottomSheetDialog(requireContext())
         setupMenu()
         setupFab()
         setupRecyclerView()
@@ -73,12 +79,7 @@ class DictionaryFragment :
         binding.appBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.dict_filter_icon -> {
-                    parentFragmentManager.beginTransaction()
-                        .setReorderingAllowed(true)
-                        .add(R.id.fcvMain, ChooseCategoryFragment::class.java, arguments)
-                        .addToBackStack(null)
-                        .commit()
-                    //todo: поменять на bottom sheet
+                    showBottomSheetDialog()
                     true
                 }
                 else -> true
@@ -153,6 +154,9 @@ class DictionaryFragment :
             }
             setupSwipeListener(binding.recyclerViewList)
         }
+        setNewListForCategoriesSpinner(
+            resources.getStringArray(R.array.default_cat_array).toList()
+        )
     }
 
     private fun collectFlows() {
@@ -183,6 +187,20 @@ class DictionaryFragment :
 //                        }
 //                    }
 //                }
+                launch {
+                    viewModel.categoriesFlow.collectLatest { categories ->
+                        val listOfCategories = mutableListOf<String>()
+                        for (i in categories) {
+                            listOfCategories.add(i.categoryName)
+                        }
+                        spinnerByCategoryAdapter = SpinnerAdapter(
+                            this@DictionaryFragment,
+                            R.layout.category_spinner_item,
+                            listOfCategories,
+                            viewModel
+                        )
+                    }
+                }
                 launch {
                     viewModel.toastFlow.collectLatest {
                         toast(it)
@@ -259,5 +277,36 @@ class DictionaryFragment :
             viewModel.removeFIlters()
             true
         }
+    }
+
+    private fun showBottomSheetDialog() {
+        val bottomSheetBinding = BottomSheetChooseCategoryBinding.inflate(layoutInflater)
+        with(bottomSheetBinding) {
+            bottomSheetDialog.setContentView(root)
+            spinnerbyCategory.adapter = spinnerByCategoryAdapter
+            applyFiltersButton.setOnClickListener {
+                val selectedCategory =
+                    if (spinnerbyCategory.selectedItemPosition == 0) {
+                        null
+                    } else {
+                        spinnerbyCategory.selectedItem as String?
+                    }
+                viewModel.showByCategory(selectedCategory)
+                bottomSheetDialog.dismiss()
+            }
+        }
+        bottomSheetDialog.show()
+    }
+
+    private fun setNewListForCategoriesSpinner(
+        list: List<String?>
+    ) {
+        val listToSubmit = list.filterNotNull()
+        spinnerByCategoryAdapter = SpinnerAdapter(
+            this,
+            R.layout.category_spinner_item,
+            listToSubmit,
+            viewModel
+        )
     }
 }

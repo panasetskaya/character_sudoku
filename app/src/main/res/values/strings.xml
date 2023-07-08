@@ -82,5 +82,10 @@
     <string name="top_results">Top results</string>
     <string name="binding_null">Fragment Binding is null</string>
     <string name="soon">Coming soon!</string>
+    <string name="filter">Filter</string>
+    <string name="ok">Ok</string>
+    <string-array name="default_cat_array">
+        <item>All</item>
+    </string-array>
 
 </resources>

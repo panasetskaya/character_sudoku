@@ -245,4 +245,13 @@ class ChineseCharacterViewModel @Inject constructor(
             toastEventChannel.trySendBlocking(R.string.not_found)
         }
     }
+
+    fun showByCategory(selectedCategory: String?) {
+        if (selectedCategory==null) {
+            removeFIlters()
+        } else {
+            val newList = innerDictCash.filter { it.category==selectedCategory }
+            _dictionaryFlow.tryEmit(newList)
+        }
+    }
 }
