@@ -164,24 +164,6 @@ class ChineseCharacterViewModel @Inject constructor(
         }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
     }
 
-    fun getOneCharacterByChinese(chinese: String): SharedFlow<ChineseCharacter> {
-        return dictionaryFlow.map { wholeDictionary ->
-            var characterWeNeed = ChineseCharacter(
-                character = "",
-                pinyin = "",
-                translation = "",
-                usages = "",
-                category = "-"
-            )
-            for (i in wholeDictionary) {
-                if (i.character == chinese) {
-                    characterWeNeed = i
-                }
-            }
-            characterWeNeed
-        }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
-    }
-
     fun deleteThisCategory(category: String) {
         viewModelScope.launch {
             deleteCategory(category)

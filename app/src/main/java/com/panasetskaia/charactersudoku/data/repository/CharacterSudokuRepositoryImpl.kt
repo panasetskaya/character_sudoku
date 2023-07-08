@@ -220,6 +220,11 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         return saveFile(entityList, TO_JSON)
     }
 
+    override suspend fun getCharacterByChinese(chinese: String): ChineseCharacter? {
+        val dbModel = charactersDao.getCharacterByChinese(chinese)
+        return dbModel?.let { mapper.mapDbChineseCharacterToDomainEntity(it) }
+    }
+
     private suspend fun generateNumberGrid(diffLevel: Level): Map<String, String> {
         return SudokuGame().fillGrid(diffLevel)
     }

@@ -9,10 +9,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Record
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -26,7 +23,8 @@ class GameViewModel @Inject constructor(
     private val getNewGameWithSel: GetNewGameUseCase,
     private val getRandomByCategory: GetRandomWithCategoryUseCase,
     private val supplyNewRecord: SupplyNewRecordUseCase,
-    private val getTopFifteenRecords: GetTopFifteenRecordsUseCase
+    private val getTopFifteenRecords: GetTopFifteenRecordsUseCase,
+    private val getOneCharacterByChineseUseCase: GetOneCharacterByChineseUseCase
 ) : BaseViewModel() {
 
     private var selectedRow = NO_SELECTION
@@ -247,6 +245,31 @@ class GameViewModel @Inject constructor(
     private fun setInitialGame() {
         getNewRandomGame(Level.EASY)
         _gameStateFlow.tryEmit(SETTING)
+    }
+
+    fun getOneCharacterByChinese(chinese: String): SharedFlow<ChineseCharacter> {
+        return flow<ChineseCharacter> { getOneCharacterByChineseUseCase(chinese) }.shareIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            replay = 1
+        )
+        //todo: проверить работу, когда заработает перезапуск игры
+
+//        dictionaryFlow.map { wholeDictionary ->
+//            var characterWeNeed = ChineseCharacter(
+//                character = "",
+//                pinyin = "",
+//                translation = "",
+//                usages = "",
+//                category = "-"
+//            )
+//            for (i in wholeDictionary) {
+//                if (i.character == chinese) {
+//                    characterWeNeed = i
+//                }
+//            }
+//            characterWeNeed
+//        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
     }
 
     companion object {

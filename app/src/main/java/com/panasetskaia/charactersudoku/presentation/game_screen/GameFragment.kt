@@ -35,8 +35,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
     lateinit var viewModelFactory: ViewModelFactory
 
     override val viewModel by viewModels<GameViewModel> { viewModelFactory }
-    private val characterViewModel by viewModels<ChineseCharacterViewModel> { viewModelFactory }
-    // todo: зачем тебе тут две тяжеленные вьюмодели?? пихай юзкейсы в нужную!
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -85,7 +83,7 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
             button.setOnLongClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        characterViewModel.getOneCharacterByChinese(button.text.toString())
+                        viewModel.getOneCharacterByChinese(button.text.toString())
                             .collectLatest {
                                 if (it.pinyin.length > 0 || it.translation.length > 0) {
                                     toast("${it.character} [ ${it.pinyin.trim()} ] ${it.translation}")

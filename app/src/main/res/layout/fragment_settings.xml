@@ -77,25 +77,14 @@
                 android:layout_marginEnd="32dp"
                 android:clickable="true"
                 android:elevation="16dp"
-                app:cardBackgroundColor="@color/primaryColor"
+                app:strokeColor="@color/primaryColor"
+                app:strokeWidth="1dp"
                 app:shapeAppearance="@style/Rounded">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="6dp">
-
-                    <ImageView
-                        android:id="@+id/game_icon"
-                        android:layout_width="40dp"
-                        android:layout_height="0dp"
-                        android:layout_margin="4dp"
-                        android:src="@drawable/top_ten"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_top_games_title"
-                        app:layout_constraintHorizontal_chainStyle="packed"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/tv_top_games_title"
@@ -105,11 +94,11 @@
                         android:gravity="center"
                         android:text="@string/my_records"
                         android:textAllCaps="true"
-                        android:textColor="@color/primaryTextColor"
+                        android:textColor="@color/primaryColor"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/game_icon"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -128,25 +117,14 @@
                 android:padding="8dp"
                 android:clickable="true"
                 android:elevation="16dp"
-                app:cardBackgroundColor="@color/primaryColor"
+                app:strokeColor="@color/primaryColor"
+                app:strokeWidth="1dp"
                 app:shapeAppearance="@style/Rounded">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="6dp">
-
-                    <ImageView
-                        android:id="@+id/export_icon"
-                        android:layout_width="40dp"
-                        android:layout_height="0dp"
-                        android:layout_margin="4dp"
-                        android:src="@drawable/ic_baseline_share_24"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_export_title"
-                        app:layout_constraintHorizontal_chainStyle="packed"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/tv_export_title"
@@ -156,11 +134,11 @@
                         android:gravity="center"
                         android:text="@string/import_export"
                         android:textAllCaps="true"
-                        android:textColor="@color/primaryTextColor"
+                        android:textColor="@color/primaryColor"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/export_icon"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -178,25 +156,14 @@
                 android:padding="8dp"
                 android:clickable="true"
                 android:elevation="16dp"
-                app:cardBackgroundColor="@color/primaryColor"
+                app:strokeColor="@color/primaryColor"
+                app:strokeWidth="1dp"
                 app:shapeAppearance="@style/Rounded">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="6dp">
-
-                    <ImageView
-                        android:id="@+id/help_icon"
-                        android:layout_width="40dp"
-                        android:layout_height="0dp"
-                        android:layout_margin="4dp"
-                        android:src="@drawable/ic_question_stroke_and_fill"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_help_title"
-                        app:layout_constraintHorizontal_chainStyle="packed"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/tv_help_title"
@@ -206,11 +173,11 @@
                         android:gravity="center"
                         android:text="@string/help"
                         android:textAllCaps="true"
-                        android:textColor="@color/primaryTextColor"
+                        android:textColor="@color/primaryColor"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/help_icon"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
