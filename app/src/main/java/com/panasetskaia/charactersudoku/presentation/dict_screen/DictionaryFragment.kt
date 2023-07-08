@@ -34,7 +34,6 @@ import javax.inject.Inject
 class DictionaryFragment :
     BaseFragment<FragmentDictionaryBinding, ChineseCharacterViewModel>(FragmentDictionaryBinding::inflate) {
 
-
     private lateinit var listAdapter: DictionaryListAdapter
     private lateinit var itemTouchCallback: MyItemTouchCallback
     private lateinit var selectedCharacters: List<ChineseCharacter>
@@ -47,6 +46,7 @@ class DictionaryFragment :
 
     override val viewModel by viewModels<ChineseCharacterViewModel> { viewModelFactory }
     private val gameViewModel by viewModels<GameViewModel> { viewModelFactory }
+    // todo: убери лишнюю вьюмодель
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -69,6 +69,7 @@ class DictionaryFragment :
         val v: ImageView = searchView.findViewById(searchImgId)
         v.setImageResource(R.drawable.ic_search_stroke_and_fill)
         searchView.maxWidth = Integer.MAX_VALUE
+        setupSearch()
         binding.appBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.dict_filter_icon -> {
@@ -88,22 +89,12 @@ class DictionaryFragment :
     private fun setupFab() {
         shakeAdd()
         binding.fabAdd.setOnClickListener {
-            val arguments = Bundle().apply {
-                putInt(
-                    SingleCharacterFragment.EXTRA_CHINESE_ID,
-                    SingleCharacterFragment.NEW_CHAR_ID
-                )
-                putString(
-                    SingleCharacterFragment.EXTRA_MODE,
-                    SingleCharacterFragment.MODE_ADD
-                )
-            }
-            replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
-            //todo: поменять навигацию
+            viewModel.goToSingleCharacterFragment(null)
         }
         binding.fabPlay.setOnClickListener {
             if (isFabPlayEnabled) {
                 gameViewModel.setSelected(selectedCharacters)
+                    //todo: можно как-то здесь по-другому отправлять выбранные? да. selected должны храниться в репозитории.
                 parentFragmentManager.popBackStack()
                 val arguments = Bundle().apply {
                     putString(
@@ -120,6 +111,7 @@ class DictionaryFragment :
             }
         }
         binding.fabDeleteSelected.setOnClickListener {
+
             val arguments = Bundle().apply {
                 putString(
                     ConfirmDeletingDialogFragment.MODE_EXTRA,
@@ -131,6 +123,7 @@ class DictionaryFragment :
                 .add(R.id.fcvMain, ConfirmDeletingDialogFragment::class.java, arguments)
                 .addToBackStack(null)
                 .commit()
+            //todo: поменять навигацию
         }
     }
 
@@ -156,18 +149,7 @@ class DictionaryFragment :
                 viewModel.changeIsChosenState(it)
             }
             listAdapter.onCharacterItemClickListener = {
-                val arguments = Bundle().apply {
-                    putInt(
-                        SingleCharacterFragment.EXTRA_CHINESE_ID,
-                        it.id
-                    )
-                    putString(
-                        SingleCharacterFragment.EXTRA_MODE,
-                        SingleCharacterFragment.MODE_EDIT
-                    )
-                }
-                replaceWithThisFragment(SingleCharacterFragment::class.java, arguments)
-                //todo: поменять навигацию
+                viewModel.goToSingleCharacterFragment(it.id)
             }
             setupSwipeListener(binding.recyclerViewList)
         }
@@ -178,18 +160,16 @@ class DictionaryFragment :
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 //todo: фильтрация через вьюмодель
 //                if (filter == NO_FILTER) {
-                    launch {
-                        viewModel.dictionaryFlow.collectLatest {
-                            if (it.size > 0) {
-                                binding.tvDefaultText.visibility = View.GONE
-                            } else {
-                                binding.tvDefaultText.visibility = View.VISIBLE
-                            }
-                            listAdapter.submitList(it)
-                            setupSearch(it)
-
+                launch {
+                    viewModel.dictionaryFlow.collectLatest {
+                        if (it.size > 0) {
+                            binding.tvDefaultText.visibility = View.GONE
+                        } else {
+                            binding.tvDefaultText.visibility = View.VISIBLE
                         }
+                        listAdapter.submitList(it)
                     }
+                }
 //                } else {
 //                    launch {
 //                        viewModel.getDictionaryByCategory(filter).collectLatest {
@@ -203,6 +183,11 @@ class DictionaryFragment :
 //                        }
 //                    }
 //                }
+                launch {
+                    viewModel.toastFlow.collectLatest {
+                        toast(it)
+                    }
+                }
                 launch {
                     viewModel.selectedCharactersSharedFlow.collectLatest { selected ->
                         if (selected.size > 0) {
@@ -259,29 +244,20 @@ class DictionaryFragment :
             .commit()
     }
 
-    private fun setupSearch(list: List<ChineseCharacter>) {
+    private fun setupSearch() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                val thereIs = list.any { it.character == query }
-                if (thereIs) {
-                    val itemPosition = list.indexOf(list.filter { it.character == query }[0])
-                    listAdapter.setFoundItemPosition(itemPosition)
-                    binding.recyclerViewList.scrollToPosition(itemPosition)
-                } else {
-                    toast(R.string.not_found)
-                }
+                query?.let { viewModel.filterByQuery(it) }
                 return false
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
-                val thereIs = list.any { it.character == newText }
-                if (thereIs) {
-                    val itemPosition = list.indexOf(list.filter { it.character == newText }[0])
-                    listAdapter.setFoundItemPosition(itemPosition)
-                    binding.recyclerViewList.scrollToPosition(itemPosition)
-                }
+                newText?.let { viewModel.filterByQuery(it) }
                 return false
             }
         })
+        searchView.setOnCloseListener {
+            viewModel.removeFIlters()
+            true
+        }
     }
 }

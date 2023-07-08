@@ -4,6 +4,7 @@ import android.app.Application
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.dict_screen.DictionaryFragment
+import com.panasetskaia.charactersudoku.presentation.dict_screen.SingleCharacterFragment
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
 import com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragment
 import com.panasetskaia.charactersudoku.presentation.settings_screen.HelpFragment
@@ -29,6 +30,8 @@ interface AppComponent {
     fun inject(fragment: DictionaryFragment)
 
     fun inject(fragment: GameFragment)
+
+    fun inject(fragment: SingleCharacterFragment)
 
     @Component.Factory
     interface AppComponentFactory {

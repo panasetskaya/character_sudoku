@@ -1,16 +1,24 @@
 package com.panasetskaia.charactersudoku.presentation.dict_screen
 
 import android.app.Application
+import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
+import com.panasetskaia.charactersudoku.utils.myLog
+import com.panasetskaia.charactersudoku.utils.replaceWithThisFragment
+import com.panasetskaia.charactersudoku.utils.simplifyPinyin
+import com.panasetskaia.charactersudoku.utils.toast
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
@@ -27,7 +35,13 @@ class ChineseCharacterViewModel @Inject constructor(
     private val saveDictToJson: SaveDictToJsonUseCase,
 ) : BaseViewModel() {
 
+    private var innerDictCash = listOf<ChineseCharacter>()
+
     private lateinit var selected: List<ChineseCharacter>
+
+    private val toastEventChannel = Channel<Int>(Channel.BUFFERED)
+    val toastFlow: Flow<Int>
+        get() = toastEventChannel.receiveAsFlow()
 
     private val _pathLiveData = MutableLiveData<String>()
     val pathLiveData: LiveData<String>
@@ -63,10 +77,15 @@ class ChineseCharacterViewModel @Inject constructor(
 
     private fun updateDictionary() {
         viewModelScope.launch {
-            _dictionaryFlow.emitAll(
-                getWholeDict()
-            )
+            getWholeDict().collectLatest {
+                innerDictCash = it
+                _dictionaryFlow.emit(it)
+            }
         }
+    }
+
+    fun removeFIlters() {
+        updateDictionary()
     }
 
     private fun updateCategories() {
@@ -146,6 +165,14 @@ class ChineseCharacterViewModel @Inject constructor(
         }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
     }
 
+    fun goToSingleCharacterFragment(id: Int?) {
+        if (id==null) {
+            navigate(DictionaryFragmentDirections.actionDictionaryFragmentToSingleCharacterFragment(SingleCharacterFragment.MODE_ADD, SingleCharacterFragment.NEW_CHAR_ID))
+        } else {
+            navigate(DictionaryFragmentDirections.actionDictionaryFragmentToSingleCharacterFragment(SingleCharacterFragment.MODE_EDIT, id))
+        }
+    }
+
     fun getOneCharacterById(id: Int): SharedFlow<ChineseCharacter> {
         return dictionaryFlow.map { wholeDictionary ->
             var characterWeNeed = ChineseCharacter(
@@ -186,7 +213,7 @@ class ChineseCharacterViewModel @Inject constructor(
     fun saveDictionaryToCSV() {
         viewModelScope.launch {
             val path = saveDictToCSV()
-            Log.d("MYMYMY", "path is $path")
+            myLog("path is $path")
             _pathLiveData.postValue(path)
         }
     }
@@ -194,7 +221,7 @@ class ChineseCharacterViewModel @Inject constructor(
     fun saveDictionaryToJson() {
         viewModelScope.launch {
             val path = saveDictToJson()
-            Log.d("MYMYMY", "path is $path")
+            myLog("path is $path")
             _pathLiveData.postValue(path)
         }
     }
@@ -204,6 +231,18 @@ class ChineseCharacterViewModel @Inject constructor(
             for (i in newDict) {
                 addCharacterToDict(i.copy(id=0))
             }
+        }
+    }
+
+    fun filterByQuery(query: String) {
+        val thereIs = innerDictCash.any { it.character == query || it.pinyin.contains(query)}
+        if (thereIs) {
+            val newList = innerDictCash.filter {
+                it.character==query || it.pinyin.simplifyPinyin().contains(query)
+            }
+            _dictionaryFlow.tryEmit(newList)
+        } else {
+            toastEventChannel.trySendBlocking(R.string.not_found)
         }
     }
 }

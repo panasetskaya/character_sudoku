@@ -53,5 +53,14 @@
         android:id="@+id/singleCharacterFragment"
         android:name="com.panasetskaia.charactersudoku.presentation.dict_screen.SingleCharacterFragment"
         android:label="fragment_single_character"
-        tools:layout="@layout/fragment_single_character" />
+        tools:layout="@layout/fragment_single_character" >
+        <argument
+            android:name="mode"
+            app:argType="string"
+            app:nullable="false"/>
+        <argument
+            android:name="characterId"
+            app:argType="integer"
+            />
+    </fragment>
 </navigation>
