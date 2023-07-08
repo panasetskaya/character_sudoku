@@ -24,14 +24,14 @@ class GameViewModel @Inject constructor(
     private val getRandomByCategory: GetRandomWithCategoryUseCase,
     private val supplyNewRecord: SupplyNewRecordUseCase,
     private val getTopFifteenRecords: GetTopFifteenRecordsUseCase,
-    private val getOneCharacterByChineseUseCase: GetOneCharacterByChineseUseCase
+    private val getOneCharacterByChineseUseCase: GetOneCharacterByChineseUseCase,
+    private val getGameWithSelected: GetGameWithSelected
 ) : BaseViewModel() {
 
     private var selectedRow = NO_SELECTION
     private var selectedCol = NO_SELECTION
     private lateinit var currentBoard: Board
     private lateinit var nineChars: List<String>
-    private lateinit var selected: List<ChineseCharacter>
 
     private val levelFlow = MutableStateFlow(Level.MEDIUM)
 
@@ -120,11 +120,7 @@ class GameViewModel @Inject constructor(
     fun getGameWithSelected() {
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val listString = mutableListOf<String>()
-            for (i in selected) {
-                listString.add(i.character)
-            }
-            val newBoard = getNewGameWithSel(selected, levelFlow.value).copy(
+            val newBoard = getGameWithSelected(levelFlow.value).copy(
                 timeSpent = 0,
                 alreadyFinished = false
             )
@@ -218,10 +214,6 @@ class GameViewModel @Inject constructor(
 
     fun setLevel(chosenLevel: Level) {
         levelFlow.value = chosenLevel
-    }
-
-    fun setSelected(newSelected: List<ChineseCharacter>) {
-        selected = newSelected
     }
 
     private fun saveRecord(recordTime: Long) {

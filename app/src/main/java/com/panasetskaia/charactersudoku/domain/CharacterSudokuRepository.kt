@@ -38,4 +38,6 @@ interface CharacterSudokuRepository {
     suspend fun saveDictToJson(): String
 
     suspend fun getCharacterByChinese(chinese: String): ChineseCharacter?
+
+    suspend fun getGameWithSelected(diffLevel: Level): Board
 }

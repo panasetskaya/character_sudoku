@@ -94,17 +94,17 @@ class DictionaryFragment :
         }
         binding.fabPlay.setOnClickListener {
             if (isFabPlayEnabled) {
-                gameViewModel.setSelected(selectedCharacters)
+//                gameViewModel.setSelected(selectedCharacters)
                     //todo: можно как-то здесь по-другому отправлять выбранные? да. selected должны храниться в репозитории.
-                parentFragmentManager.popBackStack()
-                val arguments = Bundle().apply {
-                    putString(
-                        RandomOrSelectDialogFragment.EXTRA_MODE,
-                        RandomOrSelectDialogFragment.MODE_FROM_DICT
-                    )
-                }
-                replaceWithThisFragment(GameFragment::class.java, null)
-                addThisFragment(RandomOrSelectDialogFragment::class.java, arguments)
+//                parentFragmentManager.popBackStack()
+//                val arguments = Bundle().apply {
+//                    putString(
+//                        RandomOrSelectDialogFragment.EXTRA_MODE,
+//                        RandomOrSelectDialogFragment.MODE_FROM_DICT
+//                    )
+//                }
+//                replaceWithThisFragment(GameFragment::class.java, null)
+//                addThisFragment(RandomOrSelectDialogFragment::class.java, arguments)
 
                 //todo: поменять навигацию
             } else {
@@ -254,13 +254,13 @@ class DictionaryFragment :
             interpolator = mInterpolator
         }
 
-    private fun addThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
-        parentFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .add(R.id.fcvMain, fragment, args)
-            .addToBackStack(null)
-            .commit()
-    }
+//    private fun addThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
+//        parentFragmentManager.beginTransaction()
+//            .setReorderingAllowed(true)
+//            .add(R.id.fcvMain, fragment, args)
+//            .addToBackStack(null)
+//            .commit()
+//    }
 
     private fun setupSearch() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

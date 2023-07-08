@@ -1,9 +1,5 @@
 package com.panasetskaia.charactersudoku.presentation.dict_screen
 
-import android.app.Application
-import android.os.Bundle
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,9 +9,7 @@ import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import com.panasetskaia.charactersudoku.utils.myLog
-import com.panasetskaia.charactersudoku.utils.replaceWithThisFragment
 import com.panasetskaia.charactersudoku.utils.simplifyPinyin
-import com.panasetskaia.charactersudoku.utils.toast
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.trySendBlocking
@@ -35,9 +29,9 @@ class ChineseCharacterViewModel @Inject constructor(
     private val saveDictToJson: SaveDictToJsonUseCase,
 ) : BaseViewModel() {
 
-    private var innerDictCash = listOf<ChineseCharacter>()
+    private var innerDictCache = listOf<ChineseCharacter>()
 
-    private lateinit var selected: List<ChineseCharacter>
+    private var selectedCache = listOf<ChineseCharacter>()
 
     private val toastEventChannel = Channel<Int>(Channel.BUFFERED)
     val toastFlow: Flow<Int>
@@ -72,13 +66,14 @@ class ChineseCharacterViewModel @Inject constructor(
                 selectedCharacters.add(i)
             }
         }
-        selectedCharacters.toList()
+        selectedCache = selectedCharacters
+        selectedCache
     }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
 
     private fun updateDictionary() {
         viewModelScope.launch {
             getWholeDict().collectLatest {
-                innerDictCash = it
+                innerDictCache = it
                 _dictionaryFlow.emit(it)
             }
         }
@@ -153,18 +148,6 @@ class ChineseCharacterViewModel @Inject constructor(
         }
     }
 
-    fun getDictionaryByCategory(filter: String): SharedFlow<List<ChineseCharacter>> {
-        return dictionaryFlow.map { wholeDictionary ->
-            val selectedCharacters = mutableListOf<ChineseCharacter>()
-            for (i in wholeDictionary) {
-                if (i.category==filter) {
-                    selectedCharacters.add(i)
-                }
-            }
-            selectedCharacters.toList()
-        }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
-    }
-
     fun goToSingleCharacterFragment(id: Int?) {
         if (id==null) {
             navigate(DictionaryFragmentDirections.actionDictionaryFragmentToSingleCharacterFragment(SingleCharacterFragment.MODE_ADD, SingleCharacterFragment.NEW_CHAR_ID))
@@ -199,7 +182,7 @@ class ChineseCharacterViewModel @Inject constructor(
 
     fun deleteSelected() {
         viewModelScope.launch {
-            for (i in selected) {
+            for (i in selectedCache) {
                 deleteCharacter(i.id)
             }
         }
@@ -207,7 +190,7 @@ class ChineseCharacterViewModel @Inject constructor(
     }
 
     fun setSelectedForDeleting(newSelected: List<ChineseCharacter>) {
-        selected = newSelected
+        selectedCache = newSelected
     }
 
     fun saveDictionaryToCSV() {
@@ -235,9 +218,9 @@ class ChineseCharacterViewModel @Inject constructor(
     }
 
     fun filterByQuery(query: String) {
-        val thereIs = innerDictCash.any { it.character == query || it.pinyin.contains(query)}
+        val thereIs = innerDictCache.any { it.character == query || it.pinyin.contains(query)}
         if (thereIs) {
-            val newList = innerDictCash.filter {
+            val newList = innerDictCache.filter {
                 it.character==query || it.pinyin.simplifyPinyin().contains(query)
             }
             _dictionaryFlow.tryEmit(newList)
@@ -250,7 +233,7 @@ class ChineseCharacterViewModel @Inject constructor(
         if (selectedCategory==null) {
             removeFIlters()
         } else {
-            val newList = innerDictCash.filter { it.category==selectedCategory }
+            val newList = innerDictCache.filter { it.category==selectedCategory }
             _dictionaryFlow.tryEmit(newList)
         }
     }

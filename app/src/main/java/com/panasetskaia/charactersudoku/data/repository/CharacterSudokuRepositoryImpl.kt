@@ -31,6 +31,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 ) : CharacterSudokuRepository {
 
     private var temporaryDict = INITIAL_9_CHAR
+    private var selected: List<ChineseCharacter> = listOf()
 
     override suspend fun getRandomBoard(diffLevel: Level): Board {
         temporaryDict = INITIAL_9_CHAR
@@ -223,6 +224,11 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     override suspend fun getCharacterByChinese(chinese: String): ChineseCharacter? {
         val dbModel = charactersDao.getCharacterByChinese(chinese)
         return dbModel?.let { mapper.mapDbChineseCharacterToDomainEntity(it) }
+    }
+
+    override suspend fun getGameWithSelected(diffLevel: Level): Board {
+        TODO("Not yet implemented")
+
     }
 
     private suspend fun generateNumberGrid(diffLevel: Level): Map<String, String> {
