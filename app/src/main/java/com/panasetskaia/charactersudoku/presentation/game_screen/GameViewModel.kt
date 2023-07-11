@@ -20,12 +20,11 @@ class GameViewModel @Inject constructor(
     private val getRandomBoard: GetRandomBoard,
     private val getSavedGameUseCase: GetSavedGameUseCase,
     private val saveGameUseCase: SaveGameUseCase,
-    private val getNewGameWithSel: GetNewGameUseCase,
     private val getRandomByCategory: GetRandomWithCategoryUseCase,
     private val supplyNewRecord: SupplyNewRecordUseCase,
     private val getTopFifteenRecords: GetTopFifteenRecordsUseCase,
     private val getOneCharacterByChineseUseCase: GetOneCharacterByChineseUseCase,
-    private val getGameWithSelected: GetGameWithSelected
+    private val getGameWithSelectedUseCase: GetGameWithSelected
 ) : BaseViewModel() {
 
     private var selectedRow = NO_SELECTION
@@ -117,10 +116,10 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun getGameWithSelected() {
+    fun getGameWithSelected(lvl: Level) {
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val newBoard = getGameWithSelected(levelFlow.value).copy(
+            val newBoard = getGameWithSelectedUseCase(lvl).copy(
                 timeSpent = 0,
                 alreadyFinished = false
             )

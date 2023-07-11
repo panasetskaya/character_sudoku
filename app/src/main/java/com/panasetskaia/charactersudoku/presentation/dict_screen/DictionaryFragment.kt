@@ -7,10 +7,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.animation.AccelerateInterpolator
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -20,15 +18,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.BottomSheetChooseCategoryBinding
+import com.panasetskaia.charactersudoku.databinding.BottomSheetChooseLevelBinding
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
-import com.panasetskaia.charactersudoku.presentation.common_fragments.RandomOrSelectDialogFragment
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
 import com.panasetskaia.charactersudoku.utils.getAppComponent
-import com.panasetskaia.charactersudoku.utils.replaceWithThisFragment
 import com.panasetskaia.charactersudoku.utils.toast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -79,7 +77,7 @@ class DictionaryFragment :
         binding.appBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.dict_filter_icon -> {
-                    showBottomSheetDialog()
+                    showChooseCategoryBottomDialog()
                     true
                 }
                 else -> true
@@ -94,19 +92,7 @@ class DictionaryFragment :
         }
         binding.fabPlay.setOnClickListener {
             if (isFabPlayEnabled) {
-//                gameViewModel.setSelected(selectedCharacters)
-                    //todo: можно как-то здесь по-другому отправлять выбранные? да. selected должны храниться в репозитории.
-//                parentFragmentManager.popBackStack()
-//                val arguments = Bundle().apply {
-//                    putString(
-//                        RandomOrSelectDialogFragment.EXTRA_MODE,
-//                        RandomOrSelectDialogFragment.MODE_FROM_DICT
-//                    )
-//                }
-//                replaceWithThisFragment(GameFragment::class.java, null)
-//                addThisFragment(RandomOrSelectDialogFragment::class.java, arguments)
-
-                //todo: поменять навигацию
+                showChooseLevelBottomDialog()
             } else {
                 toast(R.string.not_enough)
             }
@@ -254,14 +240,6 @@ class DictionaryFragment :
             interpolator = mInterpolator
         }
 
-//    private fun addThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
-//        parentFragmentManager.beginTransaction()
-//            .setReorderingAllowed(true)
-//            .add(R.id.fcvMain, fragment, args)
-//            .addToBackStack(null)
-//            .commit()
-//    }
-
     private fun setupSearch() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -279,7 +257,7 @@ class DictionaryFragment :
         }
     }
 
-    private fun showBottomSheetDialog() {
+    private fun showChooseCategoryBottomDialog() {
         val bottomSheetBinding = BottomSheetChooseCategoryBinding.inflate(layoutInflater)
         with(bottomSheetBinding) {
             bottomSheetDialog.setContentView(root)
@@ -298,6 +276,19 @@ class DictionaryFragment :
         bottomSheetDialog.show()
     }
 
+    private fun showChooseLevelBottomDialog() {
+        val bottomSheetBinding = BottomSheetChooseLevelBinding.inflate(layoutInflater)
+        with(bottomSheetBinding) {
+            bottomSheetDialog.setContentView(root)
+            applyButton.setOnClickListener {
+                val lvl = getLevel(this)
+                viewModel.startGameWithSelected(lvl)
+                bottomSheetDialog.dismiss()
+            }
+        }
+        bottomSheetDialog.show()
+    }
+
     private fun setNewListForCategoriesSpinner(
         list: List<String?>
     ) {
@@ -308,5 +299,20 @@ class DictionaryFragment :
             listToSubmit,
             viewModel
         )
+    }
+
+    private fun getLevel(b: BottomSheetChooseLevelBinding): Int {
+        return when (b.radiogroup.checkedRadioButtonId) {
+            b.radioEasy.id -> {
+                GameFragment.LEVEL_EASY
+            }
+            b.radioMedium.id -> {
+                GameFragment.LEVEL_MED
+            }
+            b.radioHard.id -> {
+                GameFragment.LEVEL_HARD
+            }
+            else -> GameFragment.LEVEL_EASY
+        }
     }
 }

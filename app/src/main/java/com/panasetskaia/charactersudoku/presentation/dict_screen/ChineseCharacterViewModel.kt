@@ -237,4 +237,8 @@ class ChineseCharacterViewModel @Inject constructor(
             _dictionaryFlow.tryEmit(newList)
         }
     }
+
+    fun startGameWithSelected(lvl: Int) {
+        navigate(DictionaryFragmentDirections.actionDictionaryFragmentToGameFragment(lvl))
+    }
 }

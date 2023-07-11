@@ -9,7 +9,13 @@
         android:id="@+id/gameFragment"
         android:name="com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment"
         android:label="fragment_game"
-        tools:layout="@layout/fragment_game" />
+        tools:layout="@layout/fragment_game" >
+        <argument
+            android:name="levelWithSelected"
+            app:argType="integer"
+            android:defaultValue="-1"
+            />
+    </fragment>
     <fragment
         android:id="@+id/dictionaryFragment"
         android:name="com.panasetskaia.charactersudoku.presentation.dict_screen.DictionaryFragment"
@@ -18,6 +24,9 @@
         <action
             android:id="@+id/action_dictionaryFragment_to_singleCharacterFragment"
             app:destination="@id/singleCharacterFragment" />
+        <action
+            android:id="@+id/action_dictionaryFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"

@@ -112,7 +112,7 @@ class RandomOrSelectDialogFragment : Fragment() {
         binding.okButton.setOnClickListener {
             val lvl = getLevel()
             gameViewModel.setLevel(lvl)
-            gameViewModel.getGameWithSelected()
+            gameViewModel.getGameWithSelected(Level.EASY)
             charViewModel.markAllUnselected()
             parentFragmentManager.popBackStack()
             parentFragmentManager.beginTransaction()

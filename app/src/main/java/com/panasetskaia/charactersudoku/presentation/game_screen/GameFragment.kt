@@ -14,12 +14,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.navArgs
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
+import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
+import com.panasetskaia.charactersudoku.presentation.dict_screen.SingleCharacterFragmentArgs
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
 import com.panasetskaia.charactersudoku.utils.getAppComponent
 import com.panasetskaia.charactersudoku.utils.toast
@@ -36,6 +39,8 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
 
     override val viewModel by viewModels<GameViewModel> { viewModelFactory }
 
+    private val navArgs by navArgs<GameFragmentArgs>()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         getAppComponent().inject(this)
@@ -45,12 +50,26 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
         binding.sudokuBoard.registerListener(this)
         setAnimations()
         setButtons()
+        parseParams()
     }
 
     override fun onPause() {
         val timeWhenStopped = binding.chTimer.base - SystemClock.elapsedRealtime()
         viewModel.saveBoard(timeWhenStopped)
         super.onPause()
+    }
+
+    private fun parseParams() {
+        val gameLevelWithSelected = navArgs.levelWithSelected
+        if (gameLevelWithSelected!= NO_SELECTED_CHARS_FOR_GAME) {
+            val level = when (gameLevelWithSelected) {
+                LEVEL_EASY -> Level.EASY
+                LEVEL_MED -> Level.MEDIUM
+                LEVEL_HARD -> Level.HARD
+                else -> Level.EASY
+            }
+            viewModel.getGameWithSelected(level)
+        }
     }
 
     private fun setButtons() {
@@ -327,6 +346,12 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
         viewModel.launchOldBoard()
     }
 
+    companion object {
+        const val LEVEL_EASY = 1
+        const val LEVEL_MED = 2
+        const val LEVEL_HARD = 3
+        const val NO_SELECTED_CHARS_FOR_GAME = -1
+    }
 
 }
 
