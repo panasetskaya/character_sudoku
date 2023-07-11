@@ -10,17 +10,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.R
+import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 open class MyItemTouchCallback(
-    private val context: DictionaryFragment,
     private val adapter: DictionaryListAdapter,
     private val viewModel: ChineseCharacterViewModel
 ) : ItemTouchHelper.Callback() {
 
+    var onCharacterItemSwipeListener: ((Int) -> Unit)? = null
+
     private var swipeback = false
-    var isDialogShowed = false
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
@@ -56,25 +57,10 @@ open class MyItemTouchCallback(
         isCurrentlyActive: Boolean
     ) {
         setTouchListener(recyclerView)
-        context.viewLifecycleOwner.lifecycleScope.launch {
-            context.viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isDialogHiddenStateFlow.collectLatest { isDialogHidden ->
-                    isDialogShowed = !isDialogHidden
-                }
-            }
-        }
-        if (dX > -300f && !isDialogShowed) {
+        if (dX > -300f) {
             viewModel.finishDeleting(false)
             val item = adapter.currentList[viewHolder.adapterPosition]
-            val arguments = Bundle().apply {
-                putInt(ConfirmDeletingDialogFragment.ITEM_ID_EXTRA, item.id)
-                putString(ConfirmDeletingDialogFragment.MODE_EXTRA, ConfirmDeletingDialogFragment.MODE_SINGLE)
-            }
-            context.parentFragmentManager.beginTransaction()
-                .setReorderingAllowed(true)
-                .add(R.id.fcvMain, ConfirmDeletingDialogFragment::class.java, arguments)
-                .addToBackStack(null)
-                .commit()
+           onCharacterItemSwipeListener?.invoke(item.id)
         }
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }

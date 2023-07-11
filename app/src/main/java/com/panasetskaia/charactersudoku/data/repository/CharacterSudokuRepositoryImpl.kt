@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken
 import com.panasetskaia.charactersudoku.data.database.board.BoardDao
 import com.panasetskaia.charactersudoku.data.database.dictionary.CategoryDbModel
 import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDbModel
 import com.panasetskaia.charactersudoku.data.database.records.RecordsDao
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
@@ -31,7 +32,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 ) : CharacterSudokuRepository {
 
     private var temporaryDict = INITIAL_9_CHAR
-    private var selected: List<ChineseCharacter> = listOf()
 
     override suspend fun getRandomBoard(diffLevel: Level): Board {
         temporaryDict = INITIAL_9_CHAR
@@ -227,8 +227,28 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getGameWithSelected(diffLevel: Level): Board {
-        TODO("Not yet implemented")
+        val selectedList = charactersDao.getSelectedCharacters()
+        return if (selectedList.size==9) {
+            withContext(Dispatchers.Default) {
+                markAllUnselected()
+                val grid = generateNumberGrid(diffLevel).values.toList()[0]
+                val board = mapStringGridToBoard(grid)
+                temporaryDict = getStringsFromSelectedCharacters(selectedList)
+                translateNumbersToCharacters(board)
+            }
+        } else {
+            getSavedGame() ?: getRandomBoard(diffLevel)
+        }
+    }
 
+    private suspend fun markAllUnselected() {
+        val wholeDict = charactersDao.getAllDictAsList()
+        for (i in wholeDict) {
+            if (i.isChosen) {
+                val newChineseCharacter = i.copy(isChosen = false)
+                charactersDao.addOrEditCharacter(newChineseCharacter)
+            }
+        }
     }
 
     private suspend fun generateNumberGrid(diffLevel: Level): Map<String, String> {
@@ -326,7 +346,14 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
-
+    private fun getStringsFromSelectedCharacters(list: List<ChineseCharacterDbModel>): List<String> {
+        val result = mutableListOf<String>()
+        for (i in list) {
+            val s = i.character
+            result.add(s)
+        }
+        return result
+    }
 
 
     companion object {

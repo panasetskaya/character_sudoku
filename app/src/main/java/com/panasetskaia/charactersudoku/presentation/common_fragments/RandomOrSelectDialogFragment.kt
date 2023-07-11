@@ -177,6 +177,5 @@ class RandomOrSelectDialogFragment : Fragment() {
     companion object {
         const val EXTRA_MODE = "extra_mode"
         const val MODE_FROM_GAME = "from_game"
-        const val MODE_FROM_DICT = "from_dict"
     }
 }

@@ -19,6 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.BottomSheetChooseCategoryBinding
 import com.panasetskaia.charactersudoku.databinding.BottomSheetChooseLevelBinding
+import com.panasetskaia.charactersudoku.databinding.BottomSheetConfirmDeleteBinding
 import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.entities.Level
@@ -48,8 +49,6 @@ class DictionaryFragment :
     lateinit var viewModelFactory: ViewModelFactory
 
     override val viewModel by viewModels<ChineseCharacterViewModel> { viewModelFactory }
-    private val gameViewModel by viewModels<GameViewModel> { viewModelFactory }
-    // todo: убери лишнюю вьюмодель
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -98,28 +97,19 @@ class DictionaryFragment :
             }
         }
         binding.fabDeleteSelected.setOnClickListener {
-
-            val arguments = Bundle().apply {
-                putString(
-                    ConfirmDeletingDialogFragment.MODE_EXTRA,
-                    ConfirmDeletingDialogFragment.MODE_LIST
-                )
-            }
-            parentFragmentManager.beginTransaction()
-                .setReorderingAllowed(true)
-                .add(R.id.fcvMain, ConfirmDeletingDialogFragment::class.java, arguments)
-                .addToBackStack(null)
-                .commit()
-            //todo: поменять навигацию
+            showConfirmDeleteBottomDialog(null)
         }
     }
 
     private fun setupRecyclerView() {
         listAdapter = DictionaryListAdapter()
         itemTouchCallback = object : MyItemTouchCallback(
-            this, listAdapter,
+            listAdapter,
             viewModel
         ) {}
+        itemTouchCallback.onCharacterItemSwipeListener = {
+            showConfirmDeleteBottomDialog(it)
+        }
         listAdapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         with(binding.recyclerViewList) {
@@ -148,8 +138,6 @@ class DictionaryFragment :
     private fun collectFlows() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                //todo: фильтрация через вьюмодель
-//                if (filter == NO_FILTER) {
                 launch {
                     viewModel.dictionaryFlow.collectLatest {
                         if (it.size > 0) {
@@ -160,19 +148,7 @@ class DictionaryFragment :
                         listAdapter.submitList(it)
                     }
                 }
-//                } else {
-//                    launch {
-//                        viewModel.getDictionaryByCategory(filter).collectLatest {
-//                            if (it.size > 0) {
-//                                binding.tvDefaultText.visibility = View.GONE
-//                            } else {
-//                                binding.tvDefaultText.visibility = View.VISIBLE
-//                            }
-//                            listAdapter.submitList(it)
-//                            setupSearch(it)
-//                        }
-//                    }
-//                }
+
                 launch {
                     viewModel.categoriesFlow.collectLatest { categories ->
                         val listOfCategories = mutableListOf<String>()
@@ -253,7 +229,7 @@ class DictionaryFragment :
         })
         searchView.setOnCloseListener {
             viewModel.removeFIlters()
-            true
+            false
         }
     }
 
@@ -283,6 +259,25 @@ class DictionaryFragment :
             applyButton.setOnClickListener {
                 val lvl = getLevel(this)
                 viewModel.startGameWithSelected(lvl)
+                bottomSheetDialog.dismiss()
+            }
+        }
+        bottomSheetDialog.show()
+    }
+
+    private fun showConfirmDeleteBottomDialog(id: Int?) {
+        val bottomSheetBinding = BottomSheetConfirmDeleteBinding.inflate(layoutInflater)
+        with(bottomSheetBinding) {
+            bottomSheetDialog.setContentView(root)
+            cancelButton.setOnClickListener {
+                bottomSheetDialog.dismiss()
+            }
+            confirmButton.setOnClickListener {
+                if (id!=null) {
+                    viewModel.deleteCharacterFromDict(id)
+                } else {
+                    viewModel.deleteSelected()
+                }
                 bottomSheetDialog.dismiss()
             }
         }

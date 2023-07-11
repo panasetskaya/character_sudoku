@@ -24,6 +24,9 @@ interface ChineseCharacterDao {
     @Query("SELECT * FROM chinesecharacterdbmodel WHERE character=:characterStr")
     suspend fun getCharacterByChinese(characterStr: String): ChineseCharacterDbModel?
 
+    @Query("SELECT * FROM chinesecharacterdbmodel WHERE isChosen=1")
+    suspend fun getSelectedCharacters(): List<ChineseCharacterDbModel>
+
     @Query("SELECT * FROM categorydbmodel")
     fun getAllCategories(): Flow<List<CategoryDbModel>>
 
