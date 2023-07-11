@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation.common_fragments
+package com.panasetskaia.charactersudoku.presentation.game_screen
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,9 +16,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.dict_screen.SpinnerAdapter
 import com.panasetskaia.charactersudoku.presentation.dict_screen.DictionaryFragment
-import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
 import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
-import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

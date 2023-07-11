@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".presentation.common_fragments.RandomOrSelectDialogFragment">
+    tools:context=".presentation.game_screen.RandomOrSelectDialogFragment">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="270dp"

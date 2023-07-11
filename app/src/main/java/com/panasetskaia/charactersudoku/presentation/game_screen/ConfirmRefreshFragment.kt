@@ -10,7 +10,6 @@ import androidx.fragment.app.commit
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.FragmentConfirmRefreshBinding
 import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.common_fragments.RandomOrSelectDialogFragment
 
 class ConfirmRefreshFragment : Fragment() {
 

@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.panasetskaia.charactersudoku.R
-import com.panasetskaia.charactersudoku.presentation.common_fragments.RandomOrSelectDialogFragment
+import com.panasetskaia.charactersudoku.presentation.game_screen.RandomOrSelectDialogFragment
 
 class SpinnerAdapter(
     private val mContext: Fragment,
