@@ -4,4 +4,6 @@ import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import javax.inject.Inject
 
 class HelpViewModel @Inject constructor(): BaseViewModel() {
+    override fun deleteThisCategory(cat: String) {
+    }
 }

@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="178dp"
-    xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="16dp"
     >
 
@@ -13,11 +12,11 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/tv_confirmDelete"
+            android:id="@+id/tv_randomOrSelect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="@string/confirmDelete"
+            android:text="@string/randomOrSelect"
             android:layout_marginTop="32dp"
             android:textSize="18sp"
             android:gravity="center"
@@ -26,35 +25,40 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/confirm_button"
+            android:id="@+id/select_button"
             android:layout_width="wrap_content"
             android:layout_height="37dp"
             android:layout_marginTop="24dp"
-            android:text="@string/ok"
+            android:text="@string/selectCharactersButton"
             android:gravity="center"
             style="@style/PrettyButtonNoBackgroundTint"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/cancel_button"
-            app:layout_constraintTop_toBottomOf="@+id/tv_confirmDelete"
+            app:layout_constraintStart_toEndOf="@id/random_button"
+            app:layout_constraintTop_toBottomOf="@+id/tv_randomOrSelect"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="32dp"
-            android:backgroundTint="@android:color/holo_red_dark"
+            android:backgroundTint="@color/primaryColor"
             android:background="@drawable/rounded_shape"
             />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/cancel_button"
+            android:id="@+id/random_button"
             android:layout_width="wrap_content"
             android:layout_height="37dp"
             android:layout_marginTop="24dp"
-            android:text="@string/cancelButton"
+            android:text="@string/randomButton"
             android:gravity="center"
-            style="@style/TextButtonNoBackgroundTint"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            style="@style/PrettyButtonNoBackgroundTint"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/confirm_button"
-            app:layout_constraintTop_toBottomOf="@+id/tv_confirmDelete"
+            app:layout_constraintEnd_toStartOf="@id/select_button"
+            app:layout_constraintTop_toBottomOf="@+id/tv_randomOrSelect"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="32dp"
+            android:backgroundTint="@color/primaryLightColor"
             android:background="@drawable/rounded_shape"
             />
 

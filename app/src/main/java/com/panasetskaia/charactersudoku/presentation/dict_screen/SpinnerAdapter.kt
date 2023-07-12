@@ -8,13 +8,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.panasetskaia.charactersudoku.R
-import com.panasetskaia.charactersudoku.presentation.game_screen.RandomOrSelectDialogFragment
+import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 
 class SpinnerAdapter(
     private val mContext: Fragment,
     private val mLayoutResourceId: Int,
     val categories: List<String>,
-    private val viewModel: ChineseCharacterViewModel
+    private val viewModel: BaseViewModel
 ): ArrayAdapter<String>(mContext.requireContext(), mLayoutResourceId, categories) {
     override fun getCount(): Int {
         return categories.size
@@ -47,7 +47,7 @@ class SpinnerAdapter(
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val layout = if (mContext is RandomOrSelectDialogFragment) {
+        val layout = if (mContext !is SingleCharacterFragment) {
             mLayoutResourceId
         } else R.layout.category_spinner_item_dropdown
         var convertView = convertView
@@ -59,7 +59,7 @@ class SpinnerAdapter(
             val category: String = getItem(position)
             val categoryTextView = convertView!!.findViewById<View>(R.id.tv_cat) as TextView
             categoryTextView.text = category
-            if (mContext !is RandomOrSelectDialogFragment) {
+            if (mContext is SingleCharacterFragment) {
                 val deleteButton = convertView.findViewById<View>(R.id.deleteCategoryButton) as ImageView
                 if (category!= NO_CAT) {
                     deleteButton.setOnClickListener {

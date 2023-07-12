@@ -15,6 +15,9 @@
             app:argType="integer"
             android:defaultValue="-1"
             />
+        <action
+            android:id="@+id/action_gameFragment_to_dictionaryFragment"
+            app:destination="@id/dictionaryFragment" />
     </fragment>
     <fragment
         android:id="@+id/dictionaryFragment"
