@@ -5,7 +5,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Level
 import javax.inject.Inject
 
-class GetGameWithSelected @Inject constructor(private val repository: CharacterSudokuRepository) {
+class GetGameWithSelectedUseCase @Inject constructor(private val repository: CharacterSudokuRepository) {
     suspend operator fun invoke(diffLevel: Level): Board {
         return repository.getGameWithSelected(diffLevel)
     }
