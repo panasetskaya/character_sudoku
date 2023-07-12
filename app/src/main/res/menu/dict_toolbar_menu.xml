@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/dict_export_import_icon"
-        android:icon="@drawable/ic_baseline_share_24"
-        android:title="@string/export_dict"
+        android:id="@+id/dict_search_icon"
+        android:icon="@drawable/ic_search_stroke_and_fill"
+        android:title="@string/help_icon_title"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
     <item
         android:id="@+id/dict_filter_icon"
@@ -13,15 +14,5 @@
         android:title="@string/help_icon_title"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/dict_help_icon"
-        android:icon="@drawable/ic_question_stroke_and_fill"
-        android:title="@string/help_icon_title"
-        app:showAsAction="always" />
 
-    <item
-        android:id="@+id/sudoku_icon"
-        android:icon="@drawable/ic_sudoku_icon_stroke_and_fill"
-        android:title="@string/board_icon_title"
-        app:showAsAction="always" />
 </menu>

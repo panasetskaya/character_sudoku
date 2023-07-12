@@ -4,16 +4,18 @@ import android.app.Application
 import android.os.Environment
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.panasetskaia.charactersudoku.data.database.BoardDao
-import com.panasetskaia.charactersudoku.data.database.CategoryDbModel
-import com.panasetskaia.charactersudoku.data.database.ChineseCharacterDao
-import com.panasetskaia.charactersudoku.data.database.RecordsDao
+import com.panasetskaia.charactersudoku.data.database.board.BoardDao
+import com.panasetskaia.charactersudoku.data.database.dictionary.CategoryDbModel
+import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDao
+import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDbModel
+import com.panasetskaia.charactersudoku.data.database.records.RecordsDao
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
 import com.panasetskaia.charactersudoku.domain.GameResult
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.*
+import com.panasetskaia.charactersudoku.utils.myLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -31,6 +33,10 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 ) : CharacterSudokuRepository {
 
     private var temporaryDict = INITIAL_9_CHAR
+
+    /**
+     * Game functions:
+     */
 
     override suspend fun getRandomBoard(diffLevel: Level): Board {
         temporaryDict = INITIAL_9_CHAR
@@ -68,45 +74,21 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addOrEditCharToDict(character: ChineseCharacter) {
-        val dbModel = mapper.mapDomainChineseCharacterToDbModel(character)
-        charactersDao.addOrEditCharacter(dbModel)
-    }
-
-    override suspend fun deleteCharFromDict(characterId: Int) {
-        charactersDao.deleteCharFromDict(characterId)
-    }
-
-
-    override fun getWholeDictionary(): Flow<List<ChineseCharacter>> {
-        return charactersDao.getWholeDictionary().map { dbModelList ->
-            if (!charactersDao.categoryExists(NO_CAT)) {
-                charactersDao.addOrEditCategory(CategoryDbModel(0, NO_CAT))
-            }
-            val entityList = mutableListOf<ChineseCharacter>()
-            for (i in dbModelList) {
-                val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
-                entityList.add(entity)
-            }
-            entityList
-        }
-    }
-
-    override suspend fun getNewGame(
-        nineCharacters: List<ChineseCharacter>,
-        diffLevel: Level
-    ): Board {
-        val listString = mutableListOf<String>()
-        for (i in nineCharacters) {
-            listString.add(i.character)
-        }
-        temporaryDict = listString
-        return withContext(Dispatchers.Default) {
-            val grid = generateNumberGrid(diffLevel).values.toList()[0]
-            val board = mapStringGridToBoard(grid)
-            translateNumbersToCharacters(board)
-        }
-    }
+//    override suspend fun getNewGame(
+//        nineCharacters: List<ChineseCharacter>,
+//        diffLevel: Level
+//    ): Board {
+//        val listString = mutableListOf<String>()
+//        for (i in nineCharacters) {
+//            listString.add(i.character)
+//        }
+//        temporaryDict = listString
+//        return withContext(Dispatchers.Default) {
+//            val grid = generateNumberGrid(diffLevel).values.toList()[0]
+//            val board = mapNumberGridWithTemporaryDictToBoard(grid)
+//            translateNumbersToCharacters(board)
+//        }
+//    }
 
     private suspend fun getNewGameWithStrings(
         nineCharacters: List<String>,
@@ -115,7 +97,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         temporaryDict = nineCharacters
         return withContext(Dispatchers.Default) {
             val grid = generateNumberGrid(diffLevel).values.toList()[0]
-            val board = mapStringGridToBoard(grid)
+            val board = mapNumberGridWithTemporaryDictToBoard(grid)
             translateNumbersToCharacters(board)
         }
     }
@@ -141,90 +123,28 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         val stringGrid = translateCharactersToNumbers(board)
         val solution = SudokuGame().getSolution(stringGrid)
         return if (solution != null) {
-            val numberBoard = mapStringGridToBoard(solution)
+            val numberBoard = mapNumberGridWithTemporaryDictToBoard(solution)
             val solutionBoard = translateNumbersToCharacters(numberBoard)
             SUCCESS(solutionBoard)
         } else FAILED
     }
 
-    override fun getAllCategories(): Flow<List<Category>> {
-        return charactersDao.getAllCategories().map {
-            val entityList = mutableListOf<Category>()
-            for (i in it) {
-                val entity = mapper.mapDbModelToDomainCategory(i)
-                entityList.add(entity)
-            }
-            entityList
-        }
-    }
-
-    override suspend fun deleteCategory(catName: String) {
-        charactersDao.deleteCategory(catName)
-        charactersDao.getWholeDictionary().map {
-            for (i in it) {
-                if (i.category == catName) {
-                    val replaceChar = i.copy(category = NO_CAT)
-                    charactersDao.addOrEditCharacter(replaceChar)
-                }
-            }
-        }
-    }
-
-    override suspend fun addCategory(category: Category) {
-        if (!charactersDao.categoryExists(category.categoryName)) {
-            charactersDao.addOrEditCategory(mapper.mapDomainCategoryToDbModel(category))
-        }
-    }
-
-    override suspend fun getAllRecords(): List<Record> {
-        val recordsFromDB = recordsDao.getTopFifteen()
-        val records = mutableListOf<Record>()
-        recordsFromDB.forEach {
-            val record = mapper.mapDbModelToDomainRecord(it)
-            records.add(record)
-        }
-        return records
-    }
-
-    override suspend fun supplyNewRecord(record: Record) {
-        val recordsFromDB = recordsDao.getTopFifteen()
-        if (recordsFromDB.size < 14) {
-            recordsDao.saveNewRecord(mapper.mapDomainEntityToRecordDbModel(record))
+    override suspend fun getGameWithSelected(diffLevel: Level): Board {
+        val selectedList = charactersDao.getSelectedCharacters()
+        return if (selectedList.size==9) {
+            markAllUnselected()
+            val listAsStrings = getStringsFromSelectedCharacters(selectedList)
+            getNewGameWithStrings(listAsStrings, diffLevel)
         } else {
-            val getsToTop = recordsFromDB.any {
-                it.recordTime >= record.recordTime
-            }
-            if (getsToTop) {
-                recordsDao.saveNewRecord(mapper.mapDomainEntityToRecordDbModel(record))
-            }
+            getSavedGame() ?: getRandomBoard(diffLevel)
         }
-    }
-
-    override suspend fun saveDictToCSV(): String {
-        val dataDB = charactersDao.getAllDictAsList()
-        val entityList = mutableListOf<ChineseCharacter>()
-        for (i in dataDB) {
-            val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
-            entityList.add(entity)
-        }
-        return saveFile(entityList, TO_CSV)
-    }
-
-    override suspend fun saveDictToJson(): String {
-        val dataDB = charactersDao.getAllDictAsList()
-        val entityList = mutableListOf<ChineseCharacter>()
-        for (i in dataDB) {
-            val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
-            entityList.add(entity)
-        }
-        return saveFile(entityList, TO_JSON)
     }
 
     private suspend fun generateNumberGrid(diffLevel: Level): Map<String, String> {
         return SudokuGame().fillGrid(diffLevel)
     }
 
-    private fun mapStringGridToBoard(stringGrid: String): Board {
+    private fun mapNumberGridWithTemporaryDictToBoard(stringGrid: String): Board {
         val cells = List(SudokuGame.GRID_SIZE * SudokuGame.GRID_SIZE) { i ->
             Cell(
                 i / SudokuGame.GRID_SIZE,
@@ -258,14 +178,148 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         return gridString
     }
 
-    private fun isExternalStorageReadOnly(): Boolean {
-        val extStorageState = Environment.getExternalStorageState()
-        return Environment.MEDIA_MOUNTED_READ_ONLY == extStorageState
+    private fun getStringsFromSelectedCharacters(list: List<ChineseCharacterDbModel>): List<String> {
+        val result = mutableListOf<String>()
+        for (i in list) {
+            val s = i.character
+            result.add(s)
+        }
+        return result
     }
 
-    private fun isExternalStorageAvailable(): Boolean {
-        val extStorageState = Environment.getExternalStorageState()
-        return Environment.MEDIA_MOUNTED == extStorageState
+
+    /**
+     * Records (top results) functions:
+     */
+
+    override suspend fun getAllRecords(): List<Record> {
+        val recordsFromDB = recordsDao.getTopFifteen()
+        val records = mutableListOf<Record>()
+        recordsFromDB.forEach {
+            val record = mapper.mapDbModelToDomainRecord(it)
+            records.add(record)
+        }
+        return records
+    }
+
+    override suspend fun supplyNewRecord(record: Record) {
+        val recordsFromDB = recordsDao.getTopFifteen()
+        if (recordsFromDB.size < 14) {
+            recordsDao.saveNewRecord(mapper.mapDomainEntityToRecordDbModel(record))
+        } else {
+            val getsToTop = recordsFromDB.any {
+                it.recordTime >= record.recordTime
+            }
+            if (getsToTop) {
+                recordsDao.saveNewRecord(mapper.mapDomainEntityToRecordDbModel(record))
+            }
+        }
+    }
+
+
+    /**
+     * Dictionary functions:
+     */
+
+    override suspend fun addOrEditCharToDict(character: ChineseCharacter) {
+        val dbModel = mapper.mapDomainChineseCharacterToDbModel(character)
+        charactersDao.addOrEditCharacter(dbModel)
+    }
+
+    override suspend fun deleteCharFromDict(characterId: Int) {
+        charactersDao.deleteCharFromDict(characterId)
+    }
+
+    override fun getWholeDictionary(): Flow<List<ChineseCharacter>> {
+        return charactersDao.getWholeDictionary().map { dbModelList ->
+            if (!charactersDao.categoryExists(NO_CAT)) {
+                charactersDao.addOrEditCategory(CategoryDbModel(0, NO_CAT))
+            }
+            val entityList = mutableListOf<ChineseCharacter>()
+            for (i in dbModelList) {
+                val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+                entityList.add(entity)
+            }
+            entityList
+        }
+    }
+
+    private suspend fun markAllUnselected() {
+        try {
+            val wholeDict = charactersDao.getAllDictAsList()
+            for (i in wholeDict) {
+                if (i.isChosen) {
+                    val newChineseCharacter = i.copy(isChosen = false)
+                    charactersDao.addOrEditCharacter(newChineseCharacter)
+                }
+            }
+        } catch (e: Exception)
+        {
+            myLog("repo -> markAllUnselected: $e + ${e.message}")
+        }
+    }
+
+    override suspend fun getCharacterByChinese(chinese: String): ChineseCharacter? {
+        val dbModel = charactersDao.getCharacterByChinese(chinese)
+        return dbModel?.let { mapper.mapDbChineseCharacterToDomainEntity(it) }
+    }
+
+    /**
+     * Dictionary categories functions:
+     */
+
+    override fun getAllCategories(): Flow<List<Category>> {
+        return charactersDao.getAllCategories().map {
+            val entityList = mutableListOf<Category>()
+            for (i in it) {
+                val entity = mapper.mapDbModelToDomainCategory(i)
+                entityList.add(entity)
+            }
+            entityList
+        }
+    }
+
+    override suspend fun deleteCategory(catName: String) {
+        charactersDao.deleteCategory(catName)
+        charactersDao.getWholeDictionary().map {
+            for (i in it) {
+                if (i.category == catName) {
+                    val replaceChar = i.copy(category = NO_CAT)
+                    charactersDao.addOrEditCharacter(replaceChar)
+                }
+            }
+        }
+    }
+
+    override suspend fun addCategory(category: Category) {
+        if (!charactersDao.categoryExists(category.categoryName)) {
+            charactersDao.addOrEditCategory(mapper.mapDomainCategoryToDbModel(category))
+        }
+    }
+
+
+    /**
+     * Export and import functions:
+     */
+
+    override suspend fun saveDictToCSV(): String {
+        val dataDB = charactersDao.getAllDictAsList()
+        val entityList = mutableListOf<ChineseCharacter>()
+        for (i in dataDB) {
+            val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+            entityList.add(entity)
+        }
+        return saveFile(entityList, TO_CSV)
+    }
+
+    override suspend fun saveDictToJson(): String {
+        val dataDB = charactersDao.getAllDictAsList()
+        val entityList = mutableListOf<ChineseCharacter>()
+        for (i in dataDB) {
+            val entity = mapper.mapDbChineseCharacterToDomainEntity(i)
+            entityList.add(entity)
+        }
+        return saveFile(entityList, TO_JSON)
     }
 
     private fun saveFile(myData: List<ChineseCharacter>, method: String): String {
@@ -315,7 +369,15 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
     }
 
+    private fun isExternalStorageReadOnly(): Boolean {
+        val extStorageState = Environment.getExternalStorageState()
+        return Environment.MEDIA_MOUNTED_READ_ONLY == extStorageState
+    }
 
+    private fun isExternalStorageAvailable(): Boolean {
+        val extStorageState = Environment.getExternalStorageState()
+        return Environment.MEDIA_MOUNTED == extStorageState
+    }
 
 
     companion object {

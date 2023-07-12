@@ -6,7 +6,7 @@
     android:id="@+id/constraintLayoutDict"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragments.HelpFragment">
+    tools:context=".presentation.settings_screen.HelpFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -24,8 +24,13 @@
             android:paddingLeft="12dp"
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
-            app:contentInsetStart="0dp" />
+            app:contentInsetStart="0dp"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+
+            app:title="@string/help"
+            />
     </com.google.android.material.appbar.AppBarLayout>
+
 
 
 

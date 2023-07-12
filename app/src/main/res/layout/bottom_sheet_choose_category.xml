@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="16dp"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/apply_filters_button"
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/ok"
+            android:gravity="center"
+            style="@style/PrettyButton"
+            app:layout_constraintEnd_toEndOf="@+id/spinnerbyCategory"
+            app:layout_constraintTop_toTopOf="parent"
+            android:backgroundTint="?colorSecondary"
+            android:background="@drawable/rounded_shape"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@+id/apply_filters_button"
+            app:layout_constraintBottom_toBottomOf="@+id/apply_filters_button"
+            android:text="@string/choose_cat"
+
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/spinnerbyCategory"/>
+
+        <Spinner
+            android:id="@+id/spinnerbyCategory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="46dp"
+            android:layout_marginEnd="46dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/rounded_shape"
+            android:backgroundTint="@color/secondaryColor"
+            tools:listitem="@layout/category_spinner_item"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/apply_filters_button"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragments.GameFragment"
+    tools:context=".presentation.game_screen.GameFragment"
     >
 
     <com.google.android.material.appbar.AppBarLayout
@@ -74,7 +74,7 @@
         app:layout_constraintStart_toStartOf="@+id/sudoku_board"
         android:background="@drawable/white_background"/>
 
-    <com.panasetskaia.charactersudoku.presentation.customViews.SudokuBoardView
+    <com.panasetskaia.charactersudoku.presentation.game_screen.SudokuBoardView
         android:id="@+id/sudoku_board"
         android:layout_width="0dp"
         android:layout_height="0dp"

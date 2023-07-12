@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragments.ExportFragment">
+    tools:context=".presentation.settings_screen.ExportFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -22,7 +22,10 @@
             android:paddingLeft="12dp"
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
-            app:contentInsetStart="0dp" />
+            app:contentInsetStart="0dp"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:title="@string/expimp"
+            />
     </com.google.android.material.appbar.AppBarLayout>
 
 <!--    style="@style/Widget.Sudoku.Toolbar"-->

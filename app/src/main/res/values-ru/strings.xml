@@ -66,4 +66,15 @@
     <string name="lvl2">Средний</string>
     <string name="lvl3">Сложный</string>
     <string name="not_found">Не найдено</string>
+    <string name="menu_game">Игра</string>
+    <string name="menu_dictionary">Словарь</string>
+    <string name="menu_profile">Настройки</string>
+
+    <string name="new_user">Некто</string>
+    <string name="login_button">Войти</string>
+    <string name="my_records">Лучшие результаты</string>
+    <string name="import_export">Импорт-экспорт словарей</string>
+    <string name="help">Помощь</string>
+    <string name="dictionary">Словарь</string>
+    <string name="profile_settings">Профиль и настройки</string>
 </resources>

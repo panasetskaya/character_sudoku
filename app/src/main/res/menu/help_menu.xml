@@ -2,15 +2,4 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/help_sudoku_icon"
-        android:icon="@drawable/ic_sudoku_icon_stroke_and_fill"
-        android:title="@string/board_icon_title"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/help_dict_icon"
-        android:icon="@drawable/ic_sudoku_icon_dict_stroke_and_fill"
-        android:title="@string/dict_icon_title"
-        app:showAsAction="always" />
 </menu>

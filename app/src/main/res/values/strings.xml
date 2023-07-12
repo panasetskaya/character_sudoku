@@ -55,7 +55,7 @@
     <string name="rating">Rating</string>
     <string name="export_dict">Dictionary export and import</string>
     <string name="default_dict_text">Here you can add your own characters or symbols to the dictionary\nand then use them for the sudoku game</string>
-    <string name="records_title">Your top games</string>
+    <string name="records_title">Your best games</string>
     <string name="file_saved">saved to: sdcard/Android/data/com.panasetskaia.charactersudoku/files</string>
     <string name="to_csv">to .csv</string>
     <string name="to_json">to .json</string>
@@ -68,5 +68,24 @@
     <string name="lvl2">MEDIUM</string>
     <string name="lvl3">HARD</string>
     <string name="not_found">Not found</string>
+    <string name="menu_game">Game</string>
+    <string name="menu_dictionary">Dictionary</string>
+    <string name="menu_profile">Settings</string>
+    <string name="new_user">New user</string>
+    <string name="login_button">Login</string>
+    <string name="my_records">My top results</string>
+    <string name="import_export">Import and share</string>
+    <string name="help">Help</string>
+    <string name="dictionary">Dictionary</string>
+    <string name="profile_settings">Profile &amp; settings</string>
+    <string name="expimp">Export/import</string>
+    <string name="top_results">Top results</string>
+    <string name="binding_null">Fragment Binding is null</string>
+    <string name="soon">Coming soon!</string>
+    <string name="filter">Filter</string>
+    <string name="ok">Ok</string>
+    <string-array name="default_cat_array">
+        <item>All</item>
+    </string-array>
 
 </resources>
