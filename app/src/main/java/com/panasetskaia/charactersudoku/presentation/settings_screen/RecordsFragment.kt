@@ -25,6 +25,7 @@ class RecordsFragment : BaseFragment<FragmentRecordsBinding,GameViewModel>(Fragm
     lateinit var viewModelFactory: ViewModelFactory
 
     override val viewModel by viewModels<GameViewModel> { viewModelFactory }
+    //todo: сделать свою viewmodel
 
     private lateinit var listAdapter: RecordListAdapter
 

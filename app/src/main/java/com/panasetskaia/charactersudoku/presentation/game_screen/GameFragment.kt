@@ -24,6 +24,7 @@ import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.Level
+import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.dict_screen.SpinnerAdapter
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
@@ -232,13 +233,13 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
         viewModel.markSelectedAsDoubtful(currentTime)
     }
 
-    private fun addThisFragment(fragment: Class<out Fragment>) {
-        parentFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .add(R.id.gameContainerView, fragment, null)
-            .addToBackStack(null)
-            .commit()
-    }
+//    private fun addThisFragment(fragment: Class<out Fragment>) {
+//        parentFragmentManager.beginTransaction()
+//            .setReorderingAllowed(true)
+//            .add(R.id.gameContainerView, fragment, null)
+//            .addToBackStack(null)
+//            .commit()
+//    }
 
     private fun continueTimer(time: Long) {
         binding.chTimer.base = SystemClock.elapsedRealtime() + time
@@ -408,7 +409,7 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
                 bottomSheetRandomDialog.dismiss()
             }
             selectButton.setOnClickListener {
-                viewModel.goToDict()
+                viewModel.goToDictionary(requireActivity() as MainActivity)
                 bottomSheetRandomDialog.dismiss()
             }
 

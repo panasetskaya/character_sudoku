@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.*
 import com.panasetskaia.charactersudoku.domain.usecases.*
+import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
@@ -284,8 +285,9 @@ class GameViewModel @Inject constructor(
 //        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
     }
 
-    fun goToDict() {
-        navigate(GameFragmentDirections.actionGameFragmentToDictionaryFragment())
+    fun goToDictionary(activity: MainActivity) {
+//        navigate(GameFragmentDirections.actionGameFragmentToDictionaryFragment())
+        activity.navController.navigate(GameFragmentDirections.actionGameFragmentToDictionaryFragment())
     }
 
     companion object {
