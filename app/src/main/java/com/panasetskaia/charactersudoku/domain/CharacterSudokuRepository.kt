@@ -10,11 +10,14 @@ interface CharacterSudokuRepository {
      */
     suspend fun getRandomBoard(diffLevel: Level): Board
     suspend fun getRandomWithCategory(category: String, diffLevel: Level): Board
-    suspend fun saveGame(board: Board)
-    suspend fun getSavedGame(): Board?
-    suspend fun getGameResult(board: Board): GameResult
+    suspend fun getSavedGame()
     suspend fun getGameWithSelected(): Board
+
+    suspend fun saveGame(board: Board)
     suspend fun selLevel(lvl: Level)
+    suspend fun getGameResult(board: Board): GameResult
+
+    suspend fun getGameState(): Flow<GameState>
 
     /**
      * Records (top results) functions:

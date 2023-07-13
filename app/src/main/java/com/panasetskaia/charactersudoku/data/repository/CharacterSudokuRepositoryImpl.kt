@@ -17,7 +17,10 @@ import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.*
 import com.panasetskaia.charactersudoku.utils.myLog
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -34,10 +37,22 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
     private var temporaryDict = INITIAL_9_CHAR
     private var temporaryLevel: Level = Level.EASY
+    private var gameCache: GameState = REFRESHING
+
+    private val _gameStateFlow = MutableSharedFlow<GameState>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val gameStateFlow: SharedFlow<GameState>
+        get() = _gameStateFlow
 
     /**
      * Game functions:
      */
+
+    override suspend fun getGameState(): Flow<GameState> {
+        return gameStateFlow
+    }
 
     override suspend fun getRandomBoard(diffLevel: Level): Board {
         temporaryDict = INITIAL_9_CHAR
@@ -108,9 +123,9 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         boardDao.saveGame(boardDbModel)
     }
 
-    override suspend fun getSavedGame(): Board? {
+    override suspend fun getSavedGame() {
         val boardDbModel = boardDao.getSavedGame()
-        return boardDbModel?.let {
+        boardDbModel?.let {
             val nineChars = mutableListOf<String>()
             for (i in it.nineChars) {
                 nineChars.add(i)
@@ -118,6 +133,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
             temporaryDict = nineChars
             mapper.mapBoardDbModelToDomainEntity(it)
         }
+        //todo: вот эту функцию переписываем (она первая, остальные тоже переписать)
     }
 
     override suspend fun getGameResult(board: Board): GameResult {

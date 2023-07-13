@@ -25,7 +25,8 @@ class GameViewModel @Inject constructor(
     private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase,
     private val getAllCategories: GetAllCategoriesUseCase,
     private val deleteCategory: DeleteCategoryUseCase,
-    private val setLevel: SetLevelUseCase
+    private val setLevel: SetLevelUseCase,
+    private val getGameStateFlow:GetGameStateUseCase
 ) : BaseViewModel() {
 
     private var selectedRow = NO_SELECTION
@@ -156,8 +157,31 @@ class GameViewModel @Inject constructor(
         }
     }
 
+    private fun collectGameState() {
+        viewModelScope.launch {
+            getGameStateFlow().collectLatest {
+                when (it) {
+                    is WIN -> _gameStateFlow.emit(it)
+                    is DISPLAY -> {
+                        _gameStateFlow.emit(it)
+                        updateViewModelBoard(it.oldBoard)
+                    }
+                    is PLAYING -> {
+                        _gameStateFlow.emit(it)
+                        updateViewModelBoard(it.currentBoard)
+                    }
+                    is REFRESHING -> _gameStateFlow.emit(it)
+                }
+                updateSelection(NO_SELECTION, NO_SELECTION)
+            }
+        }
+    }
+    //todo: вот здесь закончила. не дописала. На данный момент идея в том, чтобы GameState шел через флоу репозитория, и
+
     private fun getSavedBoard() {
         viewModelScope.launch {
+
+
             val savedBoard = getSavedGameUseCase()
             savedBoard?.let {
                 if (it.alreadyFinished) {

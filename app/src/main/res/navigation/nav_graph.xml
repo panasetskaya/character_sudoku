@@ -15,11 +15,7 @@
             app:argType="integer"
             android:defaultValue="-1"
             />
-        <action
-            android:id="@+id/action_gameFragment_to_dictionaryFlow"
-            app:destination="@id/dictionary_nav_graph" />
     </fragment>
-
 
     <navigation
         android:id="@+id/dictionary_nav_graph"
