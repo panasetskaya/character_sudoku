@@ -292,18 +292,18 @@ class DictionaryFragment :
         )
     }
 
-    private fun getLevel(b: BottomSheetChooseLevelBinding): Int {
+    private fun getLevel(b: BottomSheetChooseLevelBinding): Level {
         return when (b.radiogroup.checkedRadioButtonId) {
             b.radioEasy.id -> {
-                GameFragment.LEVEL_EASY
+                Level.EASY
             }
             b.radioMedium.id -> {
-                GameFragment.LEVEL_MED
+                Level.MEDIUM
             }
             b.radioHard.id -> {
-                GameFragment.LEVEL_HARD
+                Level.HARD
             }
-            else -> GameFragment.LEVEL_EASY
+            else -> Level.EASY
         }
     }
 }

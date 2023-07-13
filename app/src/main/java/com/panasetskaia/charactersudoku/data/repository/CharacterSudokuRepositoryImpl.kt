@@ -33,6 +33,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 ) : CharacterSudokuRepository {
 
     private var temporaryDict = INITIAL_9_CHAR
+    private var temporaryLevel: Level = Level.EASY
 
     /**
      * Game functions:
@@ -129,14 +130,18 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         } else FAILED
     }
 
-    override suspend fun getGameWithSelected(diffLevel: Level): Board {
+    override suspend fun selLevel(lvl: Level) {
+        temporaryLevel = lvl
+    }
+
+    override suspend fun getGameWithSelected(): Board {
         val selectedList = charactersDao.getSelectedCharacters()
         return if (selectedList.size==9) {
             markAllUnselected()
             val listAsStrings = getStringsFromSelectedCharacters(selectedList)
-            getNewGameWithStrings(listAsStrings, diffLevel)
+            getNewGameWithStrings(listAsStrings, temporaryLevel)
         } else {
-            getSavedGame() ?: getRandomBoard(diffLevel)
+            getSavedGame() ?: getRandomBoard(temporaryLevel)
         }
     }
 

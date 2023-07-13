@@ -16,63 +16,84 @@
             android:defaultValue="-1"
             />
         <action
-            android:id="@+id/action_gameFragment_to_dictionaryFragment"
-            app:destination="@id/dictionaryFragment" />
+            android:id="@+id/action_gameFragment_to_dictionaryFlow"
+            app:destination="@id/dictionary_nav_graph" />
     </fragment>
-    <fragment
-        android:id="@+id/dictionaryFragment"
-        android:name="com.panasetskaia.charactersudoku.presentation.dict_screen.DictionaryFragment"
-        android:label="fragment_dictionary"
-        tools:layout="@layout/fragment_dictionary" >
-        <action
-            android:id="@+id/action_dictionaryFragment_to_singleCharacterFragment"
-            app:destination="@id/singleCharacterFragment" />
-        <action
-            android:id="@+id/action_dictionaryFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.SettingsFragment"
-        android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" >
-        <action
-            android:id="@+id/action_settingsFragment_to_recordsFragment"
-            app:destination="@id/recordsFragment" />
-        <action
-            android:id="@+id/action_settingsFragment_to_helpFragment"
-            app:destination="@id/helpFragment" />
-        <action
-            android:id="@+id/action_settingsFragment_to_exportFragment"
-            app:destination="@id/exportFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/exportFragment"
-        android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragment"
-        android:label="fragment_export"
-        tools:layout="@layout/fragment_export" />
-    <fragment
-        android:id="@+id/helpFragment"
-        android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.HelpFragment"
-        android:label="fragment_help"
-        tools:layout="@layout/fragment_help" />
-    <fragment
-        android:id="@+id/recordsFragment"
-        android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.RecordsFragment"
-        android:label="fragment_records"
-        tools:layout="@layout/fragment_records" />
-    <fragment
-        android:id="@+id/singleCharacterFragment"
-        android:name="com.panasetskaia.charactersudoku.presentation.dict_screen.SingleCharacterFragment"
-        android:label="fragment_single_character"
-        tools:layout="@layout/fragment_single_character" >
-        <argument
-            android:name="mode"
-            app:argType="string"
-            app:nullable="false"/>
-        <argument
-            android:name="characterId"
-            app:argType="integer"
-            />
-    </fragment>
+
+
+    <navigation
+        android:id="@+id/dictionary_nav_graph"
+        app:startDestination="@id/dictionaryFragment">
+
+        <fragment
+            android:id="@+id/dictionaryFragment"
+            android:name="com.panasetskaia.charactersudoku.presentation.dict_screen.DictionaryFragment"
+            android:label="fragment_dictionary"
+            tools:layout="@layout/fragment_dictionary" >
+            <action
+                android:id="@+id/action_dictionaryFragment_to_singleCharacterFragment"
+                app:destination="@id/singleCharacterFragment" />
+            <action
+                android:id="@+id/action_dictionaryFragment_to_gameFlow"
+                app:destination="@id/gameFragment" />
+
+        </fragment>
+
+
+        <fragment
+            android:id="@+id/singleCharacterFragment"
+            android:name="com.panasetskaia.charactersudoku.presentation.dict_screen.SingleCharacterFragment"
+            android:label="fragment_single_character"
+            tools:layout="@layout/fragment_single_character" >
+            <argument
+                android:name="mode"
+                app:argType="string"
+                app:nullable="false"/>
+            <argument
+                android:name="characterId"
+                app:argType="integer"
+                />
+        </fragment>
+
+    </navigation>
+
+    <navigation
+        android:id="@+id/settings_nav_graph"
+        app:startDestination="@id/settingsFragment">
+
+        <fragment
+            android:id="@+id/settingsFragment"
+            android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.SettingsFragment"
+            android:label="fragment_settings"
+            tools:layout="@layout/fragment_settings" >
+            <action
+                android:id="@+id/action_settingsFragment_to_recordsFragment"
+                app:destination="@id/recordsFragment" />
+            <action
+                android:id="@+id/action_settingsFragment_to_helpFragment"
+                app:destination="@id/helpFragment" />
+            <action
+                android:id="@+id/action_settingsFragment_to_exportFragment"
+                app:destination="@id/exportFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/exportFragment"
+            android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragment"
+            android:label="fragment_export"
+            tools:layout="@layout/fragment_export" />
+        <fragment
+            android:id="@+id/helpFragment"
+            android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.HelpFragment"
+            android:label="fragment_help"
+            tools:layout="@layout/fragment_help" />
+        <fragment
+            android:id="@+id/recordsFragment"
+            android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.RecordsFragment"
+            android:label="fragment_records"
+            tools:layout="@layout/fragment_records" />
+
+    </navigation>
+
+
 </navigation>

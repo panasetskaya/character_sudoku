@@ -3,10 +3,10 @@
     <item android:id="@+id/gameFragment"
         android:title="@string/menu_game"
         android:icon="@drawable/ic_sudoku_icon_stroke_and_fill" />
-    <item android:id="@+id/dictionaryFragment"
+    <item android:id="@+id/dictionary_nav_graph"
         android:title="@string/menu_dictionary"
         android:icon="@drawable/ic_sudoku_icon_dict_stroke_and_fill" />
-    <item android:id="@+id/settingsFragment"
+    <item android:id="@+id/settings_nav_graph"
         android:title="@string/menu_profile"
         android:icon="@drawable/ic_account" />
 </menu>

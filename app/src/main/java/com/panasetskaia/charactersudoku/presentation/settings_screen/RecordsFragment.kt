@@ -2,16 +2,13 @@ package com.panasetskaia.charactersudoku.presentation.settings_screen
 
 import android.content.Context
 import android.os.Bundle
-import android.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.panasetskaia.charactersudoku.databinding.FragmentRecordsBinding
-import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
-import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
 import com.panasetskaia.charactersudoku.utils.getAppComponent

@@ -13,7 +13,8 @@ interface CharacterSudokuRepository {
     suspend fun saveGame(board: Board)
     suspend fun getSavedGame(): Board?
     suspend fun getGameResult(board: Board): GameResult
-    suspend fun getGameWithSelected(diffLevel: Level): Board
+    suspend fun getGameWithSelected(): Board
+    suspend fun selLevel(lvl: Level)
 
     /**
      * Records (top results) functions:

@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
+import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
 import com.panasetskaia.charactersudoku.utils.myLog
 import com.panasetskaia.charactersudoku.utils.simplifyPinyin
 import kotlinx.coroutines.channels.BufferOverflow
@@ -27,6 +29,7 @@ class ChineseCharacterViewModel @Inject constructor(
     private val deleteCategory: DeleteCategoryUseCase,
     private val saveDictToCSV: SaveDictToCSVUseCase,
     private val saveDictToJson: SaveDictToJsonUseCase,
+    private val setLevelUseCase: SetLevelUseCase
 ) : BaseViewModel() {
 
     private var innerDictCache = listOf<ChineseCharacter>()
@@ -231,7 +234,19 @@ class ChineseCharacterViewModel @Inject constructor(
         }
     }
 
-    fun startGameWithSelected(lvl: Int) {
-        navigate(DictionaryFragmentDirections.actionDictionaryFragmentToGameFragment(lvl))
+    fun startGameWithSelected(lvl: Level) {
+        setLevelInRepo(lvl)
+        val levelNumber = when (lvl) {
+            Level.EASY -> GameFragment.LEVEL_EASY
+            Level.MEDIUM -> GameFragment.LEVEL_MED
+            Level.HARD -> GameFragment.LEVEL_HARD
+        }
+        navigate(DictionaryFragmentDirections.actionDictionaryFragmentToGameFlow(levelNumber))
+    }
+
+    private fun setLevelInRepo(lvl: Level) {
+        viewModelScope.launch {
+            setLevelUseCase(lvl)
+        }
     }
 }

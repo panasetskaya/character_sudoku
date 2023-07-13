@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.*
 import com.panasetskaia.charactersudoku.domain.usecases.*
-import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
@@ -24,7 +24,8 @@ class GameViewModel @Inject constructor(
     private val getOneCharacterByChineseUseCase: GetOneCharacterByChineseUseCase,
     private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase,
     private val getAllCategories: GetAllCategoriesUseCase,
-    private val deleteCategory: DeleteCategoryUseCase
+    private val deleteCategory: DeleteCategoryUseCase,
+    private val setLevel: SetLevelUseCase
 ) : BaseViewModel() {
 
     private var selectedRow = NO_SELECTION
@@ -128,7 +129,8 @@ class GameViewModel @Inject constructor(
         levelFlow.value = lvl
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val newBoard = getGameWithSelectedUseCase(lvl).copy(
+            setLevel(lvl)
+            val newBoard = getGameWithSelectedUseCase().copy(
                 timeSpent = 0,
                 alreadyFinished = false
             )
@@ -286,8 +288,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun goToDictionary(activity: MainActivity) {
-//        navigate(GameFragmentDirections.actionGameFragmentToDictionaryFragment())
-        activity.navController.navigate(GameFragmentDirections.actionGameFragmentToDictionaryFragment())
+        activity.switchToDict()
     }
 
     companion object {
