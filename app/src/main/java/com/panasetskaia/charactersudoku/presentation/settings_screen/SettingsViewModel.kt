@@ -17,4 +17,7 @@ class SettingsViewModel @Inject constructor(): BaseViewModel() {
         navigate(SettingsFragmentDirections.actionSettingsFragmentToExportFragment())
     }
 
+    override fun deleteThisCategory(cat: String) {
+    }
+
 }

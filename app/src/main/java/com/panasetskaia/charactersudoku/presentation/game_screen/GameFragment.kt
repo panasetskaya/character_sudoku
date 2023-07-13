@@ -15,14 +15,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.panasetskaia.charactersudoku.R
+import com.panasetskaia.charactersudoku.databinding.BottomSheetChooseLvlAndCategoryBinding
+import com.panasetskaia.charactersudoku.databinding.BottomSheetConfirmRefreshBinding
+import com.panasetskaia.charactersudoku.databinding.BottomSheetRandomOrSelectBinding
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.Board
 import com.panasetskaia.charactersudoku.domain.entities.Cell
 import com.panasetskaia.charactersudoku.domain.entities.Level
+import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
-import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
-import com.panasetskaia.charactersudoku.presentation.dict_screen.SingleCharacterFragmentArgs
+import com.panasetskaia.charactersudoku.presentation.dict_screen.SpinnerAdapter
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
 import com.panasetskaia.charactersudoku.utils.getAppComponent
 import com.panasetskaia.charactersudoku.utils.toast
@@ -30,9 +34,15 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGameBinding::inflate), SudokuBoardView.OnTouchListener {
+class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGameBinding::inflate),
+    SudokuBoardView.OnTouchListener {
 
     private val mInterpolator = AccelerateInterpolator()
+
+    private lateinit var bottomSheetRefreshDialog: BottomSheetDialog
+    private lateinit var bottomSheetRandomDialog: BottomSheetDialog
+    private lateinit var bottomSheetLevelDialog: BottomSheetDialog
+    private lateinit var spinnerByCategoryAdapter: SpinnerAdapter
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -47,6 +57,7 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
     }
 
     override fun onReady(savedInstanceState: Bundle?) {
+        setBottomDialogs()
         binding.sudokuBoard.registerListener(this)
         setAnimations()
         setButtons()
@@ -59,17 +70,28 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
         super.onPause()
     }
 
+    private fun setBottomDialogs() {
+        bottomSheetRefreshDialog = BottomSheetDialog(requireContext())
+        bottomSheetRandomDialog = BottomSheetDialog(requireContext())
+        bottomSheetLevelDialog = BottomSheetDialog(requireContext())
+    }
+
     private fun parseParams() {
         val gameLevelWithSelected = navArgs.levelWithSelected
-        if (gameLevelWithSelected!= NO_SELECTED_CHARS_FOR_GAME) {
-            val level = when (gameLevelWithSelected) {
-                LEVEL_EASY -> Level.EASY
-                LEVEL_MED -> Level.MEDIUM
-                LEVEL_HARD -> Level.HARD
-                else -> Level.EASY
-            }
+        if (gameLevelWithSelected != NO_SELECTED_CHARS_FOR_GAME) {
+            val level = mapIntToLevel(gameLevelWithSelected)
             viewModel.getGameWithSelected(level)
         }
+    }
+
+    private fun mapIntToLevel(lvl: Int): Level {
+        val level = when (lvl) {
+            LEVEL_EASY -> Level.EASY
+            LEVEL_MED -> Level.MEDIUM
+            LEVEL_HARD -> Level.HARD
+            else -> Level.EASY
+        }
+        return level
     }
 
     private fun setButtons() {
@@ -172,6 +194,11 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
                         updateSelectedCellUI(selectedCell)
                     }
                 }
+                launch {
+                    viewModel.categoriesFlow.collectLatest { list ->
+                        setNewListForCategoriesSpinner(list)
+                    }
+                }
             }
         }
     }
@@ -206,13 +233,13 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
         viewModel.markSelectedAsDoubtful(currentTime)
     }
 
-    private fun addThisFragment(fragment: Class<out Fragment>) {
-        parentFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .add(R.id.gameContainerView, fragment, null)
-            .addToBackStack(null)
-            .commit()
-    }
+//    private fun addThisFragment(fragment: Class<out Fragment>) {
+//        parentFragmentManager.beginTransaction()
+//            .setReorderingAllowed(true)
+//            .add(R.id.gameContainerView, fragment, null)
+//            .addToBackStack(null)
+//            .commit()
+//    }
 
     private fun continueTimer(time: Long) {
         binding.chTimer.base = SystemClock.elapsedRealtime() + time
@@ -221,8 +248,7 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
     }
 
     private fun initiateNewGame() {
-        addThisFragment(ConfirmRefreshFragment::class.java)
-        viewModel.setSettingsState()
+        showConfirmRefreshBottomDialog()
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -345,6 +371,92 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
     private fun launchOldBoard() {
         viewModel.launchOldBoard()
     }
+
+    private fun showConfirmRefreshBottomDialog() {
+        val bottomSheetBinding = BottomSheetConfirmRefreshBinding.inflate(layoutInflater)
+        with(bottomSheetBinding) {
+            bottomSheetRefreshDialog.setContentView(root)
+            confirmButton.setOnClickListener {
+                showRandomOrSelectBottomDialog()
+                bottomSheetRefreshDialog.dismiss()
+            }
+            cancelButton.setOnClickListener {
+                bottomSheetRefreshDialog.dismiss()
+            }
+
+        }
+        bottomSheetRefreshDialog.show()
+    }
+
+    private fun setNewListForCategoriesSpinner(
+        list: List<String?>
+    ) {
+        val listToSubmit = list.filterNotNull()
+        spinnerByCategoryAdapter = SpinnerAdapter(
+            this,
+            R.layout.category_spinner_item,
+            listToSubmit,
+            viewModel
+        )
+    }
+
+    private fun showRandomOrSelectBottomDialog() {
+        val bottomSheetBinding = BottomSheetRandomOrSelectBinding.inflate(layoutInflater)
+        with(bottomSheetBinding) {
+            bottomSheetRandomDialog.setContentView(root)
+            randomButton.setOnClickListener {
+                showChooseCategoryAndLevelBottomDialog()
+                bottomSheetRandomDialog.dismiss()
+            }
+            selectButton.setOnClickListener {
+                viewModel.goToDictionary(requireActivity() as MainActivity)
+                bottomSheetRandomDialog.dismiss()
+            }
+
+        }
+        bottomSheetRandomDialog.show()
+    }
+
+    private fun showChooseCategoryAndLevelBottomDialog() {
+        val bottomSheetBinding = BottomSheetChooseLvlAndCategoryBinding.inflate(layoutInflater)
+        with(bottomSheetBinding) {
+            bottomSheetLevelDialog.setContentView(root)
+            spinnerbyCategory.adapter = spinnerByCategoryAdapter
+            applyButton.setOnClickListener {
+                val lvl = mapIntToLevel(getLevel(bottomSheetBinding))
+                val selectedCategory =
+                    if (spinnerbyCategory.selectedItemPosition == 0) {
+                        null
+                    } else {
+                        spinnerbyCategory.selectedItem as String?
+                    }
+                if (selectedCategory != null) {
+                    viewModel.getRandomGameWithCategory(selectedCategory, lvl)
+                } else {
+                    viewModel.getNewRandomGame(lvl)
+                }
+
+                bottomSheetLevelDialog.dismiss()
+            }
+        }
+        bottomSheetLevelDialog.show()
+    }
+
+    private fun getLevel(b: BottomSheetChooseLvlAndCategoryBinding): Int {
+        return when (b.radiogroup.checkedRadioButtonId) {
+            b.radioEasy.id -> {
+                LEVEL_EASY
+            }
+            b.radioMedium.id -> {
+                LEVEL_MED
+            }
+            b.radioHard.id -> {
+                LEVEL_HARD
+            }
+            else -> LEVEL_EASY
+        }
+    }
+
 
     companion object {
         const val LEVEL_EASY = 1

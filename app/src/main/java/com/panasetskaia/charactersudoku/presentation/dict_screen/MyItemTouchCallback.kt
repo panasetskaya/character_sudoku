@@ -58,7 +58,6 @@ open class MyItemTouchCallback(
     ) {
         setTouchListener(recyclerView)
         if (dX > -300f) {
-            viewModel.finishDeleting(false)
             val item = adapter.currentList[viewHolder.adapterPosition]
            onCharacterItemSwipeListener?.invoke(item.id)
         }

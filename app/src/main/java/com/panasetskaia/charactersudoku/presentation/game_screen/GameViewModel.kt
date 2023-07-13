@@ -2,11 +2,9 @@ package com.panasetskaia.charactersudoku.presentation.game_screen
 
 import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.domain.SUCCESS
-import com.panasetskaia.charactersudoku.domain.entities.Board
-import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
-import com.panasetskaia.charactersudoku.domain.entities.Level
-import com.panasetskaia.charactersudoku.domain.entities.Record
+import com.panasetskaia.charactersudoku.domain.entities.*
 import com.panasetskaia.charactersudoku.domain.usecases.*
+import com.panasetskaia.charactersudoku.presentation.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
@@ -24,7 +22,9 @@ class GameViewModel @Inject constructor(
     private val supplyNewRecord: SupplyNewRecordUseCase,
     private val getTopFifteenRecords: GetTopFifteenRecordsUseCase,
     private val getOneCharacterByChineseUseCase: GetOneCharacterByChineseUseCase,
-    private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase
+    private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase,
+    private val getAllCategories: GetAllCategoriesUseCase,
+    private val deleteCategory: DeleteCategoryUseCase
 ) : BaseViewModel() {
 
     private var selectedRow = NO_SELECTION
@@ -56,8 +56,16 @@ class GameViewModel @Inject constructor(
     val recordsFlow: SharedFlow<List<Record>>
         get() = _recordsFlow
 
+    private val _categoriesFlow = MutableSharedFlow<List<String>>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val categoriesFlow: SharedFlow<List<String>>
+        get() = _categoriesFlow
+
     init {
         getSavedBoard()
+        updateCategories()
     }
 
     fun handleInput(number: Int, currentTime: Long) {
@@ -169,6 +177,19 @@ class GameViewModel @Inject constructor(
         getSavedBoard()
     }
 
+    private fun updateCategories() {
+        viewModelScope.launch {
+            getAllCategories().collectLatest {
+                val listOfCategories = mutableListOf<String>()
+                for (i in it) {
+                    listOfCategories.add(i.categoryName)
+                }
+                _categoriesFlow.emit(listOfCategories)
+            }
+
+        }
+    }
+
     private fun checkForSolution(currentTime: Long) {
         _finalErrorFlow.value = false
         val boardCells = currentBoard.cells
@@ -264,10 +285,21 @@ class GameViewModel @Inject constructor(
 //        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
     }
 
+    fun goToDictionary(activity: MainActivity) {
+//        navigate(GameFragmentDirections.actionGameFragmentToDictionaryFragment())
+        activity.navController.navigate(GameFragmentDirections.actionGameFragmentToDictionaryFragment())
+    }
+
     companion object {
         internal const val EMPTY_CELLS_MINIMUM = 8
         private const val EMPTY_CELL = "0"
         private const val NO_SELECTION = -1
+    }
+
+    override fun deleteThisCategory(cat: String) {
+        viewModelScope.launch {
+            deleteCategory(cat)
+        }
     }
 }
 

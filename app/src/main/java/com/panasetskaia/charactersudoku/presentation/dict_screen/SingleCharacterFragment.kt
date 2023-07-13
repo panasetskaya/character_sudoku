@@ -146,14 +146,10 @@ class SingleCharacterFragment :
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.categoriesFlow.collectLatest { categories ->
-                        val listOfCategories = mutableListOf<String>()
-                        for (i in categories) {
-                            listOfCategories.add(i.categoryName)
-                        }
                         adapterForSpinner = SpinnerAdapter(
                             this@SingleCharacterFragment,
                             R.layout.category_spinner_item,
-                            listOfCategories,
+                            categories,
                             viewModel
                         )
                         binding.spinnerCat.adapter = adapterForSpinner

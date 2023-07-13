@@ -151,14 +151,10 @@ class DictionaryFragment :
 
                 launch {
                     viewModel.categoriesFlow.collectLatest { categories ->
-                        val listOfCategories = mutableListOf<String>()
-                        for (i in categories) {
-                            listOfCategories.add(i.categoryName)
-                        }
                         spinnerByCategoryAdapter = SpinnerAdapter(
                             this@DictionaryFragment,
                             R.layout.category_spinner_item,
-                            listOfCategories,
+                            categories,
                             viewModel
                         )
                     }

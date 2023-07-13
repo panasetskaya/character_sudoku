@@ -48,16 +48,12 @@ class ChineseCharacterViewModel @Inject constructor(
     val dictionaryFlow: SharedFlow<List<ChineseCharacter>>
         get() = _dictionaryFlow
 
-    private val _categoriesFlow = MutableSharedFlow<List<Category>>(
+    private val _categoriesFlow = MutableSharedFlow<List<String>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    val categoriesFlow: SharedFlow<List<Category>>
+    val categoriesFlow: SharedFlow<List<String>>
         get() = _categoriesFlow
-
-    private var _isDialogHiddenStateFlow = MutableStateFlow(true)
-    val isDialogHiddenStateFlow: StateFlow<Boolean>
-        get() = _isDialogHiddenStateFlow
 
     val selectedCharactersSharedFlow = dictionaryFlow.map { wholeDictionary ->
         val selectedCharacters = mutableListOf<ChineseCharacter>()
@@ -85,9 +81,14 @@ class ChineseCharacterViewModel @Inject constructor(
 
     private fun updateCategories() {
         viewModelScope.launch {
-            _categoriesFlow.emitAll(
-                getAllCategories()
-            )
+            getAllCategories().collectLatest {
+                val listOfCategories = mutableListOf<String>()
+                for (i in it) {
+                    listOfCategories.add(i.categoryName)
+                }
+                _categoriesFlow.emit(listOfCategories)
+            }
+
         }
     }
 
@@ -100,7 +101,6 @@ class ChineseCharacterViewModel @Inject constructor(
         viewModelScope.launch {
             deleteCharacter(chineseCharacterId)
         }
-        finishDeleting(true)
     }
 
     fun addOrEditCharacter(chineseCharacter: ChineseCharacter) {
@@ -112,9 +112,7 @@ class ChineseCharacterViewModel @Inject constructor(
     fun addNewCategory(categoryName: String) {
         viewModelScope.launch {
             addCategory(Category(categoryName = categoryName))
-            _categoriesFlow.emitAll(
-                getAllCategories()
-            )
+            updateCategories()
             _dictionaryFlow.emitAll(
                 getWholeDict()
             )
@@ -126,10 +124,6 @@ class ChineseCharacterViewModel @Inject constructor(
         viewModelScope.launch {
             addCharacterToDict(newChineseCharacter)
         }
-    }
-
-    fun finishDeleting(isDialogHidden: Boolean) {
-        _isDialogHiddenStateFlow.value = isDialogHidden
     }
 
     fun markAllUnselected() {
@@ -174,7 +168,7 @@ class ChineseCharacterViewModel @Inject constructor(
         }.shareIn(viewModelScope, WhileSubscribed(5000), replay = 1)
     }
 
-    fun deleteThisCategory(category: String) {
+    override fun deleteThisCategory(category: String) {
         viewModelScope.launch {
             deleteCategory(category)
         }
@@ -186,7 +180,6 @@ class ChineseCharacterViewModel @Inject constructor(
                 deleteCharacter(i.id)
             }
         }
-        finishDeleting(true)
     }
 
     fun setSelectedForDeleting(newSelected: List<ChineseCharacter>) {
