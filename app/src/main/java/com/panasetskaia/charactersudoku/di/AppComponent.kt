@@ -24,13 +24,13 @@ interface AppComponent {
 
     fun inject(fragment: HelpFragment)
 
-    fun inject(fragment: RecordsFragment)
-
     fun inject(fragment: DictionaryFragment)
 
     fun inject(fragment: GameFragment)
 
     fun inject(fragment: SingleCharacterFragment)
+
+    fun inject(fragment: RecordsFragment)
 
     @Component.Factory
     interface AppComponentFactory {

@@ -16,12 +16,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class RecordsFragment : BaseFragment<FragmentRecordsBinding,GameViewModel>(FragmentRecordsBinding::inflate) {
+class RecordsFragment : BaseFragment<FragmentRecordsBinding,RecordsViewModel>(FragmentRecordsBinding::inflate) {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    override val viewModel by viewModels<GameViewModel> { viewModelFactory }
+    override val viewModel by viewModels<RecordsViewModel> { viewModelFactory }
     //todo: сделать свою viewmodel
 
     private lateinit var listAdapter: RecordListAdapter

@@ -13,7 +13,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.BottomSheetChooseLvlAndCategoryBinding
@@ -21,17 +20,15 @@ import com.panasetskaia.charactersudoku.databinding.BottomSheetConfirmRefreshBin
 import com.panasetskaia.charactersudoku.databinding.BottomSheetRandomOrSelectBinding
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
 import com.panasetskaia.charactersudoku.domain.entities.*
-import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.dict_screen.SpinnerAdapter
+import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
 import com.panasetskaia.charactersudoku.utils.getAppComponent
 import com.panasetskaia.charactersudoku.utils.toast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-
 
 class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGameBinding::inflate),
     SudokuBoardView.OnTouchListener {
@@ -47,7 +44,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
     lateinit var viewModelFactory: ViewModelFactory
 
     override val viewModel by viewModels<GameViewModel> { viewModelFactory }
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -71,16 +67,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
         bottomSheetRefreshDialog = BottomSheetDialog(requireContext())
         bottomSheetRandomDialog = BottomSheetDialog(requireContext())
         bottomSheetLevelDialog = BottomSheetDialog(requireContext())
-    }
-
-    private fun mapIntToLevel(lvl: Int): Level {
-        val level = when (lvl) {
-            LEVEL_EASY -> Level.EASY
-            LEVEL_MED -> Level.MEDIUM
-            LEVEL_HARD -> Level.HARD
-            else -> Level.EASY
-        }
-        return level
     }
 
     private fun setButtons() {
@@ -111,19 +97,7 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
                 }
             }
             button.setOnLongClickListener {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.getOneCharacterByChinese(button.text.toString())
-                            .collectLatest {
-                                if (it.pinyin.length > 0 || it.translation.length > 0) {
-                                    toast("${it.character} [ ${it.pinyin.trim()} ] ${it.translation}")
-                                } else {
-                                    toast(it.character)
-                                }
-
-                            }
-                    }
-                }
+                viewModel.getOneCharacterByChinese(button.text.toString())
                 true
             }
         }
@@ -185,6 +159,15 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
                         setNewListForCategoriesSpinner(list)
                     }
                 }
+                launch {
+                    viewModel.oneCharacterFlow.collectLatest {
+                        if (it.pinyin.isNotEmpty() || it.translation.isNotEmpty()) {
+                            toast("${it.character} [ ${it.pinyin.trim()} ] ${it.translation}")
+                        } else {
+                            toast(it.character)
+                        }
+                    }
+                }
             }
         }
     }
@@ -219,18 +202,9 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
         viewModel.markSelectedAsDoubtful(currentTime)
     }
 
-//    private fun addThisFragment(fragment: Class<out Fragment>) {
-//        parentFragmentManager.beginTransaction()
-//            .setReorderingAllowed(true)
-//            .add(R.id.gameContainerView, fragment, null)
-//            .addToBackStack(null)
-//            .commit()
-//    }
-
     private fun continueTimer(time: Long) {
         binding.chTimer.base = SystemClock.elapsedRealtime() + time
         binding.chTimer.start()
-
     }
 
     private fun initiateNewGame() {
@@ -394,7 +368,7 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
             bottomSheetLevelDialog.setContentView(root)
             spinnerbyCategory.adapter = spinnerByCategoryAdapter
             applyButton.setOnClickListener {
-                val lvl = mapIntToLevel(getLevel(bottomSheetBinding))
+                val lvl = getLevel(bottomSheetBinding)
                 val selectedCategory =
                     if (spinnerbyCategory.selectedItemPosition == 0) {
                         null
@@ -413,27 +387,19 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
         bottomSheetLevelDialog.show()
     }
 
-    private fun getLevel(b: BottomSheetChooseLvlAndCategoryBinding): Int {
+    private fun getLevel(b: BottomSheetChooseLvlAndCategoryBinding): Level {
         return when (b.radiogroup.checkedRadioButtonId) {
             b.radioEasy.id -> {
-                LEVEL_EASY
+                Level.EASY
             }
             b.radioMedium.id -> {
-                LEVEL_MED
+                Level.MEDIUM
             }
             b.radioHard.id -> {
-                LEVEL_HARD
+                Level.HARD
             }
-            else -> LEVEL_EASY
+            else -> Level.EASY
         }
-    }
-
-
-    companion object {
-        const val LEVEL_EASY = 1
-        const val LEVEL_MED = 2
-        const val LEVEL_HARD = 3
-        const val NO_SELECTED_CHARS_FOR_GAME = -1
     }
 
 }

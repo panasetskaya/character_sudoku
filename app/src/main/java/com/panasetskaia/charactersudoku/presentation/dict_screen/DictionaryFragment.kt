@@ -24,8 +24,6 @@ import com.panasetskaia.charactersudoku.databinding.FragmentDictionaryBinding
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
-import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
-import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
 import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
 import com.panasetskaia.charactersudoku.utils.getAppComponent
@@ -219,6 +217,7 @@ class DictionaryFragment :
                 query?.let { viewModel.filterByQuery(it) }
                 return false
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let { viewModel.filterByQuery(it) }
                 return false
@@ -270,7 +269,7 @@ class DictionaryFragment :
                 bottomSheetDialog.dismiss()
             }
             confirmButton.setOnClickListener {
-                if (id!=null) {
+                if (id != null) {
                     viewModel.deleteCharacterFromDict(id)
                 } else {
                     viewModel.deleteSelected()

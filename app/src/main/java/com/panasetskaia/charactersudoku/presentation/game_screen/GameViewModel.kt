@@ -4,8 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.*
 import com.panasetskaia.charactersudoku.domain.usecases.*
-import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
+import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -20,12 +20,11 @@ class GameViewModel @Inject constructor(
     private val saveGameUseCase: SaveGameUseCase,
     private val getRandomByCategory: GetRandomWithCategoryUseCase,
     private val supplyNewRecord: SupplyNewRecordUseCase,
-    private val getTopFifteenRecords: GetTopFifteenRecordsUseCase,
     private val getOneCharacterByChineseUseCase: GetOneCharacterByChineseUseCase,
     private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase,
     private val getAllCategories: GetAllCategoriesUseCase,
     private val deleteCategory: DeleteCategoryUseCase,
-    private val getGameStateFlow:GetGameStateUseCase
+    private val getGameStateFlow: GetGameStateUseCase
 ) : BaseViewModel() {
 
     private var selectedRow = NO_SELECTION
@@ -50,19 +49,19 @@ class GameViewModel @Inject constructor(
     val gameStateFlow: SharedFlow<GameState>
         get() = _gameStateFlow
 
-    private val _recordsFlow = MutableSharedFlow<List<Record>>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    val recordsFlow: SharedFlow<List<Record>>
-        get() = _recordsFlow
-
     private val _categoriesFlow = MutableSharedFlow<List<String>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val categoriesFlow: SharedFlow<List<String>>
         get() = _categoriesFlow
+
+    private val _oneCharacterFlow = MutableSharedFlow<ChineseCharacter>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val oneCharacterFlow: SharedFlow<ChineseCharacter>
+        get() = _oneCharacterFlow
 
     init {
         getSavedBoard()
@@ -238,10 +237,6 @@ class GameViewModel @Inject constructor(
         _selectedCellFlow.value = Pair(row, col)
     }
 
-//    fun setLevel(chosenLevel: Level) {
-//        levelFlow.value = chosenLevel
-//    }
-
     private fun saveRecord(recordTime: Long) {
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -252,53 +247,29 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun getRecords() {
+    fun getOneCharacterByChinese(chinese: String) {
         viewModelScope.launch {
-            _recordsFlow.tryEmit(
-                getTopFifteenRecords()
-            )
+            val char = getOneCharacterByChineseUseCase(chinese)
+            char?.let {
+                _oneCharacterFlow.emit(it)
+            }
         }
-    }
-
-    fun getOneCharacterByChinese(chinese: String): SharedFlow<ChineseCharacter> {
-        return flow<ChineseCharacter> { getOneCharacterByChineseUseCase(chinese) }.shareIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            replay = 1
-        )
-        //todo: проверить работу, когда заработает перезапуск игры
-
-//        dictionaryFlow.map { wholeDictionary ->
-//            var characterWeNeed = ChineseCharacter(
-//                character = "",
-//                pinyin = "",
-//                translation = "",
-//                usages = "",
-//                category = "-"
-//            )
-//            for (i in wholeDictionary) {
-//                if (i.character == chinese) {
-//                    characterWeNeed = i
-//                }
-//            }
-//            characterWeNeed
-//        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
     }
 
     fun goToDictionary(activity: MainActivity) {
         activity.switchToDict()
     }
 
-    companion object {
-        internal const val EMPTY_CELLS_MINIMUM = 8
-        private const val EMPTY_CELL = "0"
-        private const val NO_SELECTION = -1
-    }
-
     override fun deleteThisCategory(cat: String) {
         viewModelScope.launch {
             deleteCategory(cat)
         }
+    }
+
+    companion object {
+        internal const val EMPTY_CELLS_MINIMUM = 8
+        private const val EMPTY_CELL = "0"
+        private const val NO_SELECTION = -1
     }
 }
 

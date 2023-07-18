@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
 import com.panasetskaia.charactersudoku.presentation.settings_screen.HelpViewModel
+import com.panasetskaia.charactersudoku.presentation.settings_screen.RecordsViewModel
 import com.panasetskaia.charactersudoku.presentation.settings_screen.SettingsViewModel
 import dagger.Binds
 import dagger.Module
@@ -31,4 +32,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(HelpViewModel::class)
     fun bindHelpViewModel(impl: HelpViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RecordsViewModel::class)
+    fun bindRecordsViewModel(impl: HelpViewModel): ViewModel
 }
