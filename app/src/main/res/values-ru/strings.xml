@@ -64,7 +64,6 @@
     <string name="menu_game">Игра</string>
     <string name="menu_dictionary">Словарь</string>
     <string name="menu_profile">Настройки</string>
-
     <string name="new_user">Некто</string>
     <string name="login_button">Войти</string>
     <string name="my_records">Лучшие результаты</string>
@@ -73,14 +72,9 @@
     <string name="dictionary">Словарь</string>
     <string name="profile_settings">Профиль и настройки</string>
     <string name="expimp">Экспорт и импорт</string>
-    <string name="expimp">Э</string>
-    <string name="expimp">Э</string>
     <string name="top_results">Лучшие игры</string>
-    <string name="top_results">Л</string>
-    <string name="binding_null">Fragment Binding is null</string>
     <string name="binding_null">Fragment Binding is null</string>
     <string name="soon">Будет совсем скоро!</string>
     <string name="filter">Фильтр</string>
     <string name="ok">Ок</string>
-    <string name="ok">О</string>
 </resources>

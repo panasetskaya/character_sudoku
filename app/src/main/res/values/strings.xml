@@ -12,6 +12,7 @@
     <string name="menu_game">Game</string>
     <string name="menu_dictionary">Dictionary</string>
     <string name="menu_profile">Settings</string>
+    <string name="binding_null">Fragment Binding is null</string>
 
     <!-- game screen -->
     <string name="check_again">There is an error somewhere, check again!</string>
@@ -55,13 +56,16 @@
     <string name="choose_level">Level:</string>
     <string name="big_char" translatable="false">Big char</string>
     <string name="default_dict_text">Here you can add your own characters or symbols to the dictionary\nand then use them for the sudoku game</string>
+    <string name="filter">Filter</string>
+    <string-array name="default_cat_array">
+        <item>All</item>
+    </string-array>
 
     <!--    Settings screen-->
     <string name="help_game">You can mark the selected cell as doubtful with a long click on the cell.\n\nThe button on the right erases the selected cell value.\n\nYour game board is saved every time you leave.\n\nLong click on a character button below will show you its information from the dictionary.\n\nClick on refresh arrow to get a new game.</string>
     <string name="help_dict">Swipe left to delete the character from the dictionary.\n\nSelect characters for the game with a long click.\n\nThe play button will become active once you have selected 9 characters.\n\nYou can add a new category or delete an old one when adding or editing characters.</string>
     <string name="not_enough">There has to be 9 characters selected to start the game</string>
     <string name="export_dict">Dictionary export and import</string>
-
     <string name="records_title">Your best games</string>
     <string name="file_saved">saved to: sdcard/Android/data/com.panasetskaia.charactersudoku/files</string>
     <string name="to_csv">to .csv</string>
@@ -84,13 +88,7 @@
     <string name="profile_settings">Profile &amp; settings</string>
     <string name="expimp">Export/import</string>
     <string name="top_results">Top results</string>
-    <string name="binding_null">Fragment Binding is null</string>
     <string name="soon">Coming soon!</string>
-    <string name="filter">Filter</string>
     <string name="ok">OK</string>
-
-    <string-array name="default_cat_array">
-        <item>All</item>
-    </string-array>
 
 </resources>
