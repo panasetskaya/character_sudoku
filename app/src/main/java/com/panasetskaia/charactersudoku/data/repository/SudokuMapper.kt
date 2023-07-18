@@ -43,7 +43,8 @@ class SudokuMapper @Inject constructor() {
             domainBoard.cells,
             domainBoard.nineChars,
             domainBoard.timeSpent,
-            domainBoard.alreadyFinished
+            domainBoard.alreadyFinished,
+            domainBoard.level
         )
     }
 
@@ -54,7 +55,8 @@ class SudokuMapper @Inject constructor() {
             boardDbModel.cells,
             boardDbModel.nineChars,
             boardDbModel.timeSpent,
-            boardDbModel.alreadyFinished
+            boardDbModel.alreadyFinished,
+            boardDbModel.level
         )
     }
 

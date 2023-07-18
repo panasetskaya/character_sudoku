@@ -32,7 +32,7 @@ class GameViewModel @Inject constructor(
     private lateinit var currentBoardCache: Board
     private lateinit var nineCharsCache: List<String>
 
-    private val levelFlow = MutableStateFlow(Level.MEDIUM)
+    private val levelFlow = MutableStateFlow(Level.EASY)
 
     private val _selectedCellFlow = MutableStateFlow(Pair(NO_SELECTION, NO_SELECTION))
     val selectedCellFlow: StateFlow<Pair<Int, Int>>
@@ -102,7 +102,6 @@ class GameViewModel @Inject constructor(
     }
 
     fun getNewRandomGame(diffLevel: Level) {
-        levelFlow.value = diffLevel
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             _gameStateFlow.emit(REFRESHING)
@@ -111,7 +110,6 @@ class GameViewModel @Inject constructor(
     }
 
     fun getRandomGameWithCategory(category: String, diffLevel: Level) {
-        levelFlow.value = diffLevel
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
             _gameStateFlow.emit(REFRESHING)
@@ -156,6 +154,8 @@ class GameViewModel @Inject constructor(
                     is PLAYING -> {
                         _gameStateFlow.emit(it)
                         updateViewModelBoard(it.currentBoard)
+                        levelFlow.value = it.currentBoard.level
+
                     }
                     is REFRESHING -> {
                         _gameStateFlow.emit(it)

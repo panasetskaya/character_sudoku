@@ -36,5 +36,5 @@ interface ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(RecordsViewModel::class)
-    fun bindRecordsViewModel(impl: HelpViewModel): ViewModel
+    fun bindRecordsViewModel(impl: RecordsViewModel): ViewModel
 }

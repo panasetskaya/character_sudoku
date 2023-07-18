@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.panasetskaia.charactersudoku.data.database.SudokuConverters
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
 import com.panasetskaia.charactersudoku.domain.entities.Cell
+import com.panasetskaia.charactersudoku.domain.entities.Level
 
 @Entity
 data class BoardDbModel (
@@ -16,5 +17,6 @@ data class BoardDbModel (
     val cells: List<Cell>,
     val nineChars: List<String>,
     var timeSpent: Long = 0,
-    var alreadyFinished: Boolean = false
+    var alreadyFinished: Boolean = false,
+    val level: Level = Level.EASY
         )

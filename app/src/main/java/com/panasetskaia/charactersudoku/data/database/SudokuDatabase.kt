@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [ChineseCharacterDbModel::class, BoardDbModel::class, CategoryDbModel::class, RecordDbModel::class],
-    version = 17,
-    autoMigrations = [AutoMigration (from = 13, to = 14)],
+    version = 18,
+    autoMigrations = [AutoMigration (from = 13, to = 14), AutoMigration (from = 17, to = 18)],
     exportSchema = true
 )
 @TypeConverters(SudokuConverters::class)

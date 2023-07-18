@@ -37,8 +37,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 ) : CharacterSudokuRepository {
 
     private var temporaryDict = INITIAL_9_CHAR
-    private var temporaryLevel: Level = Level.EASY
-    //todo: вот тут проблема. нам надо сохранять левел в борду, чтобы потом для рекордов получать ее оттуда, вот что.
 
     private val _gameStateFlow = MutableSharedFlow<GameState>(
         replay = 1,
@@ -58,7 +56,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     override suspend fun getRandomBoard(diffLevel: Level) {
         try {
             temporaryDict = INITIAL_9_CHAR
-            temporaryLevel = diffLevel
             val wholeList = charactersDao.getAllChineseAsList().toSet().shuffled()
             val board = produceBoardOfBigList(wholeList, diffLevel)
             delay(800) //for refreshing animation
@@ -71,7 +68,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     override suspend fun getRandomWithCategory(category: String, diffLevel: Level) {
         try {
             temporaryDict = INITIAL_9_CHAR
-            temporaryLevel = diffLevel
             val listForCategory = charactersDao.getChineseByCategory(category).toSet().shuffled()
             val board = produceBoardOfBigList(listForCategory, diffLevel)
             delay(800) //for refreshing animation
@@ -82,7 +78,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     }
 
     private suspend fun produceBoardOfBigList(list: List<String>, diffLevel: Level): Board {
-        temporaryLevel = diffLevel
         return if (list.size >= 9) {
             val randomCharacters = mutableListOf<String>()
             for (i in 0 until 9) {
@@ -115,7 +110,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 }
 
             } else {
-                getRandomBoard(temporaryLevel)
+                getRandomBoard(Level.EASY)
             }
         } catch (e: Exception) {
             myLog("repository -> getSavedGame() -> exception: ${e.message}")
@@ -127,7 +122,6 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
         try {
             _gameStateFlow.emit(REFRESHING)
-            temporaryLevel = diffLevel
             val selectedList = charactersDao.getSelectedCharacters()
             if (selectedList.size == 9) {
                 markAllUnselected()
@@ -148,7 +142,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         val stringGrid = translateCharactersToNumbers(board)
         val solution = SudokuGame().getSolution(stringGrid)
         return if (solution != null) {
-            val numberBoard = mapNumberGridWithTemporaryDictToBoard(solution)
+            val numberBoard = mapNumberGridWithTemporaryDictToBoard(solution, board.level)
             val solutionBoard = translateNumbersToCharacters(numberBoard)
             SUCCESS(solutionBoard)
         } else FAILED
@@ -163,11 +157,10 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         nineCharacters: List<String>,
         diffLevel: Level
     ): Board {
-        temporaryLevel = diffLevel
         temporaryDict = nineCharacters
         return withContext(Dispatchers.Default) {
             val grid = generateNumberGrid(diffLevel).values.toList()[0]
-            val board = mapNumberGridWithTemporaryDictToBoard(grid)
+            val board = mapNumberGridWithTemporaryDictToBoard(grid, diffLevel)
             translateNumbersToCharacters(board)
         }
     }
@@ -176,7 +169,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         return SudokuGame().fillGrid(diffLevel)
     }
 
-    private fun mapNumberGridWithTemporaryDictToBoard(stringGrid: String): Board {
+    private fun mapNumberGridWithTemporaryDictToBoard(stringGrid: String, diffLevel: Level): Board {
         val cells = List(SudokuGame.GRID_SIZE * SudokuGame.GRID_SIZE) { i ->
             Cell(
                 i / SudokuGame.GRID_SIZE,
@@ -184,7 +177,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                 stringGrid[i].toString()
             )
         }
-        return Board(cells = cells, nineChars = temporaryDict)
+        return Board(cells = cells, nineChars = temporaryDict, level = diffLevel)
     }
 
     private fun translateNumbersToCharacters(board: Board): Board {

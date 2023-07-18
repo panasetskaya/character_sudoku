@@ -22,7 +22,6 @@ class RecordsFragment : BaseFragment<FragmentRecordsBinding,RecordsViewModel>(Fr
     lateinit var viewModelFactory: ViewModelFactory
 
     override val viewModel by viewModels<RecordsViewModel> { viewModelFactory }
-    //todo: сделать свою viewmodel
 
     private lateinit var listAdapter: RecordListAdapter
 
