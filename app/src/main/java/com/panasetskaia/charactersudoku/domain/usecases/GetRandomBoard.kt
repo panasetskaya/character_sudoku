@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class GetRandomBoard @Inject constructor(private val repository: CharacterSudokuRepository) {
 
-    suspend operator fun invoke(diffLevel: Level): Board {
+    suspend operator fun invoke(diffLevel: Level) {
         return repository.getRandomBoard(diffLevel)
     }
 

@@ -26,6 +26,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
 import com.panasetskaia.charactersudoku.utils.getAppComponent
 import com.panasetskaia.charactersudoku.utils.toast
@@ -254,7 +255,7 @@ class DictionaryFragment :
             bottomSheetDialog.setContentView(root)
             applyButton.setOnClickListener {
                 val lvl = getLevel(this)
-                viewModel.startGameWithSelected(lvl)
+                viewModel.startGameWithSelected(lvl, requireActivity() as MainActivity)
                 bottomSheetDialog.dismiss()
             }
         }

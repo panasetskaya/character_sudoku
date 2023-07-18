@@ -52,6 +52,10 @@ class MainActivity : AppCompatActivity() {
     fun switchToDict() {
         binding.activityMainBottomNavigation.selectedItemId = R.id.dictionary_nav_graph
     }
+
+    fun switchToGame() {
+        binding.activityMainBottomNavigation.selectedItemId = R.id.gameFragment
+    }
 //
 //    override fun onStop() {
 //        characterViewModel.markAllUnselected()

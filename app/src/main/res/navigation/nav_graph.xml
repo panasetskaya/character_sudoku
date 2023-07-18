@@ -10,11 +10,6 @@
         android:name="com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment"
         android:label="fragment_game"
         tools:layout="@layout/fragment_game" >
-        <argument
-            android:name="levelWithSelected"
-            app:argType="integer"
-            android:defaultValue="-1"
-            />
     </fragment>
 
     <navigation

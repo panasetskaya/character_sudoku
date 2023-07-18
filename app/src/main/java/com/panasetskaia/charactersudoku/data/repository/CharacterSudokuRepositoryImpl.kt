@@ -18,6 +18,7 @@ import com.panasetskaia.charactersudoku.domain.entities.*
 import com.panasetskaia.charactersudoku.utils.myLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -37,13 +38,13 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
     private var temporaryDict = INITIAL_9_CHAR
     private var temporaryLevel: Level = Level.EASY
-    private var gameCache: GameState = REFRESHING
+    //todo: вот тут проблема. нам надо сохранять левел в борду, чтобы потом для рекордов получать ее оттуда, вот что.
 
     private val _gameStateFlow = MutableSharedFlow<GameState>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    val gameStateFlow: SharedFlow<GameState>
+    private val gameStateFlow: SharedFlow<GameState>
         get() = _gameStateFlow
 
     /**
@@ -54,86 +55,93 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         return gameStateFlow
     }
 
-    override suspend fun getRandomBoard(diffLevel: Level): Board {
-        temporaryDict = INITIAL_9_CHAR
-        val wholeList = charactersDao.getAllChineseAsList().toSet().shuffled()
-        if (wholeList.size >= 9) {
+    override suspend fun getRandomBoard(diffLevel: Level) {
+        try {
+            temporaryDict = INITIAL_9_CHAR
+            temporaryLevel = diffLevel
+            val wholeList = charactersDao.getAllChineseAsList().toSet().shuffled()
+            val board = produceBoardOfBigList(wholeList, diffLevel)
+            delay(800) //for refreshing animation
+            _gameStateFlow.emit(PLAYING(board))
+        } catch (e: Exception) {
+            myLog("repository -> getRandomBoard() -> exception: ${e.message}")
+        }
+    }
+
+    override suspend fun getRandomWithCategory(category: String, diffLevel: Level) {
+        try {
+            temporaryDict = INITIAL_9_CHAR
+            temporaryLevel = diffLevel
+            val listForCategory = charactersDao.getChineseByCategory(category).toSet().shuffled()
+            val board = produceBoardOfBigList(listForCategory, diffLevel)
+            delay(800) //for refreshing animation
+            _gameStateFlow.emit(PLAYING(board))
+        } catch (e: Exception) {
+            myLog("repository -> getRandomWithCategory() -> exception: ${e.message}")
+        }
+    }
+
+    private suspend fun produceBoardOfBigList(list: List<String>, diffLevel: Level): Board {
+        temporaryLevel = diffLevel
+        return if (list.size >= 9) {
             val randomCharacters = mutableListOf<String>()
             for (i in 0 until 9) {
-                val randomChinese = wholeList[i]
+                val randomChinese = list[i]
                 randomCharacters.add(randomChinese)
             }
-            return getNewGameWithStrings(randomCharacters, diffLevel)
+            getNewGameWithNineStrings(randomCharacters, diffLevel)
         } else {
-            val missingSize = 9 - wholeList.size
+            val missingSize = 9 - list.size
             val adding = INITIAL_9_CHAR.subList(0, missingSize)
-            val randomCharacters = wholeList + adding
-            return getNewGameWithStrings(randomCharacters, diffLevel)
+            val randomCharacters = list + adding
+            getNewGameWithNineStrings(randomCharacters, diffLevel)
         }
-    }
-
-    override suspend fun getRandomWithCategory(category: String, diffLevel: Level): Board {
-        temporaryDict = INITIAL_9_CHAR
-        val listForCategory = charactersDao.getChineseByCategory(category).toSet().shuffled()
-        if (listForCategory.size >= 9) {
-            val randomCharacters = mutableListOf<String>()
-            for (i in 0 until 9) {
-                val randomChinese = listForCategory[i]
-                randomCharacters.add(randomChinese)
-            }
-            return getNewGameWithStrings(randomCharacters, diffLevel)
-        } else {
-            val missingSize = 9 - listForCategory.size
-            val adding = INITIAL_9_CHAR.subList(0, missingSize)
-            val randomCharacters = listForCategory + adding
-            return getNewGameWithStrings(randomCharacters, diffLevel)
-        }
-    }
-
-//    override suspend fun getNewGame(
-//        nineCharacters: List<ChineseCharacter>,
-//        diffLevel: Level
-//    ): Board {
-//        val listString = mutableListOf<String>()
-//        for (i in nineCharacters) {
-//            listString.add(i.character)
-//        }
-//        temporaryDict = listString
-//        return withContext(Dispatchers.Default) {
-//            val grid = generateNumberGrid(diffLevel).values.toList()[0]
-//            val board = mapNumberGridWithTemporaryDictToBoard(grid)
-//            translateNumbersToCharacters(board)
-//        }
-//    }
-
-    private suspend fun getNewGameWithStrings(
-        nineCharacters: List<String>,
-        diffLevel: Level
-    ): Board {
-        temporaryDict = nineCharacters
-        return withContext(Dispatchers.Default) {
-            val grid = generateNumberGrid(diffLevel).values.toList()[0]
-            val board = mapNumberGridWithTemporaryDictToBoard(grid)
-            translateNumbersToCharacters(board)
-        }
-    }
-
-    override suspend fun saveGame(board: Board) {
-        val boardDbModel = mapper.mapDomainBoardToDbModel(board)
-        boardDao.saveGame(boardDbModel)
     }
 
     override suspend fun getSavedGame() {
-        val boardDbModel = boardDao.getSavedGame()
-        boardDbModel?.let {
-            val nineChars = mutableListOf<String>()
-            for (i in it.nineChars) {
-                nineChars.add(i)
+        try {
+            val boardDbModel = boardDao.getSavedGame()
+            if (boardDbModel != null) {
+                val nineChars = mutableListOf<String>()
+                for (i in boardDbModel.nineChars) {
+                    nineChars.add(i)
+                }
+                temporaryDict = nineChars
+                val board = mapper.mapBoardDbModelToDomainEntity(boardDbModel)
+                if (!board.alreadyFinished) {
+                    _gameStateFlow.emit(PLAYING(board))
+                } else {
+                    _gameStateFlow.emit(DISPLAY(board))
+                }
+
+            } else {
+                getRandomBoard(temporaryLevel)
             }
-            temporaryDict = nineChars
-            mapper.mapBoardDbModelToDomainEntity(it)
+        } catch (e: Exception) {
+            myLog("repository -> getSavedGame() -> exception: ${e.message}")
         }
-        //todo: вот эту функцию переписываем (она первая, остальные тоже переписать)
+
+    }
+
+    override suspend fun getGameWithSelected(diffLevel: Level) {
+
+        try {
+            _gameStateFlow.emit(REFRESHING)
+            temporaryLevel = diffLevel
+            val selectedList = charactersDao.getSelectedCharacters()
+            if (selectedList.size == 9) {
+                markAllUnselected()
+                val listAsStrings = getStringsFromSelectedCharacters(selectedList)
+                val board = getNewGameWithNineStrings(listAsStrings, diffLevel)
+                delay(800) //for refreshing animation
+                _gameStateFlow.emit(PLAYING(board))
+            } else {
+                getSavedGame()
+                myLog("repository -> getGameWithSelected() -> the number of selected is not nine")
+            }
+        } catch (e: Exception) {
+            myLog("repository -> getGameWithSelected() -> exception: ${e.message}")
+        }
     }
 
     override suspend fun getGameResult(board: Board): GameResult {
@@ -146,18 +154,21 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         } else FAILED
     }
 
-    override suspend fun selLevel(lvl: Level) {
-        temporaryLevel = lvl
+    override suspend fun saveGame(board: Board) {
+        val boardDbModel = mapper.mapDomainBoardToDbModel(board)
+        boardDao.saveGame(boardDbModel)
     }
 
-    override suspend fun getGameWithSelected(): Board {
-        val selectedList = charactersDao.getSelectedCharacters()
-        return if (selectedList.size==9) {
-            markAllUnselected()
-            val listAsStrings = getStringsFromSelectedCharacters(selectedList)
-            getNewGameWithStrings(listAsStrings, temporaryLevel)
-        } else {
-            getSavedGame() ?: getRandomBoard(temporaryLevel)
+    private suspend fun getNewGameWithNineStrings(
+        nineCharacters: List<String>,
+        diffLevel: Level
+    ): Board {
+        temporaryLevel = diffLevel
+        temporaryDict = nineCharacters
+        return withContext(Dispatchers.Default) {
+            val grid = generateNumberGrid(diffLevel).values.toList()[0]
+            val board = mapNumberGridWithTemporaryDictToBoard(grid)
+            translateNumbersToCharacters(board)
         }
     }
 
@@ -181,7 +192,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
             if (i.value != EMPTY_CELL) {
                 i.isFixed = true
                 val index = i.value.toInt() - 1
-                i.value = temporaryDict[index] // поменять на нужный словарь
+                i.value = temporaryDict[index]
             }
         }
         return board
@@ -192,7 +203,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         for (i in board.cells) {
             var number = 0
             if (i.value != EMPTY_CELL) {
-                number = temporaryDict.indexOf(i.value) + 1  // поменять на нужный словарь
+                number = temporaryDict.indexOf(i.value) + 1
             }
             gridString += number.toString()
         }
@@ -239,7 +250,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
 
     /**
-     * Dictionary functions:
+     * Dictionary characters functions:
      */
 
     override suspend fun addOrEditCharToDict(character: ChineseCharacter) {
@@ -274,8 +285,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                     charactersDao.addOrEditCharacter(newChineseCharacter)
                 }
             }
-        } catch (e: Exception)
-        {
+        } catch (e: Exception) {
             myLog("repo -> markAllUnselected: $e + ${e.message}")
         }
     }

@@ -6,7 +6,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Level
 import javax.inject.Inject
 
 class GetRandomWithCategoryUseCase @Inject constructor(private val repository: CharacterSudokuRepository) {
-    suspend operator fun invoke(category: String, diffLevel: Level): Board {
+    suspend operator fun invoke(category: String, diffLevel: Level){
         return repository.getRandomWithCategory(category, diffLevel)
     }
 }

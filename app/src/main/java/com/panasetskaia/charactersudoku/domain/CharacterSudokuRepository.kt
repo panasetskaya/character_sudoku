@@ -8,15 +8,12 @@ interface CharacterSudokuRepository {
     /**
      * Game functions:
      */
-    suspend fun getRandomBoard(diffLevel: Level): Board
-    suspend fun getRandomWithCategory(category: String, diffLevel: Level): Board
+    suspend fun getRandomBoard(diffLevel: Level)
+    suspend fun getRandomWithCategory(category: String, diffLevel: Level)
     suspend fun getSavedGame()
-    suspend fun getGameWithSelected(): Board
-
+    suspend fun getGameWithSelected(diffLevel: Level)
     suspend fun saveGame(board: Board)
-    suspend fun selLevel(lvl: Level)
     suspend fun getGameResult(board: Board): GameResult
-
     suspend fun getGameState(): Flow<GameState>
 
     /**
@@ -26,7 +23,7 @@ interface CharacterSudokuRepository {
     suspend fun supplyNewRecord(record: Record)
 
     /**
-     * Dictionary functions:
+     * Dictionary characters functions:
      */
     suspend fun addOrEditCharToDict(character: ChineseCharacter)
     suspend fun deleteCharFromDict(characterId: Int)
