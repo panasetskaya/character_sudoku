@@ -24,9 +24,6 @@
             <action
                 android:id="@+id/action_dictionaryFragment_to_singleCharacterFragment"
                 app:destination="@id/singleCharacterFragment" />
-            <action
-                android:id="@+id/action_dictionaryFragment_to_gameFlow"
-                app:destination="@id/gameFragment" />
 
         </fragment>
 

@@ -15,15 +15,11 @@
     <string name="translation_hint">перевод</string>
     <string name="pinyin_hint">пиньинь</string>
     <string name="character_hint">字</string>
-    <string name="new_or_saved_dialog">Загрузить новую или сохраненную игру?</string>
-    <string name="new_game">Новую</string>
-    <string name="old_game">Старую</string>
     <string name="selectCharactersButton">Выбрать</string>
     <string name="randomButton">Случайно</string>
     <string name="randomOrSelect">Случайные иероглифы или выбрать?</string>
     <string name="yesButton">Да</string>
     <string name="cancelButton">Назад</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="confirmRefresh">Обновить игру?</string>
     <string name="confirmRefreshButton">Обновить</string>
     <string name="confirmDeleteButton">Yes</string>
@@ -50,7 +46,6 @@
     <string name="refresh">Новая игра</string>
     <string name="game_finished">Поздравляем!</string>
     <string name="time_formatted">%02d:%02d:%02d</string>
-    <string name="rating">Рейтинг</string>
     <string name="export_dict">Импорт и экспорт словаря</string>
     <string name="default_dict_text">Здесь вы можете добавить в словарь свои иероглифы, чтобы использовать их в игре</string>
     <string name="records_title">Ваши лучшие судоку</string>
@@ -77,4 +72,15 @@
     <string name="help">Помощь</string>
     <string name="dictionary">Словарь</string>
     <string name="profile_settings">Профиль и настройки</string>
+    <string name="expimp">Экспорт и импорт</string>
+    <string name="expimp">Э</string>
+    <string name="expimp">Э</string>
+    <string name="top_results">Лучшие игры</string>
+    <string name="top_results">Л</string>
+    <string name="binding_null">Fragment Binding is null</string>
+    <string name="binding_null">Fragment Binding is null</string>
+    <string name="soon">Будет совсем скоро!</string>
+    <string name="filter">Фильтр</string>
+    <string name="ok">Ок</string>
+    <string name="ok">О</string>
 </resources>
