@@ -33,7 +33,7 @@ class SingleCharacterFragment :
     override val viewModel by viewModels<ChineseCharacterViewModel> { viewModelFactory }
 
     private var chineseCharacterId = NEW_CHAR_ID
-    private var selectedCategory = ""
+    private var newCategory = INITIAL_CAT
 
     private val navArgs by navArgs<SingleCharacterFragmentArgs>()
 
@@ -46,9 +46,9 @@ class SingleCharacterFragment :
 
     override fun onReady(savedInstanceState: Bundle?) {
         binding.spinnerCat.onItemSelectedListener = this
+        collectCategories()
         setupMenu()
         parseParams()
-        collectCategories()
     }
 
     private fun parseParams() {
@@ -70,7 +70,7 @@ class SingleCharacterFragment :
                     val newCat = it.toString().trim()
                     if (newCat != "") {
                         viewModel.addNewCategory(newCat)
-                        selectedCategory = newCat
+                        addCharacter(newCat)
                     }
                 }
                 binding.newCatGroup.isVisible = false
@@ -85,8 +85,7 @@ class SingleCharacterFragment :
                             etPinyin.setText(it.pinyin)
                             etTranslation.setText(it.translation)
                             etUsages.setText(it.usages)
-                            selectedCategory = it.category
-                            //todo: проблема: перестал выставлять нужную категорию!
+                            setSpinnerSelection(it.category)
                             tvBigCharacter.text = it.character
                             tvBigCharacter.animate().apply {
                                 translationX(70f)
@@ -96,6 +95,8 @@ class SingleCharacterFragment :
                         }
                     }
                 }
+
+
             }
         }
     }
@@ -108,8 +109,8 @@ class SingleCharacterFragment :
                 binding.etCategory.text?.let {
                     val newCat = it.toString().trim()
                     if (newCat != "") {
+                        newCategory = newCat
                         viewModel.addNewCategory(newCat)
-                        selectedCategory = newCat
                     }
                 }
                 binding.newCatGroup.isVisible = false
@@ -153,7 +154,9 @@ class SingleCharacterFragment :
                             viewModel
                         )
                         binding.spinnerCat.adapter = adapterForSpinner
-                        setSpinnerSelection(selectedCategory)
+                        if (newCategory!=INITIAL_CAT) {
+                            setSpinnerSelection(newCategory)
+                        }
                     }
                 }
             }
@@ -189,6 +192,7 @@ class SingleCharacterFragment :
         const val MODE_ADD = "add"
         const val NEW_CHAR_ID = 0
         private const val MIN_LENGTH = 1
+        private const val INITIAL_CAT = ""
     }
 }
 
