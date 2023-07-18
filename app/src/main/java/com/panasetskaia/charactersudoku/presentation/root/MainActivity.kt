@@ -1,4 +1,4 @@
-package com.panasetskaia.charactersudoku.presentation
+package com.panasetskaia.charactersudoku.presentation.root
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -15,39 +15,52 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private val component by lazy {
-        (application as SudokuApplication).component
-    }
-
-    private lateinit var _navControl: NavController
-    val navController: NavController
-        get() = _navControl
-
-    val characterViewModel by lazy {
-        ViewModelProvider(this, viewModelFactory)[ChineseCharacterViewModel::class.java]
-    }
-    //todo: сделать свою viewmodel
-
+//    @Inject
+//    lateinit var viewModelFactory: ViewModelFactory
+//
+//    private val component by lazy {
+//        (application as SudokuApplication).component
+//    }
+//
+//    private lateinit var _navControl: NavController
+//    val navController: NavController
+//        get() = _navControl
+//
+//    val characterViewModel by lazy {
+//        ViewModelProvider(this, viewModelFactory)[ChineseCharacterViewModel::class.java]
+//    }
+//    //todo: сделать свою viewmodel
+//
     private lateinit var binding: ActivityMainBinding
-
+//
     override fun onCreate(savedInstanceState: Bundle?) {
-        component.inject(this)
+//        component.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fcvMain) as NavHostFragment
-        _navControl = navHostFragment.navController
-        binding.bottomNavigation.setupWithNavController(navHostFragment.navController)
+        setupBottomNavigationBar()
     }
 
-    override fun onStop() {
-        characterViewModel.markAllUnselected()
-        super.onStop()
+
+    private fun setupBottomNavigationBar() {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.activity_main_nav_host_container) as NavHostFragment
+        binding.activityMainBottomNavigation.setupWithNavController(navHostFragment.navController)
+
     }
+
+    fun switchToDict() {
+        binding.activityMainBottomNavigation.selectedItemId = R.id.dictionary_nav_graph
+    }
+
+    fun switchToGame() {
+        binding.activityMainBottomNavigation.selectedItemId = R.id.gameFragment
+    }
+//
+//    override fun onStop() {
+//        characterViewModel.markAllUnselected()
+//        super.onStop()
+//    }
 
 //    fun goToGameWithSelected(lvl: Int) {
 //        _navControl.navigate(DictionaryFragmentDirections.actionDictionaryFragmentToGameFragment(lvl))

@@ -9,7 +9,6 @@ import android.os.SystemClock
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.widget.Button
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,10 +20,8 @@ import com.panasetskaia.charactersudoku.databinding.BottomSheetChooseLvlAndCateg
 import com.panasetskaia.charactersudoku.databinding.BottomSheetConfirmRefreshBinding
 import com.panasetskaia.charactersudoku.databinding.BottomSheetRandomOrSelectBinding
 import com.panasetskaia.charactersudoku.databinding.FragmentGameBinding
-import com.panasetskaia.charactersudoku.domain.entities.Board
-import com.panasetskaia.charactersudoku.domain.entities.Cell
-import com.panasetskaia.charactersudoku.domain.entities.Level
-import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.domain.entities.*
+import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.dict_screen.SpinnerAdapter
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
@@ -33,6 +30,8 @@ import com.panasetskaia.charactersudoku.utils.toast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+
 
 class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGameBinding::inflate),
     SudokuBoardView.OnTouchListener {
@@ -49,7 +48,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
 
     override val viewModel by viewModels<GameViewModel> { viewModelFactory }
 
-    private val navArgs by navArgs<GameFragmentArgs>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -61,7 +59,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
         binding.sudokuBoard.registerListener(this)
         setAnimations()
         setButtons()
-        parseParams()
     }
 
     override fun onPause() {
@@ -74,14 +71,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
         bottomSheetRefreshDialog = BottomSheetDialog(requireContext())
         bottomSheetRandomDialog = BottomSheetDialog(requireContext())
         bottomSheetLevelDialog = BottomSheetDialog(requireContext())
-    }
-
-    private fun parseParams() {
-        val gameLevelWithSelected = navArgs.levelWithSelected
-        if (gameLevelWithSelected != NO_SELECTED_CHARS_FOR_GAME) {
-            val level = mapIntToLevel(gameLevelWithSelected)
-            viewModel.getGameWithSelected(level)
-        }
     }
 
     private fun mapIntToLevel(lvl: Int): Level {
@@ -179,9 +168,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
                             }
                             is WIN -> {
                                 celebrate()
-                            }
-                            is SETTING -> {
-                                setSettings()
                             }
                             is DISPLAY -> {
                                 displayOldBoard(it.oldBoard)
@@ -332,21 +318,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
                 button.text = board.nineChars[index]
             }
             updateCells(board.cells)
-        }
-    }
-
-    private fun setSettings() {
-        with(binding) {
-            buttonsGroup.visibility = View.GONE
-            rippleAnimationView.visibility = View.GONE
-            winAnimationView.visibility = View.GONE
-            sudokuBoard.visibility = View.VISIBLE
-            chTimer.visibility = View.GONE
-            tvGameFinished.visibility = View.GONE
-            newGameButton.visibility = View.GONE
-
-            refreshGame.isClickable = false
-            clearCell.isClickable = false
         }
     }
 

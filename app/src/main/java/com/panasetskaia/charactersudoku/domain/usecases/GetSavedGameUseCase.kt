@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class GetSavedGameUseCase @Inject constructor(private val repository: CharacterSudokuRepository) {
 
-    suspend operator  fun invoke(): Board? {
+    suspend operator  fun invoke() {
         return repository.getSavedGame()
     }
 }

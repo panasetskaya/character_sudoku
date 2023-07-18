@@ -26,6 +26,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameViewModel
+import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
 import com.panasetskaia.charactersudoku.utils.getAppComponent
 import com.panasetskaia.charactersudoku.utils.toast
@@ -254,7 +255,7 @@ class DictionaryFragment :
             bottomSheetDialog.setContentView(root)
             applyButton.setOnClickListener {
                 val lvl = getLevel(this)
-                viewModel.startGameWithSelected(lvl)
+                viewModel.startGameWithSelected(lvl, requireActivity() as MainActivity)
                 bottomSheetDialog.dismiss()
             }
         }
@@ -292,18 +293,18 @@ class DictionaryFragment :
         )
     }
 
-    private fun getLevel(b: BottomSheetChooseLevelBinding): Int {
+    private fun getLevel(b: BottomSheetChooseLevelBinding): Level {
         return when (b.radiogroup.checkedRadioButtonId) {
             b.radioEasy.id -> {
-                GameFragment.LEVEL_EASY
+                Level.EASY
             }
             b.radioMedium.id -> {
-                GameFragment.LEVEL_MED
+                Level.MEDIUM
             }
             b.radioHard.id -> {
-                GameFragment.LEVEL_HARD
+                Level.HARD
             }
-            else -> GameFragment.LEVEL_EASY
+            else -> Level.EASY
         }
     }
 }

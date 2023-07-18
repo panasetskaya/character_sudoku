@@ -27,14 +27,6 @@ fun Long.formatToTime(context: Activity): String {
     return timePassed
 }
 
-fun Fragment.replaceWithThisFragment(fragment: Class<out Fragment>, args: Bundle?) {
-    parentFragmentManager.beginTransaction()
-        .setReorderingAllowed(true)
-        .replace(R.id.fcvMain, fragment, args)
-        .addToBackStack(null)
-        .commit()
-}
-
 fun Fragment.toast(@StringRes stringRes: Int) {
     Toast.makeText(requireContext(), stringRes, Toast.LENGTH_SHORT).show()
 }

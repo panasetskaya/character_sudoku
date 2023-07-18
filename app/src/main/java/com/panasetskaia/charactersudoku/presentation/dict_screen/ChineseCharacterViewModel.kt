@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
+import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
+import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.utils.myLog
 import com.panasetskaia.charactersudoku.utils.simplifyPinyin
 import kotlinx.coroutines.channels.BufferOverflow
@@ -27,6 +29,7 @@ class ChineseCharacterViewModel @Inject constructor(
     private val deleteCategory: DeleteCategoryUseCase,
     private val saveDictToCSV: SaveDictToCSVUseCase,
     private val saveDictToJson: SaveDictToJsonUseCase,
+    private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase
 ) : BaseViewModel() {
 
     private var innerDictCache = listOf<ChineseCharacter>()
@@ -126,27 +129,21 @@ class ChineseCharacterViewModel @Inject constructor(
         }
     }
 
-    fun markAllUnselected() {
-        viewModelScope.launch {
-            dictionaryFlow.collect {
-                for (i in it) {
-                    if (i.isChosen) {
-                        val newChineseCharacter = i.copy(isChosen = false)
-                        addCharacterToDict(newChineseCharacter)
-                    }
-                }
-                _dictionaryFlow.emitAll(
-                    getWholeDict()
-                )
-            }
-        }
-    }
-
     fun goToSingleCharacterFragment(id: Int?) {
-        if (id==null) {
-            navigate(DictionaryFragmentDirections.actionDictionaryFragmentToSingleCharacterFragment(SingleCharacterFragment.MODE_ADD, SingleCharacterFragment.NEW_CHAR_ID))
+        if (id == null) {
+            navigate(
+                DictionaryFragmentDirections.actionDictionaryFragmentToSingleCharacterFragment(
+                    SingleCharacterFragment.MODE_ADD,
+                    SingleCharacterFragment.NEW_CHAR_ID
+                )
+            )
         } else {
-            navigate(DictionaryFragmentDirections.actionDictionaryFragmentToSingleCharacterFragment(SingleCharacterFragment.MODE_EDIT, id))
+            navigate(
+                DictionaryFragmentDirections.actionDictionaryFragmentToSingleCharacterFragment(
+                    SingleCharacterFragment.MODE_EDIT,
+                    id
+                )
+            )
         }
     }
 
@@ -205,16 +202,16 @@ class ChineseCharacterViewModel @Inject constructor(
     fun parseExternalDict(newDict: List<ChineseCharacter>) {
         viewModelScope.launch {
             for (i in newDict) {
-                addCharacterToDict(i.copy(id=0))
+                addCharacterToDict(i.copy(id = 0))
             }
         }
     }
 
     fun filterByQuery(query: String) {
-        val thereIs = innerDictCache.any { it.character == query || it.pinyin.contains(query)}
+        val thereIs = innerDictCache.any { it.character == query || it.pinyin.contains(query) }
         if (thereIs) {
             val newList = innerDictCache.filter {
-                it.character==query || it.pinyin.simplifyPinyin().contains(query)
+                it.character == query || it.pinyin.simplifyPinyin().contains(query)
             }
             _dictionaryFlow.tryEmit(newList)
         } else {
@@ -223,15 +220,25 @@ class ChineseCharacterViewModel @Inject constructor(
     }
 
     fun showByCategory(selectedCategory: String?) {
-        if (selectedCategory==null) {
+        if (selectedCategory == null) {
             removeFIlters()
         } else {
-            val newList = innerDictCache.filter { it.category==selectedCategory }
+            val newList = innerDictCache.filter { it.category == selectedCategory }
             _dictionaryFlow.tryEmit(newList)
         }
     }
 
-    fun startGameWithSelected(lvl: Int) {
-        navigate(DictionaryFragmentDirections.actionDictionaryFragmentToGameFragment(lvl))
+    fun startGameWithSelected(lvl: Level, activity: MainActivity) {
+        viewModelScope.launch {
+            activity.switchToGame()
+            getGameWithSelectedUseCase(lvl)
+        }
+
+//        val levelNumber = when (lvl) {
+//            Level.EASY -> GameFragment.LEVEL_EASY
+//            Level.MEDIUM -> GameFragment.LEVEL_MED
+//            Level.HARD -> GameFragment.LEVEL_HARD
+//        }
+//        navigate(DictionaryFragmentDirections.actionDictionaryFragmentToGameFlow(levelNumber))
     }
 }

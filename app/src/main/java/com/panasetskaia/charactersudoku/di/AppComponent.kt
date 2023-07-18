@@ -1,8 +1,7 @@
 package com.panasetskaia.charactersudoku.di
 
 import android.app.Application
-import com.panasetskaia.charactersudoku.presentation.MainActivity
-import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
+import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.dict_screen.DictionaryFragment
 import com.panasetskaia.charactersudoku.presentation.dict_screen.SingleCharacterFragment
 import com.panasetskaia.charactersudoku.presentation.game_screen.GameFragment

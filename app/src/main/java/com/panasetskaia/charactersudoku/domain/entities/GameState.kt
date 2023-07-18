@@ -1,13 +1,10 @@
-package com.panasetskaia.charactersudoku.presentation.game_screen
-import com.panasetskaia.charactersudoku.domain.entities.Board
+package com.panasetskaia.charactersudoku.domain.entities
 
 sealed class GameState
 
 object WIN: GameState()
 
 object REFRESHING: GameState()
-
-object SETTING: GameState()
 
 class PLAYING(board: Board): GameState() {
     val currentBoard = board

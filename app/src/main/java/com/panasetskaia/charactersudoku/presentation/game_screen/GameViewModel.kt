@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.*
 import com.panasetskaia.charactersudoku.domain.usecases.*
-import com.panasetskaia.charactersudoku.presentation.MainActivity
+import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
@@ -24,13 +24,14 @@ class GameViewModel @Inject constructor(
     private val getOneCharacterByChineseUseCase: GetOneCharacterByChineseUseCase,
     private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase,
     private val getAllCategories: GetAllCategoriesUseCase,
-    private val deleteCategory: DeleteCategoryUseCase
+    private val deleteCategory: DeleteCategoryUseCase,
+    private val getGameStateFlow:GetGameStateUseCase
 ) : BaseViewModel() {
 
     private var selectedRow = NO_SELECTION
     private var selectedCol = NO_SELECTION
-    private lateinit var currentBoard: Board
-    private lateinit var nineChars: List<String>
+    private lateinit var currentBoardCache: Board
+    private lateinit var nineCharsCache: List<String>
 
     private val levelFlow = MutableStateFlow(Level.MEDIUM)
 
@@ -65,23 +66,24 @@ class GameViewModel @Inject constructor(
 
     init {
         getSavedBoard()
+        collectGameState()
         updateCategories()
     }
 
     fun handleInput(number: Int, currentTime: Long) {
         if (selectedRow == NO_SELECTION || selectedCol == NO_SELECTION) return
-        if (!currentBoard.getCell(selectedRow, selectedCol).isFixed) {
-            val characterValue = nineChars[number]
-            currentBoard.getCell(selectedRow, selectedCol).value = characterValue
-            currentBoard.getCell(selectedRow, selectedCol).isDoubtful = false
-            currentBoard.timeSpent = currentTime
-            updateViewModelBoard(currentBoard)
+        if (!currentBoardCache.getCell(selectedRow, selectedCol).isFixed) {
+            val characterValue = nineCharsCache[number]
+            currentBoardCache.getCell(selectedRow, selectedCol).value = characterValue
+            currentBoardCache.getCell(selectedRow, selectedCol).isDoubtful = false
+            currentBoardCache.timeSpent = currentTime
+            updateViewModelBoard(currentBoardCache)
         }
         checkForSolution(currentTime)
     }
 
     fun markSelectedAsDoubtful(currentTime: Long) {
-        val board = currentBoard
+        val board = currentBoardCache
         val isCellDoubtful = board.getCell(selectedRow, selectedCol).isDoubtful
         board.getCell(selectedRow, selectedCol).isDoubtful = !isCellDoubtful
         board.timeSpent = currentTime
@@ -91,7 +93,7 @@ class GameViewModel @Inject constructor(
 
     fun clearSelected(currentTime: Long) {
         if (selectedRow == NO_SELECTION || selectedCol == NO_SELECTION) return
-        val board = currentBoard
+        val board = currentBoardCache
         if (!board.getCell(selectedRow, selectedCol).isFixed) {
             board.getCell(selectedRow, selectedCol).value = EMPTY_CELL
         }
@@ -104,10 +106,8 @@ class GameViewModel @Inject constructor(
         levelFlow.value = diffLevel
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val randomBoard =
-                getRandomBoard.invoke(diffLevel).copy(timeSpent = 0, alreadyFinished = false)
-            updateViewModelBoard(randomBoard)
             _gameStateFlow.emit(REFRESHING)
+            getRandomBoard(diffLevel)
         }
     }
 
@@ -115,62 +115,67 @@ class GameViewModel @Inject constructor(
         levelFlow.value = diffLevel
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val randomBoard = getRandomByCategory(category, diffLevel).copy(
-                timeSpent = 0,
-                alreadyFinished = false
-            )
-            updateViewModelBoard(randomBoard)
             _gameStateFlow.emit(REFRESHING)
+            getRandomByCategory(category, diffLevel)
         }
     }
 
     fun getGameWithSelected(lvl: Level) {
-        levelFlow.value = lvl
         updateSelection(NO_SELECTION, NO_SELECTION)
         viewModelScope.launch {
-            val newBoard = getGameWithSelectedUseCase(lvl).copy(
-                timeSpent = 0,
-                alreadyFinished = false
-            )
-            updateViewModelBoard(newBoard)
             _gameStateFlow.emit(REFRESHING)
+            getGameWithSelectedUseCase(lvl)
         }
-    }
-
-    fun setSettingsState() {
-        _gameStateFlow.tryEmit(SETTING)
     }
 
     fun saveBoard(timeSpent: Long? = null) {
         viewModelScope.launch {
             if (timeSpent != null) {
-                val board = currentBoard.copy(timeSpent = timeSpent)
+                val board = currentBoardCache.copy(timeSpent = timeSpent)
                 updateViewModelBoard(board)
                 saveGameUseCase(board)
                 getSavedBoard()
             } else {
-                saveGameUseCase(currentBoard)
+                saveGameUseCase(currentBoardCache)
+            }
+        }
+    }
+
+    private fun collectGameState() {
+        viewModelScope.launch {
+            getGameStateFlow().collectLatest {
+                when (it) {
+                    is WIN -> {
+                        _gameStateFlow.emit(it)
+                        updateSelection(NO_SELECTION, NO_SELECTION)
+                    }
+                    is DISPLAY -> {
+                        _gameStateFlow.emit(it)
+                        updateViewModelBoard(it.oldBoard)
+                        updateSelection(NO_SELECTION, NO_SELECTION)
+                    }
+                    is PLAYING -> {
+                        _gameStateFlow.emit(it)
+                        updateViewModelBoard(it.currentBoard)
+                    }
+                    is REFRESHING -> {
+                        _gameStateFlow.emit(it)
+                        updateSelection(NO_SELECTION, NO_SELECTION)
+                    }
+                }
             }
         }
     }
 
     private fun getSavedBoard() {
         viewModelScope.launch {
-            val savedBoard = getSavedGameUseCase()
-            savedBoard?.let {
-                if (it.alreadyFinished) {
-                    _gameStateFlow.tryEmit(DISPLAY(it))
-                } else {
-                    _gameStateFlow.tryEmit(PLAYING(it))
-                }
-                updateViewModelBoard(it)
-                updateSelection(NO_SELECTION, NO_SELECTION)
-            } ?: setInitialGame()
+            _gameStateFlow.emit(REFRESHING)
+            getSavedGameUseCase()
         }
     }
 
     fun launchRefreshedGame() {
-        _gameStateFlow.tryEmit(PLAYING(currentBoard))
+        _gameStateFlow.tryEmit(PLAYING(currentBoardCache))
     }
 
     fun launchOldBoard() {
@@ -192,7 +197,7 @@ class GameViewModel @Inject constructor(
 
     private fun checkForSolution(currentTime: Long) {
         _finalErrorFlow.value = false
-        val boardCells = currentBoard.cells
+        val boardCells = currentBoardCache.cells
         var count = 0
         for (i in boardCells) {
             if (i.value == EMPTY_CELL) {
@@ -201,30 +206,30 @@ class GameViewModel @Inject constructor(
         }
         if (count < EMPTY_CELLS_MINIMUM) {
             viewModelScope.launch {
-                val gameResult = getGameResult.invoke(currentBoard)
+                val gameResult = getGameResult.invoke(currentBoardCache)
                 if (gameResult is SUCCESS) {
                     val solution =
                         gameResult.solution.copy(alreadyFinished = true, timeSpent = currentTime)
                     updateViewModelBoard(solution)
                     saveBoard()
-                    _gameStateFlow.emit(PLAYING(currentBoard))
+                    _gameStateFlow.emit(PLAYING(currentBoardCache))
                     saveRecord(currentTime)
                     _gameStateFlow.tryEmit(WIN)
                 } else {
                     _finalErrorFlow.value = true
-                    _gameStateFlow.emit(PLAYING(currentBoard))
+                    _gameStateFlow.emit(PLAYING(currentBoardCache))
                     saveBoard()
                 }
             }
         } else {
             saveBoard()
-            _gameStateFlow.tryEmit(PLAYING(currentBoard))
+            _gameStateFlow.tryEmit(PLAYING(currentBoardCache))
         }
     }
 
     private fun updateViewModelBoard(newBoard: Board) {
-        currentBoard = newBoard
-        nineChars = newBoard.nineChars
+        currentBoardCache = newBoard
+        nineCharsCache = newBoard.nineChars
     }
 
     fun updateSelection(row: Int, col: Int) {
@@ -233,9 +238,9 @@ class GameViewModel @Inject constructor(
         _selectedCellFlow.value = Pair(row, col)
     }
 
-    fun setLevel(chosenLevel: Level) {
-        levelFlow.value = chosenLevel
-    }
+//    fun setLevel(chosenLevel: Level) {
+//        levelFlow.value = chosenLevel
+//    }
 
     private fun saveRecord(recordTime: Long) {
         val current = LocalDateTime.now()
@@ -253,11 +258,6 @@ class GameViewModel @Inject constructor(
                 getTopFifteenRecords()
             )
         }
-    }
-
-    private fun setInitialGame() {
-        getNewRandomGame(Level.EASY)
-        _gameStateFlow.tryEmit(SETTING)
     }
 
     fun getOneCharacterByChinese(chinese: String): SharedFlow<ChineseCharacter> {
@@ -286,8 +286,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun goToDictionary(activity: MainActivity) {
-//        navigate(GameFragmentDirections.actionGameFragmentToDictionaryFragment())
-        activity.navController.navigate(GameFragmentDirections.actionGameFragmentToDictionaryFragment())
+        activity.switchToDict()
     }
 
     companion object {
