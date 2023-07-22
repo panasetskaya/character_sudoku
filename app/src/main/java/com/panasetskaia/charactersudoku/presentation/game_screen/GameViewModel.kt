@@ -1,12 +1,16 @@
 package com.panasetskaia.charactersudoku.presentation.game_screen
 
 import androidx.lifecycle.viewModelScope
+import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.*
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import com.panasetskaia.charactersudoku.presentation.root.MainActivity
+import com.panasetskaia.charactersudoku.utils.Event
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -21,10 +25,10 @@ class GameViewModel @Inject constructor(
     private val getRandomByCategory: GetRandomWithCategoryUseCase,
     private val supplyNewRecord: SupplyNewRecordUseCase,
     private val getOneCharacterByChineseUseCase: GetOneCharacterByChineseUseCase,
-    private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase,
     private val getAllCategories: GetAllCategoriesUseCase,
     private val deleteCategory: DeleteCategoryUseCase,
-    private val getGameStateFlow: GetGameStateUseCase
+    private val getGameStateFlow: GetGameStateUseCase,
+    private val getStringUseCase: GetStringUseCase
 ) : BaseViewModel() {
 
     private var selectedRow = NO_SELECTION
@@ -34,13 +38,13 @@ class GameViewModel @Inject constructor(
 
     private val levelFlow = MutableStateFlow(Level.EASY)
 
+    private val _toastFlow = MutableStateFlow<Event<String>?>(null)
+    val toastFlow: StateFlow<Event<String>?>
+        get() = _toastFlow
+
     private val _selectedCellFlow = MutableStateFlow(Pair(NO_SELECTION, NO_SELECTION))
     val selectedCellFlow: StateFlow<Pair<Int, Int>>
         get() = _selectedCellFlow
-
-    private val _finalErrorFlow = MutableStateFlow(false)
-    val finalErrorFlow: StateFlow<Boolean>
-        get() = _finalErrorFlow
 
     private val _gameStateFlow = MutableSharedFlow<GameState>(
         replay = 1,
@@ -55,13 +59,6 @@ class GameViewModel @Inject constructor(
     )
     val categoriesFlow: SharedFlow<List<String>>
         get() = _categoriesFlow
-
-    private val _oneCharacterFlow = MutableSharedFlow<ChineseCharacter>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    val oneCharacterFlow: SharedFlow<ChineseCharacter>
-        get() = _oneCharacterFlow
 
     init {
         getSavedBoard()
@@ -117,13 +114,13 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun getGameWithSelected(lvl: Level) {
-        updateSelection(NO_SELECTION, NO_SELECTION)
-        viewModelScope.launch {
-            _gameStateFlow.emit(REFRESHING)
-            getGameWithSelectedUseCase(lvl)
-        }
-    }
+//    fun getGameWithSelected(lvl: Level) {
+//        updateSelection(NO_SELECTION, NO_SELECTION)
+//        viewModelScope.launch {
+//            _gameStateFlow.emit(REFRESHING)
+//            getGameWithSelectedUseCase(lvl)
+//        }
+//    }
 
     fun saveBoard(timeSpent: Long? = null) {
         viewModelScope.launch {
@@ -195,7 +192,6 @@ class GameViewModel @Inject constructor(
     }
 
     private fun checkForSolution(currentTime: Long) {
-        _finalErrorFlow.value = false
         val boardCells = currentBoardCache.cells
         var count = 0
         for (i in boardCells) {
@@ -215,7 +211,7 @@ class GameViewModel @Inject constructor(
                     saveRecord(currentTime)
                     _gameStateFlow.tryEmit(WIN)
                 } else {
-                    _finalErrorFlow.value = true
+                    _toastFlow.value = Event(getStringUseCase(R.string.check_again))
                     _gameStateFlow.emit(PLAYING(currentBoardCache))
                     saveBoard()
                 }
@@ -251,7 +247,12 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch {
             val char = getOneCharacterByChineseUseCase(chinese)
             char?.let {
-                _oneCharacterFlow.emit(it)
+                if (it.pinyin.isNotEmpty() || it.translation.isNotEmpty()) {
+                    _toastFlow.value = Event("${it.character} [ ${it.pinyin.trim()} ] ${it.translation}")
+                } else {
+                    _toastFlow.value = Event(it.character)
+                }
+
             }
         }
     }

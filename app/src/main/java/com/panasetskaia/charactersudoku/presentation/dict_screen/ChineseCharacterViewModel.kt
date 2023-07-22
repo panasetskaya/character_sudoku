@@ -10,6 +10,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import com.panasetskaia.charactersudoku.presentation.root.MainActivity
+import com.panasetskaia.charactersudoku.utils.Event
 import com.panasetskaia.charactersudoku.utils.myLog
 import com.panasetskaia.charactersudoku.utils.simplifyPinyin
 import kotlinx.coroutines.channels.BufferOverflow
@@ -36,9 +37,9 @@ class ChineseCharacterViewModel @Inject constructor(
 
     private var selectedCache = listOf<ChineseCharacter>()
 
-    private val toastEventChannel = Channel<Int>(Channel.BUFFERED)
-    val toastFlow: Flow<Int>
-        get() = toastEventChannel.receiveAsFlow()
+    private val _toastFlow = MutableStateFlow<Event<Int>?>(null)
+    val toastFlow: StateFlow<Event<Int>?>
+        get() = _toastFlow
 
     private val _pathLiveData = MutableLiveData<String>()
     val pathLiveData: LiveData<String>
@@ -208,14 +209,14 @@ class ChineseCharacterViewModel @Inject constructor(
     }
 
     fun filterByQuery(query: String) {
-        val thereIs = innerDictCache.any { it.character == query || it.pinyin.contains(query) }
+        val thereIs = innerDictCache.any { it.character == query || it.pinyin.simplifyPinyin().contains(query) }
         if (thereIs) {
             val newList = innerDictCache.filter {
                 it.character == query || it.pinyin.simplifyPinyin().contains(query)
             }
             _dictionaryFlow.tryEmit(newList)
         } else {
-            toastEventChannel.trySendBlocking(R.string.not_found)
+            _toastFlow.value = Event(R.string.not_found)
         }
     }
 
@@ -233,12 +234,9 @@ class ChineseCharacterViewModel @Inject constructor(
             activity.switchToGame()
             getGameWithSelectedUseCase(lvl)
         }
+    }
 
-//        val levelNumber = when (lvl) {
-//            Level.EASY -> GameFragment.LEVEL_EASY
-//            Level.MEDIUM -> GameFragment.LEVEL_MED
-//            Level.HARD -> GameFragment.LEVEL_HARD
-//        }
-//        navigate(DictionaryFragmentDirections.actionDictionaryFragmentToGameFlow(levelNumber))
+    fun sendToast(stringResource: Int) {
+        _toastFlow.value = Event(stringResource)
     }
 }

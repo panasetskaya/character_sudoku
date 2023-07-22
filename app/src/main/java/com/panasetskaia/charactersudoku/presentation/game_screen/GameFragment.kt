@@ -132,13 +132,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
                             }
                             is PLAYING -> {
                                 play(it.currentBoard, buttons)
-                                launch {
-                                    viewModel.finalErrorFlow.collectLatest { error ->
-                                        if (error) {
-                                            toast(R.string.check_again)
-                                        }
-                                    }
-                                }
                             }
                             is WIN -> {
                                 celebrate()
@@ -160,11 +153,9 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
                     }
                 }
                 launch {
-                    viewModel.oneCharacterFlow.collectLatest {
-                        if (it.pinyin.isNotEmpty() || it.translation.isNotEmpty()) {
-                            toast("${it.character} [ ${it.pinyin.trim()} ] ${it.translation}")
-                        } else {
-                            toast(it.character)
+                    viewModel.toastFlow.collectLatest { event ->
+                        event?.getContentIfNotHandled()?.let { string ->
+                            toast(string)
                         }
                     }
                 }

@@ -45,6 +45,14 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     private val gameStateFlow: SharedFlow<GameState>
         get() = _gameStateFlow
 
+
+
+    override fun getStringResource(resId: Int): String {
+        return application.getString(resId)
+    }
+
+
+
     /**
      * Game functions:
      */
@@ -52,6 +60,8 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     override suspend fun getGameState(): Flow<GameState> {
         return gameStateFlow
     }
+
+
 
     override suspend fun getRandomBoard(diffLevel: Level) {
         try {

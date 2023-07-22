@@ -92,7 +92,7 @@ class DictionaryFragment :
             if (isFabPlayEnabled) {
                 showChooseLevelBottomDialog()
             } else {
-                toast(R.string.not_enough)
+                viewModel.sendToast(R.string.not_enough)
             }
         }
         binding.fabDeleteSelected.setOnClickListener {
@@ -139,7 +139,7 @@ class DictionaryFragment :
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.dictionaryFlow.collectLatest {
-                        if (it.size > 0) {
+                        if (it.isNotEmpty()) {
                             binding.tvDefaultText.visibility = View.GONE
                         } else {
                             binding.tvDefaultText.visibility = View.VISIBLE
@@ -159,13 +159,15 @@ class DictionaryFragment :
                     }
                 }
                 launch {
-                    viewModel.toastFlow.collectLatest {
-                        toast(it)
+                    viewModel.toastFlow.collectLatest { event ->
+                        event?.getContentIfNotHandled()?.let { stringResource ->
+                            toast(stringResource)
+                        }
                     }
                 }
                 launch {
                     viewModel.selectedCharactersSharedFlow.collectLatest { selected ->
-                        if (selected.size > 0) {
+                        if (selected.isNotEmpty()) {
                             binding.fabDeleteSelected.visibility = View.VISIBLE
                             viewModel.setSelectedForDeleting(selected)
                         } else {

@@ -6,6 +6,12 @@ import kotlinx.coroutines.flow.Flow
 interface CharacterSudokuRepository {
 
     /**
+     * Common:
+     */
+    fun getStringResource(resId: Int): String
+
+
+    /**
      * Game functions:
      */
     suspend fun getRandomBoard(diffLevel: Level)
@@ -33,7 +39,7 @@ interface CharacterSudokuRepository {
      * Dictionary categories functions:
      */
     fun getAllCategories(): Flow<List<Category>>
-    suspend fun deleteCategory(catName:String)
+    suspend fun deleteCategory(catName: String)
     suspend fun addCategory(category: Category)
 
     /**
