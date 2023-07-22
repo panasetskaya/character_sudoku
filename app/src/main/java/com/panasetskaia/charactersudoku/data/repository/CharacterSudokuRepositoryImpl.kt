@@ -377,7 +377,11 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
                         sb += CSV_HEADERS
                     }
                     afterFirst = true
-                    sb += "${character.character},${character.pinyin},${character.translation},${character.usages},${character.category}\n"
+                    val pinyinToWrite = getSCVCellFilledWith(character.pinyin)
+                    val translationToWrite = getSCVCellFilledWith(character.translation)
+                    val usagesToWrite = getSCVCellFilledWith(character.usages)
+                    val categoryToWrite = getSCVCellFilledWith(character.category)
+                    sb += "${character.character},$pinyinToWrite,$translationToWrite,$usagesToWrite,$categoryToWrite\n"
                 }
                 try {
                     file.writeText(sb)
@@ -411,6 +415,10 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     private fun isExternalStorageAvailable(): Boolean {
         val extStorageState = Environment.getExternalStorageState()
         return Environment.MEDIA_MOUNTED == extStorageState
+    }
+
+    private fun getSCVCellFilledWith(s: String): String {
+        return if (s!="") s else "-"
     }
 
 

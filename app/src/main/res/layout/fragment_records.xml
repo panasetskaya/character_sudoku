@@ -27,19 +27,6 @@
             app:navigationIcon="?attr/homeAsUpIndicator"/>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/tv_records_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"
-        android:text="@string/records_title"
-        android:textColor="@color/primaryLightColor"
-        android:textSize="20sp"
-        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewRecords"
@@ -49,7 +36,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_records_title"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         android:layout_margin="24dp"
         tools:listitem="@layout/record_item" />
 
