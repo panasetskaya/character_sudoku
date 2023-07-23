@@ -139,10 +139,10 @@ class DictionaryFragment :
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.dictionaryFlow.collectLatest {
-                        if (it.isNotEmpty()) {
-                            binding.tvDefaultText.visibility = View.GONE
-                        } else {
+                        if (it.isEmpty() && !searchView.isActivated) {
                             binding.tvDefaultText.visibility = View.VISIBLE
+                        } else {
+                            binding.tvDefaultText.visibility = View.GONE
                         }
                         listAdapter.submitList(it)
                     }
@@ -216,12 +216,20 @@ class DictionaryFragment :
     private fun setupSearch() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { viewModel.filterByQuery(it) }
+                query?.let {
+                    if (!searchView.isIconified) {
+                        viewModel.filterByQuery(it)
+                    }
+                }
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let { viewModel.filterByQuery(it) }
+                newText?.let {
+                    if (!searchView.isIconified) {
+                        viewModel.filterByQuery(it)
+                    }
+                }
                 return false
             }
         })
