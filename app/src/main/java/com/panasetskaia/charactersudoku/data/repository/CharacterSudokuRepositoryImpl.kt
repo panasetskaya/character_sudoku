@@ -24,7 +24,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
+import java.util.*
 import javax.inject.Inject
 
 
@@ -46,7 +51,9 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         get() = _gameStateFlow
 
 
-
+    /**
+     * Common functions:
+     */
     override fun getStringResource(resId: Int): String {
         return application.getString(resId)
     }
@@ -370,21 +377,8 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
             TO_CSV -> {
                 val filename = CSV_FILE_NAME
                 val file = File(exportDir, filename)
-                var sb = ""
-                var afterFirst = false
-                for (character in myData) {
-                    if (!afterFirst) {
-                        sb += CSV_HEADERS
-                    }
-                    afterFirst = true
-                    val pinyinToWrite = getSCVCellFilledWith(character.pinyin)
-                    val translationToWrite = getSCVCellFilledWith(character.translation)
-                    val usagesToWrite = getSCVCellFilledWith(character.usages)
-                    val categoryToWrite = getSCVCellFilledWith(character.category)
-                    sb += "${character.character},$pinyinToWrite,$translationToWrite,$usagesToWrite,$categoryToWrite\n"
-                }
                 try {
-                    file.writeText(sb)
+                    printWithCSVPrinter(file, myData)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -421,6 +415,26 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         return if (s!="") s else "-"
     }
 
+    private fun printWithCSVPrinter(file: File, myData: List<ChineseCharacter>) {
+        val fileWriter = FileWriter(file)
+        val writer = BufferedWriter(fileWriter)
+        val csvPrinter = CSVPrinter(writer, CSVFormat.DEFAULT
+            .withHeader("Character","Pinyin","Translation","Usages","Category"))
+        for (character in myData) {
+            val characterData = listOf(
+                character.character,
+                getSCVCellFilledWith(character.pinyin),
+                getSCVCellFilledWith(character.translation),
+                getSCVCellFilledWith(character.usages),
+                getSCVCellFilledWith(character.category)
+            )
+
+            csvPrinter.printRecord(characterData)
+        }
+        csvPrinter.flush()
+        csvPrinter.close()
+    }
+
 
     companion object {
         private val INITIAL_9_CHAR = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")
@@ -430,6 +444,5 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         private const val TO_CSV = "csv"
         private const val CSV_FILE_NAME = "mandarindoku_dict.csv"
         private const val JSON_FILE_NAME = "mandarindoku_dict.json"
-        private const val CSV_HEADERS = "Character,Pinyin,Translation,Usages,Category\n"
     }
 }

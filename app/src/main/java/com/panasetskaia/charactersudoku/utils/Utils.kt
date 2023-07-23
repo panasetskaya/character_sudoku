@@ -66,3 +66,4 @@ fun String.simplifyPinyin(): String {
 fun myLog(s: String) {
     Log.d("MYMYMY", s)
 }
+
