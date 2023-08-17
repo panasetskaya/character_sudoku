@@ -10,6 +10,7 @@ import com.panasetskaia.charactersudoku.domain.entities.Level
 import com.panasetskaia.charactersudoku.domain.usecases.*
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import com.panasetskaia.charactersudoku.presentation.root.MainActivity
+import com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragmentDirections
 import com.panasetskaia.charactersudoku.utils.Event
 import com.panasetskaia.charactersudoku.utils.myLog
 import com.panasetskaia.charactersudoku.utils.simplifyPinyin
@@ -146,6 +147,10 @@ class ChineseCharacterViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    fun goToSignInFragment() {
+        navigate(ExportFragmentDirections.actionExportFragmentToSignInFragment())
     }
 
     fun getOneCharacterById(id: Int): SharedFlow<ChineseCharacter> {

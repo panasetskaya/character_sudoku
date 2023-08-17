@@ -5,11 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.panasetskaia.charactersudoku.R
@@ -19,13 +23,15 @@ import com.panasetskaia.charactersudoku.presentation.base.BaseFragment
 import com.panasetskaia.charactersudoku.presentation.dict_screen.ChineseCharacterViewModel
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
 import com.panasetskaia.charactersudoku.utils.getAppComponent
+import com.panasetskaia.charactersudoku.utils.toast
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import javax.inject.Inject
 
 
-class ExportFragment : BaseFragment<FragmentExportBinding, ChineseCharacterViewModel>(FragmentExportBinding::inflate) {
+class ExportFragment :
+    BaseFragment<FragmentExportBinding, ChineseCharacterViewModel>(FragmentExportBinding::inflate) {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -33,6 +39,8 @@ class ExportFragment : BaseFragment<FragmentExportBinding, ChineseCharacterViewM
     override val viewModel by viewModels<ChineseCharacterViewModel> { viewModelFactory }
 
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
+
+    private lateinit var auth: FirebaseAuth
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -43,37 +51,72 @@ class ExportFragment : BaseFragment<FragmentExportBinding, ChineseCharacterViewM
         setupMenu()
         setupListeners()
         setupResultLauncher()
+        auth = Firebase.auth
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            showFreeDownloads()
+        } else {
+            showLoginButton()
+        }
+    }
+
+    private fun showFreeDownloads() {
+        binding.freeDownloadButton.visibility = View.VISIBLE
+        binding.buttonLogin.visibility = View.GONE
+    }
+
+    private fun showLoginButton() {
+        binding.freeDownloadButton.visibility = View.GONE
+        binding.buttonLogin.visibility = View.VISIBLE
     }
 
     private fun setupResultLauncher() {
-        resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data: Intent? = result.data
-                data?.data?.also {
-                    val jsonString = readFileContent(it)
-                    jsonString?.let {
-                        viewModel.parseExternalDict(jsonString)
-                        Toast.makeText(requireContext(), R.string.new_dict_added, Toast.LENGTH_SHORT).show()
-                    } ?: Toast.makeText(requireContext(), R.string.invalid_dict, Toast.LENGTH_SHORT).show()
+        resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val data: Intent? = result.data
+                    data?.data?.also {
+                        val jsonString = readFileContent(it)
+                        jsonString?.let {
+                            viewModel.parseExternalDict(jsonString)
+                            Toast.makeText(
+                                requireContext(),
+                                R.string.new_dict_added,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } ?: Toast.makeText(
+                            requireContext(),
+                            R.string.invalid_dict,
+                            Toast.LENGTH_SHORT
+                        ).show()
 
+                    }
                 }
             }
-        }
     }
 
     private fun setupListeners() {
-        binding.toCsvButton.setOnClickListener {
-            viewModel.saveDictionaryToCSV()
-            observeFilePath()
+        with(binding) {
+            toCsvButton.setOnClickListener {
+                viewModel.saveDictionaryToCSV()
+                observeFilePath()
+            }
+            toJsonButton.setOnClickListener {
+                viewModel.saveDictionaryToJson()
+                observeFilePath()
+            }
+            fromJsonButton.setOnClickListener {
+                openFile()
+            }
+            freeDownloadButton.setOnClickListener {
+                toast(R.string.soon)
+                //todo: сюда запулять загрузку с облака!
+            }
+            buttonLogin.setOnClickListener {
+                viewModel.goToSignInFragment()
+            }
         }
-        binding.toJsonButton.setOnClickListener {
-            viewModel.saveDictionaryToJson()
-            observeFilePath()
 
-        }
-        binding.fromJsonButton.setOnClickListener {
-            openFile()
-        }
     }
 
     private fun setupMenu() {
@@ -84,7 +127,7 @@ class ExportFragment : BaseFragment<FragmentExportBinding, ChineseCharacterViewM
 
     private fun observeFilePath() {
         viewModel.pathLiveData.observe(viewLifecycleOwner) {
-            if (it!="") {
+            if (it != "") {
                 startFileShareIntent(it)
             }
         }
@@ -125,7 +168,8 @@ class ExportFragment : BaseFragment<FragmentExportBinding, ChineseCharacterViewM
             val inputStream = contentResolver.openInputStream(uri)
             val reader = BufferedReader(
                 InputStreamReader(
-                    inputStream)
+                    inputStream
+                )
             )
             val typeToken = object : TypeToken<List<ChineseCharacter>>() {}.type
             val gson = GsonBuilder()

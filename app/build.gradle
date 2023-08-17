@@ -99,7 +99,7 @@ dependencies {
     //scv
     implementation 'org.apache.commons:commons-csv:1.10.0'
 
-    //firebase
+    //firebase and auth
     implementation platform('com.google.firebase:firebase-bom:32.2.2')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
@@ -107,6 +107,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx'
     implementation 'com.google.firebase:firebase-inappmessaging-ktx'
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
+    implementation 'com.google.android.gms:play-services-auth:20.6.0'
+
 
 
 }

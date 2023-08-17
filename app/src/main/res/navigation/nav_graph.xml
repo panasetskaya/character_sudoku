@@ -63,13 +63,20 @@
             <action
                 android:id="@+id/action_settingsFragment_to_exportFragment"
                 app:destination="@id/exportFragment" />
+            <action
+                android:id="@+id/action_settingsFragment_to_signInFragment"
+                app:destination="@id/signInFragment" />
         </fragment>
 
         <fragment
             android:id="@+id/exportFragment"
             android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragment"
             android:label="fragment_export"
-            tools:layout="@layout/fragment_export" />
+            tools:layout="@layout/fragment_export" >
+            <action
+                android:id="@+id/action_exportFragment_to_signInFragment"
+                app:destination="@id/signInFragment" />
+        </fragment>
         <fragment
             android:id="@+id/helpFragment"
             android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.HelpFragment"
@@ -80,6 +87,11 @@
             android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.RecordsFragment"
             android:label="fragment_records"
             tools:layout="@layout/fragment_records" />
+        <fragment
+            android:id="@+id/signInFragment"
+            android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.SignInFragment"
+            android:label="fragment_sign_in"
+            tools:layout="@layout/fragment_sign_in" />
 
     </navigation>
 
