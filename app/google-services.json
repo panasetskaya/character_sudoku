@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "33541923009",
+    "project_id": "mandarindoku",
+    "storage_bucket": "mandarindoku.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:33541923009:android:e6b129c2f481d92b3bb440",
+        "android_client_info": {
+          "package_name": "com.panasetskaia.charactersudoku"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "33541923009-304763bc4hdsc67f3ah5r3gfukfn8tfp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.panasetskaia.charactersudoku",
+            "certificate_hash": "0d0af5af57aa5f50ae13eeb2018a0f83cb0ea97a"
+          }
+        },
+        {
+          "client_id": "33541923009-ndg2fjattuvh73iv1f3f5m2r6837590l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCY04Sa0DP3mRQ5Ex_pXd5_NQo1L55lEEo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "33541923009-ndg2fjattuvh73iv1f3f5m2r6837590l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
