@@ -92,8 +92,6 @@
     <string name="ok">OK</string>
     <string name="download_free_explain">Registered users can import our free HSK-1 level character dictionary. Good luck with your learning!</string>
     <string name="free_download_hsk1">get HSK1</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="auth_failed">Authentication failed!</string>
     <string name="login_with_email"> Sign in with email</string>
     <string name="email_hint">email</string>
@@ -102,5 +100,7 @@
     <string name="sign_up">Sign up with email</string>
     <string name="or"> or:</string>
     <string name="sign_in">Sign in</string>
+    <string name="web_client_id">33541923009-ndg2fjattuvh73iv1f3f5m2r6837590l.apps.googleusercontent.com</string>
+    <string name="welcome">Welcome!</string>
 
 </resources>
