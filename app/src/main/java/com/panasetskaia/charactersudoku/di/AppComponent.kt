@@ -10,6 +10,7 @@ import com.panasetskaia.charactersudoku.presentation.settings_screen.HelpFragmen
 import com.panasetskaia.charactersudoku.presentation.settings_screen.RecordsFragment
 import com.panasetskaia.charactersudoku.presentation.settings_screen.SettingsFragment
 import com.panasetskaia.charactersudoku.presentation.settings_screen.SignInFragment
+import com.panasetskaia.charactersudoku.presentation.settings_screen.SignUpFragment
 import dagger.BindsInstance
 import dagger.Component
 
@@ -34,6 +35,8 @@ interface AppComponent {
     fun inject(fragment: RecordsFragment)
 
     fun inject(fragment: SignInFragment)
+
+    fun inject(fragment: SignUpFragment)
 
     @Component.Factory
     interface AppComponentFactory {

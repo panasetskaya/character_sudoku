@@ -102,5 +102,7 @@
     <string name="sign_in">Sign in</string>
     <string name="web_client_id">33541923009-ndg2fjattuvh73iv1f3f5m2r6837590l.apps.googleusercontent.com</string>
     <string name="welcome">Welcome!</string>
+    <string name="register_with_email">You can sign up here</string>
+    <string name="confirm_password_hint">confirm password</string>
 
 </resources>

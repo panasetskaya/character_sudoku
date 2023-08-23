@@ -89,7 +89,6 @@ class ExportFragment :
                             R.string.invalid_dict,
                             Toast.LENGTH_SHORT
                         ).show()
-
                     }
                 }
             }
