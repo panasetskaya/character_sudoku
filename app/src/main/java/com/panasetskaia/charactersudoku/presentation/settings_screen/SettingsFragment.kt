@@ -41,13 +41,6 @@ class SettingsFragment :
         setListeners()
         viewModel.checkSignIn(auth)
         collectFlows()
-//        val currentUser = auth.currentUser
-//        if (currentUser != null) {
-//            showCurrentUser()
-//        } else {
-//            showNewUser()
-//        }
-
     }
 
     private fun collectFlows() {
