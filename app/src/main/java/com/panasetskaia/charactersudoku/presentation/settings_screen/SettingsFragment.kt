@@ -63,10 +63,22 @@ class SettingsFragment :
         with(binding) {
             buttonLogin.visibility = View.GONE
             buttonLogout.visibility = View.VISIBLE
+            binding.tvUserName.visibility = View.VISIBLE
             ivUserImage.setColorFilter(
                 ContextCompat.getColor(requireContext(), R.color.primaryLightColor)
             )
-            //todo: get user's email/name from Firebase to show under the pic
+            val user = auth.currentUser
+            user?.let {
+                val name = it.displayName
+                val email = it.email
+                if (name!=null) {
+                    binding.tvUserName.text = name
+                } else if (email!=null) {
+                    binding.tvUserName.text = email
+                } else {
+                    binding.tvUserName.text = getString(R.string.our_dear_user)
+                }
+            }
         }
     }
 
@@ -77,6 +89,7 @@ class SettingsFragment :
             ivUserImage.setColorFilter(
                 ContextCompat.getColor(requireContext(), R.color.secondaryColor)
             )
+            binding.tvUserName.text = getString(R.string.new_user)
         }
     }
 

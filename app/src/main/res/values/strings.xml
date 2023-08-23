@@ -110,5 +110,6 @@
     <string name="already_in_use">The email address is already in use</string>
     <string name="too_weak">This password is too weak</string>
     <string name="signup_error">For a reason unknown, sign-up failed</string>
+    <string name="our_dear_user">Our dear user</string>
 
 </resources>
