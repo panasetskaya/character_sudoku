@@ -80,7 +80,7 @@
     <string name="lvl3">HARD</string>
     <string name="not_found">Not found</string>
     <string name="new_user">New user</string>
-    <string name="login_button">Login</string>
+    <string name="login_button">Sign in</string>
     <string name="my_records">My top results</string>
     <string name="import_export">Import and share</string>
     <string name="help">Help</string>
@@ -90,7 +90,8 @@
     <string name="top_results">Top results</string>
     <string name="soon">Coming soon!</string>
     <string name="ok">OK</string>
-    <string name="download_free_explain">Registered users can import our free HSK-1 level character dictionary. Good luck with your learning!</string>
+    <string name="download_free_explain">Registered users can import our free HSK-1 level character dictionary.</string>
+    <string name="good_luck">Good luck with your learning!</string>
     <string name="free_download_hsk1">get HSK1</string>
     <string name="auth_failed">Authentication failed!</string>
     <string name="login_with_email"> Sign in with email</string>
@@ -104,5 +105,7 @@
     <string name="welcome">Welcome!</string>
     <string name="register_with_email">You can sign up here</string>
     <string name="confirm_password_hint">confirm password</string>
+    <string name="password_not_match">Passwords don\'t match!</string>
+    <string name="logout_button">Sign out</string>
 
 </resources>

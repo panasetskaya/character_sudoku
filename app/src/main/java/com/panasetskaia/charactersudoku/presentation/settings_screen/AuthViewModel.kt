@@ -28,8 +28,7 @@ class AuthViewModel @Inject constructor() : BaseViewModel() {
     }
 
     fun goToSignUp() {
-        //todo
-        // navigate(SignInFragmentDirections.actionSignInFragmentToSignUpFragment())
+        navigate(SignInFragmentDirections.actionSignInFragmentToSignUpFragment())
     }
 
     fun signInWithEmail(auth: FirebaseAuth, email: String, password: String, activity: Activity) {
@@ -81,5 +80,13 @@ class AuthViewModel @Inject constructor() : BaseViewModel() {
         } catch (e: Exception) {
             myLog("signInWithGoogle:failure: $e ${e.message}")
         }
+    }
+
+    fun showWrongPasswordToast() {
+        _toastFlow.value = Event(R.string.password_not_match)
+    }
+
+    fun signupWithEmail(email: String, password: String) {
+        TODO("Not yet implemented")
     }
 }

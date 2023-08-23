@@ -63,11 +63,13 @@ class ExportFragment :
     private fun showFreeDownloads() {
         binding.freeDownloadButton.visibility = View.VISIBLE
         binding.buttonLogin.visibility = View.GONE
+        binding.tvExportExplain.text = getString(R.string.good_luck)
     }
 
     private fun showLoginButton() {
         binding.freeDownloadButton.visibility = View.GONE
         binding.buttonLogin.visibility = View.VISIBLE
+        binding.tvExportExplain.text = getString(R.string.download_free_explain)
     }
 
     private fun setupResultLauncher() {

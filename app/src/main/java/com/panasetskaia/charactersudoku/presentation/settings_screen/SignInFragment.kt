@@ -1,9 +1,15 @@
 package com.panasetskaia.charactersudoku.presentation.settings_screen
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -11,6 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -38,7 +45,14 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>(
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
 
-    private val REQ_ONE_TAP = 2
+    private val googleRegisterResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            when (result.resultCode) {
+                Activity.RESULT_OK -> {
+                    viewModel.signInWithGoogle(auth, oneTapClient, result.data, requireActivity())
+                }
+            }
+        }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,7 +73,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setServerClientId(getString(R.string.web_client_id))
-                    .setFilterByAuthorizedAccounts(true)
+                    .setFilterByAuthorizedAccounts(false)
                     .build()
             )
             .setAutoSelectEnabled(true)
@@ -76,7 +90,11 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>(
         binding.tvSignUp.setOnClickListener {
             viewModel.goToSignUp()
         }
+        binding.appBar.setNavigationOnClickListener {
+            viewModel.navigateBack()
+        }
     }
+
 
     private fun launchEmailSignIn() {
         val email = binding.etEmail.text.toString().trim()
@@ -88,11 +106,10 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>(
         oneTapClient.beginSignIn(signInRequest)
             .addOnSuccessListener(requireActivity()) { result ->
                 try {
-                    startIntentSenderForResult(
-                        result.pendingIntent.intentSender, REQ_ONE_TAP,
-                        null, 0, 0, 0, null)
+                    val intentSenderRequest = IntentSenderRequest.Builder(result.pendingIntent.intentSender).build()
+                    googleRegisterResultLauncher.launch(intentSenderRequest)
                 } catch (e: IntentSender.SendIntentException) {
-                    myLog( "Couldn't start One Tap UI: ${e.localizedMessage}")
+                    myLog("Couldn't start One Tap UI: ${e.localizedMessage}")
                 }
             }
             .addOnFailureListener(requireActivity()) { e ->
@@ -118,15 +135,6 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>(
                         }
                     }
                 }
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            REQ_ONE_TAP -> {
-                viewModel.signInWithGoogle(auth, oneTapClient, data, requireActivity())
             }
         }
     }
