@@ -56,6 +56,13 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, AuthViewModel>(
                         }
                     }
                 }
+                launch {
+                    viewModel.isUserSignedInFlow.collectLatest { signedIn ->
+                        if (signedIn) {
+                            viewModel.navigateBack()
+                        }
+                    }
+                }
             }
         }
     }
@@ -66,7 +73,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, AuthViewModel>(
             password?.let {
                 val email = binding.etRegisterEmail.text.toString().trim()
                 if (email.isNotEmpty()) {
-                    viewModel.signupWithEmail(email,it)
+                    viewModel.signupWithEmail(auth,email,it,requireActivity())
                 }
             }
         }

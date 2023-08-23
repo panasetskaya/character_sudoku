@@ -3,7 +3,6 @@ package com.panasetskaia.charactersudoku.presentation.settings_screen
 import android.app.Activity
 import android.content.Intent
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.panasetskaia.charactersudoku.R
@@ -31,8 +30,13 @@ class AuthViewModel @Inject constructor() : BaseViewModel() {
         navigate(SignInFragmentDirections.actionSignInFragmentToSignUpFragment())
     }
 
+    fun checkSignIn(auth: FirebaseAuth) {
+        val currentUser = auth.currentUser
+        _isUserSignedInFlow.value = currentUser != null
+    }
+
     fun signInWithEmail(auth: FirebaseAuth, email: String, password: String, activity: Activity) {
-        if (email!="" && password!="") {
+        if (email != "" && password != "") {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(activity) { task ->
                     if (task.isSuccessful) {
@@ -73,6 +77,7 @@ class AuthViewModel @Inject constructor() : BaseViewModel() {
                             }
                         }
                 }
+
                 else -> {
                     myLog("signInWithGoogle:failure: no ID token!")
                 }
@@ -86,7 +91,22 @@ class AuthViewModel @Inject constructor() : BaseViewModel() {
         _toastFlow.value = Event(R.string.password_not_match)
     }
 
-    fun signupWithEmail(email: String, password: String) {
-        TODO("Not yet implemented")
+    fun signupWithEmail(auth: FirebaseAuth, email: String, password: String, activity: Activity) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(activity) { task ->
+                if (task.isSuccessful) {
+                    myLog("createUserWithEmail:success")
+                    _isUserSignedInFlow.value = true
+                } else {
+                    val msg = when (task.exception) {
+                        is com.google.firebase.auth.FirebaseAuthUserCollisionException -> R.string.already_in_use
+                        is com.google.firebase.auth.FirebaseAuthWeakPasswordException -> R.string.too_weak
+                        else -> R.string.signup_error
+                    }
+                    myLog("createUserWithEmail:failure: ${task.exception}")
+                    _toastFlow.value = Event(msg)
+                    _isUserSignedInFlow.value = false
+                }
+            }
     }
 }

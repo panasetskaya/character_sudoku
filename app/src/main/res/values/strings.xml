@@ -107,5 +107,8 @@
     <string name="confirm_password_hint">confirm password</string>
     <string name="password_not_match">Passwords don\'t match!</string>
     <string name="logout_button">Sign out</string>
+    <string name="already_in_use">The email address is already in use</string>
+    <string name="too_weak">This password is too weak</string>
+    <string name="signup_error">For a reason unknown, sign-up failed</string>
 
 </resources>

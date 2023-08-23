@@ -61,6 +61,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, AuthViewModel>(
 
     override fun onReady(savedInstanceState: Bundle?) {
         setupAuth()
+        viewModel.checkSignIn(auth)
         setListeners()
         collectFlows()
     }
