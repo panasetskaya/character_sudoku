@@ -136,7 +136,7 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
                             }
                             is PLAYING -> {
                                 play(it.currentBoard, buttons)
-                                logRealtmeDatabseResults()
+
                             }
                             is WIN -> {
                                 celebrate()
