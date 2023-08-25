@@ -28,6 +28,17 @@
             app:title="@string/dictionary" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        tools:listitem="@layout/character_item_not_chosen" />
+
     <TextView
         android:id="@+id/tv_default_text"
         android:layout_width="0dp"
@@ -41,20 +52,18 @@
         android:textColor="?attr/colorPrimary"
         android:textSize="20sp"
         android:gravity="bottom|center"
+        android:clickable="true"
         android:text="@string/default_dict_text"/>
 
-    <TextView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/tv_default_suggest_import_button"
-        android:layout_width="0dp"
+        style="@style/smallButtonStyle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/tv_default_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/tv_default_suggest_import"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:textColor="@color/primaryLightColor"
-        android:clickable="true"
         android:textSize="20sp"
         android:gravity="center"
         android:text="@string/import_button_in_settings"/>
@@ -74,16 +83,7 @@
         android:gravity="top|center"
         android:text="@string/settings_suggest"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewList"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        tools:listitem="@layout/character_item_not_chosen" />
+
 
 
 
@@ -127,16 +127,6 @@
         app:layout_constraintBottom_toTopOf="@+id/fabAdd"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_baseline_delete_forever_24" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/dictionaryContainerView"
-        android:layout_width="270dp"
-        android:layout_height="150dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

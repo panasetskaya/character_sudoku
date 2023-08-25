@@ -41,7 +41,7 @@ class SettingsViewModel @Inject constructor(): BaseViewModel() {
     }
 
     fun goToSingIn() {
-        navigate(SettingsFragmentDirections.actionSettingsFragmentToSignInFragment())
+        navigate(SettingsFragmentDirections.actionSettingsFragmentToAuthNavGraph())
     }
 
 }

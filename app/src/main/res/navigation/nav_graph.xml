@@ -25,8 +25,9 @@
                 android:id="@+id/action_dictionaryFragment_to_singleCharacterFragment"
                 app:destination="@id/singleCharacterFragment" />
             <action
-                android:id="@+id/action_dictionaryFragment_to_settings_nav_graph"
-                app:destination="@id/settings_nav_graph" />
+                android:id="@+id/action_dictionaryFragment_to_exportFragment"
+                app:destination="@id/exportFragment" />
+
 
         </fragment>
 
@@ -48,6 +49,17 @@
 
     </navigation>
 
+    <fragment
+        android:id="@+id/exportFragment"
+        android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragment"
+        android:label="fragment_export"
+        tools:layout="@layout/fragment_export" >
+
+        <action
+            android:id="@+id/action_exportFragment_to_auth_nav_graph"
+            app:destination="@id/auth_nav_graph" />
+    </fragment>
+
     <navigation
         android:id="@+id/settings_nav_graph"
         app:startDestination="@id/settingsFragment">
@@ -67,19 +79,11 @@
                 android:id="@+id/action_settingsFragment_to_exportFragment"
                 app:destination="@id/exportFragment" />
             <action
-                android:id="@+id/action_settingsFragment_to_signInFragment"
-                app:destination="@id/signInFragment" />
+                android:id="@+id/action_settingsFragment_to_auth_nav_graph"
+                app:destination="@id/auth_nav_graph" />
+
         </fragment>
 
-        <fragment
-            android:id="@+id/exportFragment"
-            android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragment"
-            android:label="fragment_export"
-            tools:layout="@layout/fragment_export" >
-            <action
-                android:id="@+id/action_exportFragment_to_signInFragment"
-                app:destination="@id/signInFragment" />
-        </fragment>
         <fragment
             android:id="@+id/helpFragment"
             android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.HelpFragment"
@@ -90,6 +94,11 @@
             android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.RecordsFragment"
             android:label="fragment_records"
             tools:layout="@layout/fragment_records" />
+    </navigation>
+
+    <navigation
+        android:id="@+id/auth_nav_graph"
+        app:startDestination="@id/signInFragment">
         <fragment
             android:id="@+id/signInFragment"
             android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.SignInFragment"
@@ -104,7 +113,6 @@
             android:name="com.panasetskaia.charactersudoku.presentation.settings_screen.SignUpFragment"
             android:label="fragment_sign_up"
             tools:layout="@layout/fragment_sign_up" />
-
     </navigation>
 
 

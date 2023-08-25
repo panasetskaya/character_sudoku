@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -98,6 +99,10 @@ class DictionaryFragment :
         binding.fabDeleteSelected.setOnClickListener {
             showConfirmDeleteBottomDialog(null)
         }
+        binding.tvDefaultSuggestImportButton.setOnClickListener {
+            Toast.makeText(requireContext(), "Pressed!", Toast.LENGTH_SHORT).show()
+            viewModel.goToExportImport()
+        }
     }
 
     private fun setupRecyclerView() {
@@ -141,8 +146,13 @@ class DictionaryFragment :
                     viewModel.dictionaryFlow.collectLatest {
                         if (it.isEmpty() && !searchView.isActivated) {
                             binding.tvDefaultText.visibility = View.VISIBLE
+                            binding.tvDefaultSuggestImport.visibility = View.VISIBLE
+                            binding.tvDefaultSuggestImportButton.visibility = View.VISIBLE
+
                         } else {
                             binding.tvDefaultText.visibility = View.GONE
+                            binding.tvDefaultSuggestImport.visibility = View.GONE
+                            binding.tvDefaultSuggestImportButton.visibility = View.GONE
                         }
                         listAdapter.submitList(it)
                     }

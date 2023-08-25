@@ -150,11 +150,11 @@ class ChineseCharacterViewModel @Inject constructor(
     }
 
     fun goToSignInFragment() {
-        navigate(ExportFragmentDirections.actionExportFragmentToSignInFragment())
+        navigate(ExportFragmentDirections.actionExportFragmentToAuthNavGraph())
     }
 
-    fun goToExportImport(activity: MainActivity) {
-        activity.switchToSettings()
+    fun goToExportImport() {
+        navigate(DictionaryFragmentDirections.actionDictionaryFragmentToExportFragment())
     }
 
     fun getOneCharacterById(id: Int): SharedFlow<ChineseCharacter> {
