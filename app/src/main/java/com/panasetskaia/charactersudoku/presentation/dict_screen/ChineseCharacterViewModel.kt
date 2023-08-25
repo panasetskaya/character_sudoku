@@ -153,6 +153,10 @@ class ChineseCharacterViewModel @Inject constructor(
         navigate(ExportFragmentDirections.actionExportFragmentToSignInFragment())
     }
 
+    fun goToExportImport(activity: MainActivity) {
+        activity.switchToSettings()
+    }
+
     fun getOneCharacterById(id: Int): SharedFlow<ChineseCharacter> {
         return dictionaryFlow.map { wholeDictionary ->
             var characterWeNeed = ChineseCharacter(

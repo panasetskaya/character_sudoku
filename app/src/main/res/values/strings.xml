@@ -55,7 +55,9 @@
     <string name="okButton">OK</string>
     <string name="choose_level">Level:</string>
     <string name="big_char" translatable="false">Big char</string>
-    <string name="default_dict_text">Here you can add your own characters or symbols to the dictionary\nand then use them for the sudoku game</string>
+    <string name="default_dict_text">Here you can add your own characters or symbols to the dictionary\nand then use them for the sudoku game. Or use</string>
+    <string name="import_button_in_settings">Import</string>
+    <string name="settings_suggest">to get your own or our free dictionaries!</string>
     <string name="filter">Filter</string>
     <string-array name="default_cat_array">
         <item>All</item>

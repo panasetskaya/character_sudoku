@@ -45,6 +45,7 @@ class SingleCharacterFragment :
     }
 
     override fun onReady(savedInstanceState: Bundle?) {
+        adapterForSpinner = SpinnerAdapter(this, R.layout.category_spinner_item, listOf(), viewModel)
         binding.spinnerCat.onItemSelectedListener = this
         collectCategories()
         setupMenu()
