@@ -1,6 +1,8 @@
 package com.panasetskaia.charactersudoku.presentation.game_screen
 
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.SUCCESS
 import com.panasetskaia.charactersudoku.domain.entities.*
@@ -8,6 +10,8 @@ import com.panasetskaia.charactersudoku.domain.usecases.*
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.utils.Event
+import com.panasetskaia.charactersudoku.utils.myLog
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.trySendBlocking
@@ -264,6 +268,20 @@ class GameViewModel @Inject constructor(
     override fun deleteThisCategory(cat: String) {
         viewModelScope.launch {
             deleteCategory(cat)
+        }
+    }
+
+    //todo: тестовая функция, удалить
+    fun testRealtimeDB() {
+        viewModelScope.launch (Dispatchers.IO) {
+            val rltimeDatabase = Firebase.database.reference
+        rltimeDatabase.child("dictionaries").child("hsk1_en").get().addOnSuccessListener {
+            myLog("firebase: Got value ${it.value}")
+            _toastFlow.value = Event("firebase: Got value ${it.value}")
+        }.addOnFailureListener{
+            myLog("firebase: Error getting data: $it")
+            _toastFlow.value = Event("firebase: Error getting data: $it")
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "33541923009",
+    "firebase_url": "https://mandarindoku-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "mandarindoku",
     "storage_bucket": "mandarindoku.appspot.com"
   },
@@ -19,6 +20,14 @@
           "android_info": {
             "package_name": "com.panasetskaia.charactersudoku",
             "certificate_hash": "0d0af5af57aa5f50ae13eeb2018a0f83cb0ea97a"
+          }
+        },
+        {
+          "client_id": "33541923009-3molm15640q17cqv5mka0mlccgqstmn7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.panasetskaia.charactersudoku",
+            "certificate_hash": "d4e44327d4092b367ecf5ca39e190bd8ededa9cc"
           }
         },
         {

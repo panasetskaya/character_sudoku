@@ -2,6 +2,8 @@ package com.panasetskaia.charactersudoku.data.repository
 
 import android.app.Application
 import android.os.Environment
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.panasetskaia.charactersudoku.data.database.board.BoardDao
@@ -112,6 +114,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
 
     override suspend fun getSavedGame() {
         try {
+
             val boardDbModel = boardDao.getSavedGame()
             if (boardDbModel != null) {
                 val nineChars = mutableListOf<String>()

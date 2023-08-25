@@ -49,4 +49,5 @@ interface CharacterSudokuRepository {
     suspend fun saveDictToJson(): String
     suspend fun getCharacterByChinese(chinese: String): ChineseCharacter?
 
+
 }
