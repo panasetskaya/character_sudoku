@@ -86,6 +86,9 @@ class DictionaryFragment :
 
     private fun setupFab() {
         shakeAdd()
+        binding.fabSelectAll.setOnClickListener {
+            viewModel.changeIsChosenStateForAll()
+        }
         binding.fabAdd.setOnClickListener {
             viewModel.goToSingleCharacterFragment(null)
         }
@@ -100,7 +103,6 @@ class DictionaryFragment :
             showConfirmDeleteBottomDialog(null)
         }
         binding.tvDefaultSuggestImportButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Pressed!", Toast.LENGTH_SHORT).show()
             viewModel.goToExportImport()
         }
     }
@@ -179,9 +181,11 @@ class DictionaryFragment :
                     viewModel.selectedCharactersSharedFlow.collectLatest { selected ->
                         if (selected.isNotEmpty()) {
                             binding.fabDeleteSelected.visibility = View.VISIBLE
+                            binding.fabSelectAll.visibility = View.VISIBLE
                             viewModel.setSelectedForDeleting(selected)
                         } else {
                             binding.fabDeleteSelected.visibility = View.GONE
+                            binding.fabSelectAll.visibility = View.GONE
                         }
                         selectedCharacters = selected
                         if (selected.size == 9) {

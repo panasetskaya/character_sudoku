@@ -67,13 +67,15 @@ class ExportFragment :
     }
 
     private fun showFreeDownloads() {
-        binding.freeDownloadButton.visibility = View.VISIBLE
+        binding.freeDownloadHSK1EngButton.visibility = View.VISIBLE
+        binding.freeDownloadHSK1RusButton.visibility = View.VISIBLE
         binding.buttonLogin.visibility = View.GONE
         binding.tvDownloadFreeDownload.text = getString(R.string.good_luck)
     }
 
     private fun showLoginButton() {
-        binding.freeDownloadButton.visibility = View.GONE
+        binding.freeDownloadHSK1EngButton.visibility = View.GONE
+        binding.freeDownloadHSK1RusButton.visibility = View.GONE
         binding.buttonLogin.visibility = View.VISIBLE
         binding.tvDownloadFreeDownload.text = getString(R.string.download_free_explain)
     }
@@ -87,16 +89,9 @@ class ExportFragment :
                         val jsonString = readFileContent(it)
                         jsonString?.let {
                             viewModel.parseExternalDict(jsonString)
-                            Toast.makeText(
-                                requireContext(),
-                                R.string.new_dict_added,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } ?: Toast.makeText(
-                            requireContext(),
-                            R.string.invalid_dict,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            toast(R.string.new_dict_added)
+
+                        } ?: toast(R.string.invalid_dict)
                     }
                 }
             }
@@ -115,9 +110,13 @@ class ExportFragment :
             fromJsonButton.setOnClickListener {
                 openFile()
             }
-            freeDownloadButton.setOnClickListener {
-                toast("Importing english dictionary!")
+            freeDownloadHSK1EngButton.setOnClickListener {
+                toast(R.string.importing_eng)
                 importRemoteDict(ChineseCharacterViewModel.DictLang.ENG)
+            }
+            freeDownloadHSK1RusButton.setOnClickListener {
+                toast(R.string.importing_ru)
+                importRemoteDict(ChineseCharacterViewModel.DictLang.RUS)
             }
             buttonLogin.setOnClickListener {
                 viewModel.goToSignInFragment()

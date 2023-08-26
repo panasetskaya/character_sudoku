@@ -3,8 +3,6 @@ package com.panasetskaia.charactersudoku.presentation.dict_screen
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
@@ -26,7 +24,6 @@ import com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragm
 import com.panasetskaia.charactersudoku.utils.Event
 import com.panasetskaia.charactersudoku.utils.myLog
 import com.panasetskaia.charactersudoku.utils.simplifyPinyin
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -233,7 +230,7 @@ class ChineseCharacterViewModel @Inject constructor(
         viewModelScope.launch {
             for (i in newDict) {
                 addCharacterToDict(i.copy(id = 0))
-                addCategory(Category(0,i.category))
+                addCategory(Category(0, i.category))
             }
         }
     }
@@ -282,6 +279,17 @@ class ChineseCharacterViewModel @Inject constructor(
                 DictLang.RUS -> {
                     getRemoteRussianHSK1UseCase()
                 }
+            }
+        }
+    }
+
+    fun changeIsChosenStateForAll() {
+        viewModelScope.launch {
+            for (i in innerDictCache) {
+
+                val newChineseCharacter = i.copy(isChosen = !i.isChosen)
+                addCharacterToDict(newChineseCharacter)
+
             }
         }
     }
