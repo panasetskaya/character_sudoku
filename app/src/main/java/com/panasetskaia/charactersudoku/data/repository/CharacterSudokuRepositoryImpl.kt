@@ -12,6 +12,7 @@ import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacte
 import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDbModel
 import com.panasetskaia.charactersudoku.data.database.records.RecordsDao
 import com.panasetskaia.charactersudoku.data.gameGenerator.SudokuGame
+import com.panasetskaia.charactersudoku.data.remote.RemoteRepo
 import com.panasetskaia.charactersudoku.domain.CharacterSudokuRepository
 import com.panasetskaia.charactersudoku.domain.FAILED
 import com.panasetskaia.charactersudoku.domain.GameResult
@@ -40,7 +41,8 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
     private val mapper: SudokuMapper,
     private val charactersDao: ChineseCharacterDao,
     private val boardDao: BoardDao,
-    private val recordsDao: RecordsDao
+    private val recordsDao: RecordsDao,
+    private val remoteRepo: RemoteRepo
 ) : CharacterSudokuRepository {
 
     private var temporaryDict = INITIAL_9_CHAR
@@ -308,6 +310,7 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         return dbModel?.let { mapper.mapDbChineseCharacterToDomainEntity(it) }
     }
 
+
     /**
      * Dictionary categories functions:
      */
@@ -436,6 +439,14 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         }
         csvPrinter.flush()
         csvPrinter.close()
+    }
+
+    override fun getRemoteEnglishHSK1Dict() {
+        remoteRepo.getEnglishHSK1()
+    }
+
+    override fun getRemoteRussianHSK1Dict() {
+        remoteRepo.getRussianHSK1()
     }
 
 

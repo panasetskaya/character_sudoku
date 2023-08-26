@@ -397,11 +397,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
             else -> Level.EASY
         }
     }
-
-    //todo: тестовая функция, удалить
-    private fun logRealtmeDatabseResults() {
-        viewModel.testRealtimeDB()
-    }
 }
 
 

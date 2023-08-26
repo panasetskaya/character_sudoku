@@ -3,22 +3,40 @@ package com.panasetskaia.charactersudoku.presentation.dict_screen
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.domain.entities.Category
 import com.panasetskaia.charactersudoku.domain.entities.ChineseCharacter
 import com.panasetskaia.charactersudoku.domain.entities.Level
-import com.panasetskaia.charactersudoku.domain.usecases.*
+import com.panasetskaia.charactersudoku.domain.usecases.AddCategoryUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.AddOrEditCharacterUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.DeleteCategoryUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.DeleteCharacterFromDictUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.GetAllCategoriesUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.GetGameWithSelectedUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.GetRemoteEnglishHSK1UseCase
+import com.panasetskaia.charactersudoku.domain.usecases.GetRemoteRussianHSK1UseCase
+import com.panasetskaia.charactersudoku.domain.usecases.GetWholeDictionaryUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.SaveDictToCSVUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.SaveDictToJsonUseCase
 import com.panasetskaia.charactersudoku.presentation.base.BaseViewModel
 import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.settings_screen.ExportFragmentDirections
 import com.panasetskaia.charactersudoku.utils.Event
 import com.panasetskaia.charactersudoku.utils.myLog
 import com.panasetskaia.charactersudoku.utils.simplifyPinyin
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,7 +49,9 @@ class ChineseCharacterViewModel @Inject constructor(
     private val deleteCategory: DeleteCategoryUseCase,
     private val saveDictToCSV: SaveDictToCSVUseCase,
     private val saveDictToJson: SaveDictToJsonUseCase,
-    private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase
+    private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase,
+    private val getRemoteEnglishHSK1UseCase: GetRemoteEnglishHSK1UseCase,
+    private val getRemoteRussianHSK1UseCase: GetRemoteRussianHSK1UseCase
 ) : BaseViewModel() {
 
     private var innerDictCache = listOf<ChineseCharacter>()
@@ -218,7 +238,9 @@ class ChineseCharacterViewModel @Inject constructor(
     }
 
     fun filterByQuery(query: String) {
-        val thereIs = innerDictCache.any { it.character == query || it.pinyin.simplifyPinyin().contains(query) }
+        val thereIs = innerDictCache.any {
+            it.character == query || it.pinyin.simplifyPinyin().contains(query)
+        }
         if (thereIs) {
             val newList = innerDictCache.filter {
                 it.character == query || it.pinyin.simplifyPinyin().contains(query)
@@ -247,5 +269,24 @@ class ChineseCharacterViewModel @Inject constructor(
 
     fun sendToast(stringResource: Int) {
         _toastFlow.value = Event(stringResource)
+    }
+
+    fun importRemoteDict(lang: DictLang) {
+        viewModelScope.launch {
+            when (lang) {
+                DictLang.ENG -> {
+                    getRemoteEnglishHSK1UseCase()
+                }
+
+                DictLang.RUS -> {
+                    getRemoteRussianHSK1UseCase()
+                }
+            }
+        }
+    }
+
+    enum class DictLang {
+        ENG,
+        RUS
     }
 }

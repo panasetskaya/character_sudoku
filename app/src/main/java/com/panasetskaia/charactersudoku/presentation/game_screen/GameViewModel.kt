@@ -271,20 +271,6 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    //todo: тестовая функция, удалить
-    fun testRealtimeDB() {
-        viewModelScope.launch (Dispatchers.IO) {
-            val rltimeDatabase = Firebase.database.reference
-        rltimeDatabase.child("dictionaries").child("hsk1_en").get().addOnSuccessListener {
-            myLog("firebase: Got value ${it.value}")
-            _toastFlow.value = Event("firebase: Got value ${it.value}")
-        }.addOnFailureListener{
-            myLog("firebase: Error getting data: $it")
-            _toastFlow.value = Event("firebase: Error getting data: $it")
-            }
-        }
-    }
-
     companion object {
         internal const val EMPTY_CELLS_MINIMUM = 8
         private const val EMPTY_CELL = "0"
