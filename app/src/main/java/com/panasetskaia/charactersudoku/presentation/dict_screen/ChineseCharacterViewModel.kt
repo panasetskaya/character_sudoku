@@ -233,6 +233,7 @@ class ChineseCharacterViewModel @Inject constructor(
         viewModelScope.launch {
             for (i in newDict) {
                 addCharacterToDict(i.copy(id = 0))
+                addCategory(Category(0,i.category))
             }
         }
     }

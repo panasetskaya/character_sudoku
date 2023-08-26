@@ -2,6 +2,7 @@ package com.panasetskaia.charactersudoku.data.remote
 
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.panasetskaia.charactersudoku.data.database.dictionary.CategoryDbModel
 import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDao
 import com.panasetskaia.charactersudoku.data.database.dictionary.ChineseCharacterDbModel
 import com.panasetskaia.charactersudoku.data.repository.SudokuMapper
@@ -59,6 +60,7 @@ class RemoteRepo @Inject constructor(private val dao: ChineseCharacterDao) {
                         )
                         scope.launch {
                             dao.addOrEditCharacter(char)
+                            dao.addOrEditCategory(CategoryDbModel(0,char.category))
                         }
                     }
                     myLog("firebase: success")
