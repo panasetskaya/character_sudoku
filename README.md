@@ -24,7 +24,7 @@ authorization through Google acc and a possibility to download dictionaries for 
 
 <img src="https://github.com/panasetskaya/mandarin_doku/assets/90948269/28e8dd19-0486-45e0-9f70-e9ad96a06d4b" width="252" height="533">  <img src="https://github.com/panasetskaya/mandarin_doku/assets/90948269/087b79f1-048a-48e6-97fb-1297e8b29703" width="252" height="533">
 
-<img src="https://github.com/panasetskaya/mandarin_doku/assets/90948269/bd7539c5-a846-44d9-912d-c60ba8bbc572" width="252" height="533">  <img src="https://github.com/panasetskaya/mandarin_doku/assets/90948269/bdfea5f6-f692-4e95-a03e-bb36e808fad9" width="252" height="533">
+<img src="https://github.com/panasetskaya/mandarin_doku/assets/90948269/c09235a2-fb22-4167-9bce-b5a6bd2835e1" width="246" height="533">  <img src="https://github.com/panasetskaya/mandarin_doku/assets/90948269/bdfea5f6-f692-4e95-a03e-bb36e808fad9" width="252" height="533">
 
 
 
