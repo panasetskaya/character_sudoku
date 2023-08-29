@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -85,6 +86,9 @@ class DictionaryFragment :
 
     private fun setupFab() {
         shakeAdd()
+        binding.fabSelectAll.setOnClickListener {
+            viewModel.changeIsChosenStateForAll()
+        }
         binding.fabAdd.setOnClickListener {
             viewModel.goToSingleCharacterFragment(null)
         }
@@ -97,6 +101,9 @@ class DictionaryFragment :
         }
         binding.fabDeleteSelected.setOnClickListener {
             showConfirmDeleteBottomDialog(null)
+        }
+        binding.tvDefaultSuggestImportButton.setOnClickListener {
+            viewModel.goToExportImport()
         }
     }
 
@@ -141,8 +148,13 @@ class DictionaryFragment :
                     viewModel.dictionaryFlow.collectLatest {
                         if (it.isEmpty() && !searchView.isActivated) {
                             binding.tvDefaultText.visibility = View.VISIBLE
+                            binding.tvDefaultSuggestImport.visibility = View.VISIBLE
+                            binding.tvDefaultSuggestImportButton.visibility = View.VISIBLE
+
                         } else {
                             binding.tvDefaultText.visibility = View.GONE
+                            binding.tvDefaultSuggestImport.visibility = View.GONE
+                            binding.tvDefaultSuggestImportButton.visibility = View.GONE
                         }
                         listAdapter.submitList(it)
                     }
@@ -169,9 +181,11 @@ class DictionaryFragment :
                     viewModel.selectedCharactersSharedFlow.collectLatest { selected ->
                         if (selected.isNotEmpty()) {
                             binding.fabDeleteSelected.visibility = View.VISIBLE
+                            binding.fabSelectAll.visibility = View.VISIBLE
                             viewModel.setSelectedForDeleting(selected)
                         } else {
                             binding.fabDeleteSelected.visibility = View.GONE
+                            binding.fabSelectAll.visibility = View.GONE
                         }
                         selectedCharacters = selected
                         if (selected.size == 9) {

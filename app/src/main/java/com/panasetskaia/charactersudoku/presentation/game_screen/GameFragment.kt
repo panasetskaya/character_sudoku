@@ -9,11 +9,14 @@ import android.os.SystemClock
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.panasetskaia.charactersudoku.R
 import com.panasetskaia.charactersudoku.databinding.BottomSheetChooseLvlAndCategoryBinding
 import com.panasetskaia.charactersudoku.databinding.BottomSheetConfirmRefreshBinding
@@ -25,6 +28,7 @@ import com.panasetskaia.charactersudoku.presentation.dict_screen.SpinnerAdapter
 import com.panasetskaia.charactersudoku.presentation.root.MainActivity
 import com.panasetskaia.charactersudoku.presentation.viewmodels.ViewModelFactory
 import com.panasetskaia.charactersudoku.utils.getAppComponent
+import com.panasetskaia.charactersudoku.utils.myLog
 import com.panasetskaia.charactersudoku.utils.toast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -132,6 +136,7 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
                             }
                             is PLAYING -> {
                                 play(it.currentBoard, buttons)
+
                             }
                             is WIN -> {
                                 celebrate()
@@ -392,7 +397,6 @@ class GameFragment : BaseFragment<FragmentGameBinding, GameViewModel>(FragmentGa
             else -> Level.EASY
         }
     }
-
 }
 
 

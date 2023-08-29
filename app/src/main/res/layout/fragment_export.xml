@@ -56,16 +56,28 @@
                 app:layout_constraintTop_toBottomOf="@+id/fine_purple_line2" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/freeDownloadButton"
+                android:id="@+id/freeDownloadHSK1EngButton"
                 style="@style/simpleSmallerButtonStyleNoCaps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_gravity="center"
-                android:text="@string/free_download_hsk1"
+                android:text="@string/free_download_hsk1_en"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_download_free_download" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/freeDownloadHSK1RusButton"
+                style="@style/simpleSmallerButtonStyleNoCaps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_gravity="center"
+                android:text="@string/free_download_hsk1_ru"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/freeDownloadHSK1EngButton" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonLogin"

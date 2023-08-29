@@ -34,4 +34,8 @@ class MainActivity : AppCompatActivity() {
         binding.activityMainBottomNavigation.selectedItemId = R.id.gameFragment
     }
 
+    fun switchToSettings() {
+        binding.activityMainBottomNavigation.selectedItemId = R.id.settings_nav_graph
+    }
+
 }
