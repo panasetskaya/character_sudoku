@@ -63,7 +63,9 @@ class RemoteRepo @Inject constructor(private val dao: ChineseCharacterDao) {
                             )
                             scope.launch {
                                 dao.addOrEditCharacter(char)
-                                dao.addOrEditCategory(CategoryDbModel(0,char.category))
+                                if (!dao.categoryExists(char.category)){
+                                    dao.addOrEditCategory(CategoryDbModel(0,char.category))
+                                }
                             }
                         }
                         myLog("firebase: success")
