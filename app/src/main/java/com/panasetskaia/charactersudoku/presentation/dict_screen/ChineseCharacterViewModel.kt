@@ -11,6 +11,7 @@ import com.panasetskaia.charactersudoku.domain.usecases.AddCategoryUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.AddOrEditCharacterUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.DeleteCategoryUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.DeleteCharacterFromDictUseCase
+import com.panasetskaia.charactersudoku.domain.usecases.FinishWorkUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.GetAllCategoriesUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.GetGameWithSelectedUseCase
 import com.panasetskaia.charactersudoku.domain.usecases.GetRemoteEnglishHSK1UseCase
@@ -48,7 +49,8 @@ class ChineseCharacterViewModel @Inject constructor(
     private val saveDictToJson: SaveDictToJsonUseCase,
     private val getGameWithSelectedUseCase: GetGameWithSelectedUseCase,
     private val getRemoteEnglishHSK1UseCase: GetRemoteEnglishHSK1UseCase,
-    private val getRemoteRussianHSK1UseCase: GetRemoteRussianHSK1UseCase
+    private val getRemoteRussianHSK1UseCase: GetRemoteRussianHSK1UseCase,
+    private val finishWorkUseCase: FinishWorkUseCase
 ) : BaseViewModel() {
 
     private var innerDictCache = listOf<ChineseCharacter>()
@@ -292,6 +294,11 @@ class ChineseCharacterViewModel @Inject constructor(
 
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        finishWorkUseCase()
     }
 
     enum class DictLang {

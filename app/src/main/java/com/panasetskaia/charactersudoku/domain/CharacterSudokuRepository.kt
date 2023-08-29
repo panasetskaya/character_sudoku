@@ -50,6 +50,7 @@ interface CharacterSudokuRepository {
     suspend fun getCharacterByChinese(chinese: String): ChineseCharacter?
     fun getRemoteEnglishHSK1Dict()
     fun getRemoteRussianHSK1Dict()
+    fun finish()
 
 
 }

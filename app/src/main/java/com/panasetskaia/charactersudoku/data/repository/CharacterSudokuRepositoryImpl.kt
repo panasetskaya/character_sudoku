@@ -449,6 +449,10 @@ class CharacterSudokuRepositoryImpl @Inject constructor(
         remoteRepo.getRussianHSK1()
     }
 
+    override fun finish() {
+        remoteRepo.cancelScope()
+    }
+
 
     companion object {
         private val INITIAL_9_CHAR = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九")

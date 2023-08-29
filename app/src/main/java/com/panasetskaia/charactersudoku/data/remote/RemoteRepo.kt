@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -39,40 +40,46 @@ class RemoteRepo @Inject constructor(private val dao: ChineseCharacterDao) {
             val rltimeDatabase = Firebase.database.reference
             rltimeDatabase.child("dictionaries").child(path).get()
                 .addOnSuccessListener { snapshot ->
-                    val value = snapshot.value as ArrayList<*>
-                    for (i in value) {
-                        val characterMap = i as HashMap<String, String>
-                        val character = characterMap["character"].toString()
-                        val pinyin = characterMap["pinyin"].toString()
-                        val translation = characterMap["translation"].toString()
-                        val usages = characterMap["usages"].toString()
-                        val category = characterMap["category"].toString()
-                        val id = 0
-                        val isChosen = false
-                        val char = ChineseCharacterDbModel(
-                            id,
-                            character,
-                            pinyin,
-                            translation,
-                            usages,
-                            isChosen,
-                            category
-                        )
-                        scope.launch {
-                            dao.addOrEditCharacter(char)
-                            dao.addOrEditCategory(CategoryDbModel(0,char.category))
+                    myLog(snapshot.value.toString())
+                    snapshot.value?.let {
+                        val value = it as ArrayList<*>
+                        for (i in value) {
+                            val characterMap = i as HashMap<String, String>
+                            val character = characterMap["character"].toString()
+                            val pinyin = characterMap["pinyin"].toString()
+                            val translation = characterMap["translation"].toString()
+                            val usages = characterMap["usages"].toString()
+                            val category = characterMap["category"].toString()
+                            val id = 0
+                            val isChosen = false
+                            val char = ChineseCharacterDbModel(
+                                id,
+                                character,
+                                pinyin,
+                                translation,
+                                usages,
+                                isChosen,
+                                category
+                            )
+                            scope.launch {
+                                dao.addOrEditCharacter(char)
+                                dao.addOrEditCategory(CategoryDbModel(0,char.category))
+                            }
                         }
+                        myLog("firebase: success")
                     }
-                    myLog("firebase: success")
-
                 }.addOnFailureListener { e ->
                 myLog("firebase: Error getting data: $e")
             }
         }
     }
 
+    fun cancelScope() {
+        scope.cancel()
+    }
+
     companion object {
         private const val ENG_PATH = "hsk1_en"
-        private const val RU_PATH = "hsk1_ru"
+        private const val RU_PATH = "hsk2_ru"
     }
 }
